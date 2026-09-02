@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Codex Helikopter Italien Briefing" xmlns="http://www.topografix.com/GPX/1/1">
+  <wpt lat="48.053000" lon="9.373000">
+    <name>EDTM Mengen-Hohentengen</name>
+    <desc>Typ: airport | Status: Start/Rückkehrbasis, ziviler Verkehrslandeplatz bestätigt | Fuel: AVGAS 100LL, Jet A1, Super Plus | Zeiten: 09:00 bis SS+30, max. 20:00 LT; Sonderzeiten auf Anfrage/OR | PPR: Sonderzeiten/Parken vorab klären | Telefon: +49 07572 711047; +49 07572 769 601 0 | Kontakt: +49 07572 711047; +49 07572 769 601 0; info@regio-airport-mengen.de | Korridor: 0.0 NM | Nutzungsstatus: guest | Quellen: https://www.regio-airport-mengen.de/piloteninfo/flugplatzdaten/</desc>
+  </wpt>
+  <wpt lat="47.988800" lon="10.239500">
+    <name>EDJA Memmingen / Allgäu Airport</name>
+    <desc>Typ: airport | Status: ziviler Alternate, nicht Startplatz | Fuel: AVGAS und Jet A1, AVGAS SB-Tankstelle nur mit Airport-Tankkarte/WFS | Zeiten: 06:00-22:00 LT; 22:00-23:00 PPR | PPR: Fluganmeldung/GA via Ops | Telefon: +49 8331 9725 315 | Kontakt: +49 8331 9725 315; ops@edja.info | Korridor: 24.5 NM | Nutzungsstatus: ppr | Quellen: https://www.memmingen-airport.de/fliegen/general-aviation/</desc>
+  </wpt>
+  <wpt lat="48.029446" lon="9.507222">
+    <name>EDTU Bad Saulgau</name>
+    <desc>Typ: airport | Status: ziviler Sonderlandeplatz; R44-Zulassung vor PPR ausdrücklich bestätigen | Fuel: nicht belegt | Zeiten: Betriebszeiten laut Betreiber; außerhalb nur bestätigtes PPR | PPR: Online-PPR vor Nutzung; Hubschrauberklasse im Einzelfall bestätigen | Telefon: +49 7581 1610 | Kontakt: +49 7581 1610; info@edtu.de | Korridor: 3.3 NM | Nutzungsstatus: ppr | Quellen: https://edtu.de/</desc>
+  </wpt>
+  <wpt lat="47.600000" lon="9.741667">
+    <name>WILD Flugplatz Wildberg</name>
+    <desc>Typ: field | Status: ziviler Sonderlandeplatz; Hubschrauber ausdrücklich zugelassen | Fuel: kein Kraftstoff laut Betreiber | Zeiten: nur nach Betreiberbestätigung; 50 Stunden Pilotenerfahrung gefordert | PPR: mindestens 24 Stunden vorher per E-Mail | Telefon: +49 8389 271 | Kontakt: +49 8389 271; flugplatz.wildberg@t-online.de | Korridor: 5.8 NM | Nutzungsstatus: ppr | Quellen: https://flugplatz-wildberg.de/piloten/</desc>
+  </wpt>
+  <wpt lat="47.908890" lon="9.250556">
+    <name>EDTP Pfullendorf</name>
+    <desc>Typ: airport | Status: ziviler Verkehrslandeplatz; R44-Klasse telefonisch bestätigen | Fuel: AVGAS 100LL und MOGAS laut Betreiber | Zeiten: Apr-Okt Sa/So 09:00-20:00 oder SS, Mi 17:00-SS; sonst PPR | PPR: außerhalb veröffentlichter Zeiten über PPR-Formular | Telefon: +49 7552 8670 | Kontakt: +49 7552 8670 | Korridor: 9.3 NM | Nutzungsstatus: ppr | Quellen: https://fsv-pfullendorf.de/piloten/</desc>
+  </wpt>
+  <wpt lat="47.671299" lon="9.511490">
+    <name>EDNY Friedrichshafen</name>
+    <desc>Typ: airport | Status: ziviler Verkehrsflughafen mit General Aviation | Fuel: AVGAS 100LL und Jet A1 laut Flughafen | Zeiten: aktuelle GA-Betriebszeiten auf Betreiberseite und in AIP/NOTAM prüfen | PPR: Handling/Abstellung und Slot-/PPR-Lage vorab klären | Telefon: +49 7541 284-120 | Kontakt: +49 7541 284-120; Luftaufsicht@bodensee-airport.eu | Korridor: 10.3 NM | Nutzungsstatus: ppr | Quellen: https://www.bodensee-airport.eu/en/business-aviation/aviation/hours-of-operation/ | https://www.bodensee-airport.eu/business-aviation/aviation/fragen-antworten/</desc>
+  </wpt>
+  <wpt lat="47.858891" lon="10.014167">
+    <name>EDNL Leutkirch-Unterzeil</name>
+    <desc>Typ: airport | Status: ziviler Verkehrslandeplatz; Hubschrauber bis 6 t veröffentlicht | Fuel: nicht belegt | Zeiten: Betriebszeiten/PPR laut Betreiber und AIP prüfen | PPR: Betreiberkoordination; EU-Auslandsflüge mindestens 3 Stunden vorher anmelden | Telefon: +49 7561 3156 | Kontakt: +49 7561 3156 | Korridor: 12.5 NM | Nutzungsstatus: ppr | Quellen: https://www.ednl.de/piloten/</desc>
+  </wpt>
+  <wpt lat="48.112359" lon="9.764013">
+    <name>EDMB Biberach</name>
+    <desc>Typ: airport | Status: ziviler Verkehrslandeplatz; HEL zugelassen | Fuel: AVGAS 100LL, Jet A1 und Super Plus laut Betreiber | Zeiten: veröffentlichte Betriebszeiten; außerhalb PPR | PPR: PPR/Flugleitung vorab telefonisch bestätigen | Telefon: +49 7351 9734; +49 7351 168402; +49 173 3195223 | Kontakt: +49 7351 9734; +49 7351 168402; +49 173 3195223 | Korridor: 14.4 NM | Nutzungsstatus: ppr | Quellen: https://www.edmb.de/fur-piloten/allgemeines/</desc>
+  </wpt>
+  <wpt lat="47.119722" lon="10.240556">
+    <name>H LOIC Wucher St. Anton</name>
+    <desc>Typ: helipad | Status: ziviler Heliport laut Austro Control AIP AD 3; VFR Tag/Nacht, MTOM 6.000 kg | Fuel: nicht belegt | Zeiten: nur PPR; aktuelle AIP/NOTAM-Bedingungen prüfen | PPR: Betreiberfreigabe Wucher Helicopter zwingend | Telefon: +43 5446 2732; +43 5550 3880 | Kontakt: +43 5446 2732; +43 5550 3880; helicopter@wucher.at | Korridor: 8.7 NM | Nutzungsstatus: ppr | Quellen: https://eaip.austrocontrol.at/lo/260806/PART_3/AD_3/LO_AD_3_en.pdf | https://www.wucher-helicopter.at/</desc>
+  </wpt>
+  <wpt lat="47.184167" lon="10.157222">
+    <name>H LOJW Wucher Zürs-Lech</name>
+    <desc>Typ: helipad | Status: ziviler Heliport laut Austro Control AIP AD 3; MTOM 5.700 kg | Fuel: nicht belegt | Zeiten: nur PPR; Beleuchtung laut AIP nur für Rettungs-/Ambulanzflüge, Gastplanung daher Tagbetrieb | PPR: Betreiberfreigabe Wucher Helicopter zwingend | Telefon: +43 5446 2732; +43 5550 3880 | Kontakt: +43 5446 2732; +43 5550 3880; helicopter@wucher.at | Korridor: 8.8 NM | Nutzungsstatus: ppr | Quellen: https://eaip.austrocontrol.at/lo/260806/PART_3/AD_3/LO_AD_3_en.pdf | https://www.wucher-helicopter.at/</desc>
+  </wpt>
+  <wpt lat="47.218889" lon="10.768889">
+    <name>H LOJP Karres</name>
+    <desc>Typ: helipad | Status: ziviler Heliport laut Austro Control AIP AD 3; VFR Tag/Nacht, MTOM 6.000 kg | Fuel: nicht belegt | Zeiten: nur PPR; aktuelle AIP/NOTAM-Bedingungen prüfen | PPR: Betreiberfreigabe Heli Mount zwingend | Telefon: +43 5412 61421 | Kontakt: +43 5412 61421 | Korridor: 11.7 NM | Nutzungsstatus: ppr | Quellen: https://eaip.austrocontrol.at/lo/260806/PART_3/AD_3/LO_AD_3_en.pdf | https://www.heli-tirol.at/</desc>
+  </wpt>
+  <wpt lat="46.460300" lon="11.326400">
+    <name>LIPB Bolzano / Bozen</name>
+    <desc>Typ: airport | Status: zivil nutzbar bestätigt; kommerziell zivil/militärisch gemischt, GA vorhanden | Fuel: Jet A1 06:00-23:00; AVGAS/MOGAS nur Aero Club, PPR/nach Verfügbarkeit | Zeiten: Operator 06:30-23:00 CET; Info 06:00-22:00 | PPR: AVGAS zwingend vorab Aero Club | Telefon: +39 0471 255207; +39 0471 250165 | Kontakt: GA +39 0471 255207; Aero Club +39 0471 250165; info@aeroclub.bz | Korridor: 0.0 NM | Nutzungsstatus: ppr | Quellen: https://www.bolzanoairport.it/en/fuel</desc>
+  </wpt>
+  <wpt lat="46.021400" lon="11.125000">
+    <name>LIDT Trento / Mattarello</name>
+    <desc>Typ: airport | Status: zivil nutzbar bestätigt, starker Fuel-Anker | Fuel: AVIO 100LL H24, Jet A1, unleaded laut Betreiber | Zeiten: H24; AFIS H24 119.655 MHz | PPR: Abstellung/Hangar vorab anfragen | Telefon: +39 0461 031000 | Kontakt: Trentino Trasporti +39 0461 031000; airport@trentinotrasporti.it laut ENAC | Korridor: 0.0 NM | Nutzungsstatus: guest | Quellen: https://www.trentinotrasporti.it/en/airport/aeroporto-caproni</desc>
+  </wpt>
+  <wpt lat="45.473050" lon="10.926930">
+    <name>LIPN Verona Boscomantico</name>
+    <desc>Typ: airport | Status: ziviler Flugplatz bestätigt, saisonal/Montag geschlossen | Fuel: AV-GAS laut Betreiber | Zeiten: Di-So; saisonale Zeiten siehe Betreiber-Briefing | PPR: Koordination mit Betreiber | Telefon: +39 045 8103661; +39 045 563200 | Kontakt: +39 045 8103661; operations@boscomanticoservizi.it; Aeroclub +39 045 563200 | Korridor: 0.0 NM | Nutzungsstatus: ppr | Quellen: https://www.boscomanticoairport.com/en/contact-us/</desc>
+  </wpt>
+  <wpt lat="45.396400" lon="10.887800">
+    <name>LIPX Verona Villafranca</name>
+    <desc>Typ: airport | Status: zivil/kommerziell mit GA-Handling bestätigt, aber kein R44-Fuel-Stop | Fuel: Jet A1; AVGAS nicht verfügbar | Zeiten: H24; PPR subject to stand availability | PPR: PPR mandatory für private/GA laut Betreiberseite | Telefon: +39 045 8095666 | Kontakt: +39 045 8095666; Handler AGS/GH/Sky Services/Argos/Delta | Korridor: 4.2 NM | Nutzungsstatus: guest | Quellen: https://www.aeroportoverona.it/en_gb/flights/private-jets</desc>
+  </wpt>
+  <wpt lat="45.428900" lon="10.330600">
+    <name>LIPO Brescia Montichiari</name>
+    <desc>Typ: airport | Status: ziviler Flughafen/GA-Alternate nahe Gardasee, aber kein R44-Fuel-Stop | Fuel: Jet A1 only, NO AVGAS laut Betreiber | Zeiten: Operations H24; Fuel 07:00-15:00 UTC, außerhalb Anfrage per Mail | PPR: Alle Flüge 3 h vor Ankunft bei Operations anmelden | Telefon: +39 030 9656530; +39 030 9656531; +39 335 7973213 | Kontakt: +39 030 9656530; +39 030 9656531; +39 335 7973213; operativo@aeroportobrescia.it | Korridor: 9.6 NM | Nutzungsstatus: ppr | Quellen: https://www.aeroportobrescia.it/it_it/voli-privati</desc>
+  </wpt>
+  <wpt lat="45.887000" lon="11.516000">
+    <name>LIDA Asiago</name>
+    <desc>Typ: airport | Status: ziviler Flugplatz/Alternate-Kandidat; Betreiberseite bestätigt zivil/touristisch | Fuel: unbekannt | Zeiten: PPR/öffentliche Betriebszeiten vorab prüfen | PPR: Betreiber kontaktieren | Telefon: +39 0424 465845 | Kontakt: +39 0424 465845 | Korridor: 17.8 NM | Nutzungsstatus: ppr | Quellen: https://www.aeroportoasiago.it/it/</desc>
+  </wpt>
+  <wpt lat="45.682000" lon="11.496000">
+    <name>LIDH Thiene</name>
+    <desc>Typ: airport | Status: ziviler Flugplatz/Alternate-Kandidat; Fuel positiv zu bestätigen | Fuel: Jet A1, AVGAS und Benzina verde laut Betreiber; Self-Service in Betriebszeiten | Zeiten: Betriebszeiten/NOTAM/Betreiber prüfen | PPR: Betreiber kontaktieren | Telefon: +39 0445 362723 | Kontakt: +39 0445 362723; info@aeroportothiene.it | Korridor: 20.1 NM | Nutzungsstatus: ppr | Quellen: https://www.aeroportothiene.it/associazioni/</desc>
+  </wpt>
+  <wpt lat="45.130100" lon="11.293200">
+    <name>LIDL Legnago</name>
+    <desc>Typ: airport | Status: ziviler Flugplatz, Betreiberbriefing vorhanden | Fuel: AV-GAS und MO-GAS laut Betreiber | Zeiten: Sa/So 09:00-19:30/SS; andere Tage nach Koordination | PPR: Betreiberkoordination, Hangar/Fuel vorab klären | Telefon: +39 371 5696638; +39 335 6191318 | Kontakt: +39 371 5696638; Präsident +39 335 6191318; info@aeroportolegnago.it | Korridor: 25.8 NM | Nutzungsstatus: ppr | Quellen: https://www.aeroportolegnago.it/briefing/</desc>
+  </wpt>
+  <wpt lat="45.396100" lon="11.848100">
+    <name>LIPU Padova</name>
+    <desc>Typ: airport | Status: ziviler Flugplatz laut Betreiber; weiter östlich | Fuel: unbekannt, vorab prüfen | Zeiten: 08:00-20:00 LT laut Betreiberseite | PPR: Betreiber kontaktieren | Telefon: +39 331 1759481 | Kontakt: +39 331 1759481; info@airportpadova.com | Korridor: 38.8 NM | Nutzungsstatus: ppr | Quellen: https://airportpadova.com/en/</desc>
+  </wpt>
+  <wpt lat="45.428300" lon="12.388100">
+    <name>LIPV Venezia/Lido - Nicelli</name>
+    <desc>Typ: airport | Status: ziviler Flugplatz laut Betreiber/AIP; weiter östlich | Fuel: unbekannt | Zeiten: AIP/NOTAM/Betreiber prüfen | PPR: Betreiber kontaktieren | Telefon: +39 041 770300 | Kontakt: +39 041 770300; operativo@aeroportonicelli.com; info@aeroportonicelli.com | Korridor: 60.3 NM | Nutzungsstatus: ppr | Quellen: https://aeroportonicelli.com/dove-siamo-eng/</desc>
+  </wpt>
+  <wpt lat="46.166600" lon="12.250400">
+    <name>LIDB Belluno</name>
+    <desc>Typ: airport | Status: ziviler Flugplatz laut Aero Club/AIP; Alpen-Alternate-Kandidat | Fuel: unbekannt | Zeiten: Di-So 09:00-18:00 laut Aero-Club-Seite, AIP/NOTAM prüfen | PPR: Betreiber kontaktieren; besondere Alpen-/Qualifikationslage prüfen | Telefon: +39 0437 30667; +39 345 3056101 | Kontakt: +39 0437 30667; +39 345 3056101; segreteria@aeroclubbelluno.org | Korridor: 41.9 NM | Nutzungsstatus: ppr | Quellen: https://www.aeroclubbelluno.org/</desc>
+  </wpt>
+  <wpt lat="45.167200" lon="10.001900">
+    <name>LILR Cremona</name>
+    <desc>Typ: airport | Status: ziviler Flugplatz; südwestlicher Alternate-/Fuel-Kandidat | Fuel: AVGAS 100LL, Jet A-1, MOGAS laut Aero Club; Verfügbarkeit vorab anrufen | Zeiten: Mi-Fr 08:00-16:00/SS; Sa/So 08:00-17:00/SS; Mo/Di geschlossen, Ausnahmen/Extra Öffnung PPR | PPR: Extra-Öffnung per E-Mail vorab; Betreiber bestätigen lassen | Telefon: +39 0372 560895; +39 351 5079340 | Kontakt: +39 0372 560895; WhatsApp +39 351 5079340; segreteria@aeroclubcremona.it | Korridor: 28.0 NM | Nutzungsstatus: ppr | Quellen: https://www.aeroclubcremona.it/charts.html</desc>
+  </wpt>
+  <wpt lat="46.765994" lon="12.158525">
+    <name>BZ02 Colle di Casies</name>
+    <desc>Typ: field | Status: ENAC/webAAI-gelistete Aviosuperficie; keine Fuel-Angabe | Fuel: nicht belegt | Zeiten: Nutzungszeiten/Betreiber über webAAI/PPR prüfen | PPR: Betreiberfreigabe und Südtirol-Schutzgebietslage klären | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakte nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Aviosuperficie, 1 Piste, Direktion Nord-Est, Stand 14.01.2026 | Korridor: 38.8 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/aviosuperfici-enac/trentino_alto_adige/colle-di-casies_A051</desc>
+  </wpt>
+  <wpt lat="46.552456" lon="11.861800">
+    <name>BZ06 Costa / Corvara in Badia</name>
+    <desc>Typ: field | Status: ENAC/webAAI-gelistete Aviosuperficie; Breite offiziell, Längengrad im webAAI-Text fehlerhaft formatiert und deshalb nur Arbeitsnäherung | Fuel: nicht belegt | Zeiten: Nutzungszeiten/Betreiber über webAAI/PPR prüfen | PPR: Betreiberfreigabe und Südtirol-Schutzgebietslage klären | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakte nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Aviosuperficie, Direktion Nord-Est, Stand 01.10.2025; publizierter Längengrad unvollständig | Korridor: 22.8 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/aviosuperfici-enac/trentino_alto_adige/costa_A053</desc>
+  </wpt>
+  <wpt lat="46.572800" lon="11.307736">
+    <name>LIGT BZ05 / LIGT San Genesio</name>
+    <desc>Typ: field | Status: ENAC/webAAI-gelistete Aviosuperficie; zivil gelistet, PPR offen | Fuel: nicht belegt | Zeiten: Nutzungszeiten/Betreiber über webAAI/PPR prüfen | PPR: Betreiberfreigabe und Südtirol-Schutzgebietslage klären | Telefon: 335218916 | Kontakt: 335218916 laut früherem ENAC-Eintrag; aktuelle Detailkontakte nach webAAI-Anmeldung | Offizielle Platzdaten: webAAI/ENAC: Aviosuperficie, Direktion Nord-Est, Stand 10.10.2024 | Korridor: 3.8 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/aviosuperfici-enac/trentino_alto_adige/san-genesio_A103</desc>
+  </wpt>
+  <wpt lat="46.602855" lon="11.379926">
+    <name>BZ03 Sarentino</name>
+    <desc>Typ: field | Status: ENAC/webAAI-gelistete Aviosuperficie; Koordinaten aus aktueller Detailseite | Fuel: nicht belegt | Zeiten: Nutzungszeiten/Betreiber über webAAI/PPR prüfen | PPR: Betreiberfreigabe und Südtirol-Schutzgebietslage klären | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakte nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Aviosuperficie, Direktion Nord-Est, Stand 08.10.2025 | Korridor: 7.2 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/aviosuperfici-enac/trentino_alto_adige/sarentino_A048</desc>
+  </wpt>
+  <wpt lat="46.876119" lon="11.949072">
+    <name>BZ07 Villa Ottone / Gais</name>
+    <desc>Typ: field | Status: ENAC/webAAI-gelistete Aviosuperficie; Koordinaten aus aktueller Detailseite | Fuel: nicht belegt | Zeiten: Nutzungszeiten/Betreiber über webAAI/PPR prüfen | PPR: Betreiberfreigabe und Südtirol-Schutzgebietslage klären | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakte nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Aviosuperficie, Direktion Nord-Est, Stand 15.05.2025 | Korridor: 35.6 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/aviosuperfici-enac/trentino_alto_adige/villa-ottone_A173</desc>
+  </wpt>
+  <wpt lat="45.263294" lon="10.583206">
+    <name>AV Tezze di Ceresara</name>
+    <desc>Typ: field | Status: aktive zivile Aviosuperficie im ENAC/webAAI-Register; Fremdnutzung für R44 nicht belegt | Fuel: nicht belegt | Zeiten: Betreiber/PPR vor Nutzung klären | PPR: Registeraufnahme ist keine Landefreigabe | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Aviosuperficie, 1 Piste, Direktion Milano Linate, Stand 25.11.2024 | Korridor: 8.8 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/aviosuperfici-enac/lombardia/tezze-di-ceresara_A111</desc>
+  </wpt>
+  <wpt lat="45.263611" lon="10.533333">
+    <name>AV Ceresara</name>
+    <desc>Typ: field | Status: aktive zivile Aviosuperficie im ENAC/webAAI-Register; Fremdnutzung für R44 nicht belegt | Fuel: nicht belegt | Zeiten: Betreiber/PPR vor Nutzung klären | PPR: Registeraufnahme ist keine Landefreigabe | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Aviosuperficie, 1 Piste, Direktion Milano Linate, Stand 14.03.2025 | Korridor: 9.3 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/aviosuperfici-enac/lombardia/ceresara_A117</desc>
+  </wpt>
+  <wpt lat="45.451900" lon="10.723200">
+    <name>VR17 Garda Lake Airfield / Castelnuovo</name>
+    <desc>Typ: field | Status: ziviles Leichtflug-/ULM-Flugfeld direkt südöstlich Gardasee; nur nach Betreiberfreigabe | Fuel: nicht belegt | Zeiten: Day VFR; Details Betreiber | PPR: PPR anfragen | Telefon: +39 366 182 7401 | Kontakt: +39 366 182 7401; info@gardalakeairfield.it | Korridor: 0.5 NM | Nutzungsstatus: unknown | Quellen: https://www.gardalakeairfield.com/en</desc>
+  </wpt>
+  <wpt lat="45.418300" lon="10.559200">
+    <name>BS15 Le Panizze / Lonato del Garda</name>
+    <desc>Typ: field | Status: private Aviosuperficie; PPR/Autorisierung zwingend; externer Verkehr laut Website verboten/Runway closed Hinweis | Fuel: nicht belegt | Zeiten: alle Tage laut Website, aber Betreiberfreigabe entscheidend | PPR: obligatorisches Formular; Landing 31, Takeoff 13 | Telefon: +39 335 5378373; +39 335 406584; +39 331 3611207 | Kontakt: Claudio +39 335 5378373; Ugo +39 335 406584; Mattia +39 331 3611207 | Korridor: 0.0 NM | Nutzungsstatus: unknown | Quellen: https://lepanizze.it/en/</desc>
+  </wpt>
+  <wpt lat="45.517338" lon="10.448269">
+    <name>BS16 Silvio Scaroni / Bedizzole</name>
+    <desc>Typ: field | Status: zivile Aviosuperficie laut webAAI/ENAC; Gardasee-nahe Option | Fuel: nicht belegt | Zeiten: PPR/Betreiber offen | PPR: Betreiberdaten via webAAI prüfen | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakte nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Aviosuperficie, 1 Piste, Direktion Bergamo, Stand 23.09.2025 | Korridor: 7.6 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/aviosuperfici-enac/lombardia/silvio-scaroni_A123</desc>
+  </wpt>
+  <wpt lat="45.501100" lon="10.788900">
+    <name>VR15 Arcadia / Pastrengo</name>
+    <desc>Typ: field | Status: private Aviosuperficie; zivil/privat ENAC-gelistet | Fuel: nicht belegt / Sekundärquelle nennt Jet A1, verifizieren | Zeiten: Betreiber/PPR offen | PPR: Betreiberfreigabe erforderlich | Telefon: 335224889 | Kontakt: Tel. 335224889 laut ENAC-Eintrag | Korridor: 2.9 NM | Nutzungsstatus: unknown | Quellen: https://avio-superfici.enac.gov.it/en/public/surface/show/1109</desc>
+  </wpt>
+  <wpt lat="45.319700" lon="10.715000">
+    <name>VR06 ULM Scaligero / Valeggio</name>
+    <desc>Typ: field | Status: Campo di volo/ULM-Kandidat; nur als ULM/Leichtflugplatz-Orientierung, R44/AG-Nutzung offen | Fuel: nicht belegt | Zeiten: Betreiber/PPR offen | PPR: Betreiber kontaktieren | Telefon: +39 337 460979; +39 347 1047551 | Kontakt: +39 337 460979; +39 347 1047551 laut ULM.it | Korridor: 5.3 NM | Nutzungsstatus: unknown | Quellen: https://www.ulm.it/mobile/campivolo/scheda.htm?chiave=164&amp;condizione=regione&amp;sel_ordine=nome+asc&amp;valore=veneto</desc>
+  </wpt>
+  <wpt lat="45.250900" lon="11.036100">
+    <name>VR13 Aliveneta / Isola della Scala</name>
+    <desc>Typ: field | Status: ziviles Campo di volo laut webAAI/Betreiber; R44/AG-Nutzung offen | Fuel: nicht belegt | Zeiten: Betreiber/PPR offen | PPR: Betreiber kontaktieren | Telefon: +39 340 2238610 | Kontakt: +39 340 2238610; info@aliveneta.it | Korridor: 14.1 NM | Nutzungsstatus: unknown | Quellen: https://www.aliveneta.it/index.php?route=information%2Fcontact</desc>
+  </wpt>
+  <wpt lat="45.214000" lon="10.960000">
+    <name>VR01 Aquile Randagie / Sorga</name>
+    <desc>Typ: field | Status: Campo di volo aus webAAI Veneto; R44/AG-Nutzung offen | Fuel: nicht belegt | Zeiten: Betreiber/PPR offen | PPR: Betreiberkontakt über webAAI prüfen | Telefon: noch nicht belastbar verifiziert | Kontakt: webAAI-Platzdetails; AAI-Daten sind nicht amtlich | Korridor: 15.5 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/aviostrutture/veneto/aquile-randagie_VR01?free=1</desc>
+  </wpt>
+  <wpt lat="45.300000" lon="11.190000">
+    <name>VR03 Volo Leggero / Isola Rizza</name>
+    <desc>Typ: field | Status: Campo di volo aus webAAI Veneto; R44/AG-Nutzung offen | Fuel: nicht belegt | Zeiten: Betreiber/PPR offen | PPR: Betreiberkontakt über webAAI prüfen | Telefon: noch nicht belastbar verifiziert | Kontakt: webAAI-Platzdetails; AAI-Daten sind nicht amtlich | Korridor: 15.2 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/aviostrutture/veneto/volo-leggero_VR03?free=1</desc>
+  </wpt>
+  <wpt lat="46.502810" lon="11.306823">
+    <name>H Moritzing / Bozen</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; Betreiber/PPR vor Nutzung klären | PPR: Registeraufnahme ist keine Landefreigabe | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 08.07.2024 | Korridor: 1.0 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/moritzing_EA03</desc>
+  </wpt>
+  <wpt lat="46.464540" lon="11.247731">
+    <name>H Schloss Freudenstein</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie; privater Helikopteranflug vom Hotel ausdrücklich angeboten | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; nur nach Voranmeldung und schriftlicher Betreiberbestätigung | PPR: Schloss Freudenstein vorab kontaktieren | Telefon: +39 0471 661308 | Kontakt: +39 0471 661308; info@schlossfreudenstein.com | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 28.10.2025 | Korridor: 2.3 NM | Nutzungsstatus: guest | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/freudenstein_EC40 | https://schlossfreudenstein.com/it/contatto/dove-siamo-e-come-arrivare/</desc>
+  </wpt>
+  <wpt lat="46.630278" lon="11.195278">
+    <name>H Hochplatter</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; Betreiber/PPR vor Nutzung klären | PPR: Registeraufnahme ist keine Landefreigabe; Schutzgebietslage prüfen | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 11.06.2025 | Korridor: 2.4 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/hochplatter_EC28</desc>
+  </wpt>
+  <wpt lat="45.485556" lon="11.022056">
+    <name>H Quinto / Verona</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt | Fuel: nicht belegt | Zeiten: Nachtbetrieb laut Register ja; konkrete Zeiten und Beleuchtung per Betreiber | PPR: Registeraufnahme ist keine Landefreigabe | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb ja, Direktion Nord-Est, Stand 05.03.2024 | Korridor: 3.7 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/veneto/quinto_EA07</desc>
+  </wpt>
+  <wpt lat="46.692833" lon="11.161028">
+    <name>H Tirolo</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; Betreiber/PPR vor Nutzung klären | PPR: Registeraufnahme ist keine Landefreigabe; Schutzgebietslage prüfen | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 20.10.2025 | Korridor: 3.8 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/tirolo_EB90</desc>
+  </wpt>
+  <wpt lat="45.367531" lon="10.859217">
+    <name>H Air Corporate / Verona</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie und kommerzieller Helikopterbetreiber; Fremdanflug nur bestätigt nach PPR | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; Betriebszeiten per Operator | PPR: Air Corporate vorab schriftlich bestätigen lassen | Telefon: +39 045 8600910 | Kontakt: +39 045 8600910; info@aircorporate.it | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 17.04.2025 | Korridor: 5.6 NM | Nutzungsstatus: ppr | Quellen: https://webaai.it/it/elisuperfici-enac/veneto/air-corporate_EC21 | https://www.aircorporate.it/</desc>
+  </wpt>
+  <wpt lat="46.549627" lon="11.492635">
+    <name>H Renon / Ritten</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; Betreiber/PPR vor Nutzung klären | PPR: Registeraufnahme ist keine Landefreigabe; Schutzgebietslage prüfen | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 17.07.2025 | Korridor: 8.7 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/renon_EC31</desc>
+  </wpt>
+  <wpt lat="46.769422" lon="11.225769">
+    <name>H Hotel Andreus / St. Leonhard</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie; Anreise mit eigenem Helikopter vom Hotel ausdrücklich angeboten | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; Hotel vorab informieren, Landung und Abstellung bestätigen | PPR: Voranmeldung beim Hotel zwingend | Telefon: +39 0473 491330 | Kontakt: +39 0473 491330; info@andreus.it | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 30.01.2026 | Korridor: 8.8 NM | Nutzungsstatus: guest | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/hotel-andreus-carina_EB64 | https://www.andreus-resorts.it/en/hosts-team/directions-location/</desc>
+  </wpt>
+  <wpt lat="45.428397" lon="10.335961">
+    <name>H BMA Bosio Motori Aeronautica</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie bei Luftfahrt-Instandhaltungsbetrieb; Fremdanflug nur nach PPR | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; Betriebszeiten per Operator | PPR: BMA vorab schriftlich/telefonisch bestätigen lassen | Telefon: +39 030 964285 | Kontakt: +39 030 964285; info@bosiomotori.it | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Bergamo, Stand 15.11.2024 | Korridor: 9.4 NM | Nutzungsstatus: ppr | Quellen: https://webaai.it/it/elisuperfici-enac/lombardia/bma-bosio-motori-aeronautica_EA20 | https://www.bosiomotori.it/</desc>
+  </wpt>
+  <wpt lat="46.623333" lon="10.822222">
+    <name>H Goldrain / Latsch</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; Betreiber/PPR vor Nutzung klären | PPR: Registeraufnahme ist keine Landefreigabe; Schutzgebietslage prüfen | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 23.10.2024 | Korridor: 9.6 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/goldrain_EB43</desc>
+  </wpt>
+  <wpt lat="46.793469" lon="11.231900">
+    <name>H San Martino in Passiria</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; zwei FATO veröffentlicht, Zeiten per Betreiber | PPR: Registeraufnahme ist keine Landefreigabe | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 2 FATO, Direktion Nord-Est, Stand 04.10.2024 | Korridor: 9.9 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/san-martino-in-passiria_EA79</desc>
+  </wpt>
+  <wpt lat="46.648889" lon="11.490833">
+    <name>H Villanderer Alm</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; Betreiber/PPR vor Nutzung klären | PPR: Registeraufnahme ist keine Landefreigabe; Berg-/Schutzgebietslage prüfen | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 22.07.2024 | Korridor: 12.5 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/villanderer-alm_EA60</desc>
+  </wpt>
+  <wpt lat="46.636944" lon="11.530556">
+    <name>H Felder Alpin Lodge</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie; private Helikopteranreise laut Unterkunft ausdrücklich möglich | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; Landung/Transfer vorab mit Unterkunft abstimmen | PPR: schriftliche Bestätigung der Felder Alpin Lodge einholen | Telefon: +39 335 8474817 | Kontakt: +39 335 8474817 laut Unterkunftsverzeichnis; info@felder-alpin.com | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 02.05.2024 | Korridor: 13.3 NM | Nutzungsstatus: guest | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/felder_EA33 | https://www.felder-alpin.com/location/</desc>
+  </wpt>
+  <wpt lat="46.594078" lon="11.584486">
+    <name>H Brembach</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; Betreiber/PPR vor Nutzung klären | PPR: Registeraufnahme ist keine Landefreigabe; Berg-/Schutzgebietslage prüfen | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 27.02.2025 | Korridor: 13.3 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/brembach_EA21</desc>
+  </wpt>
+  <wpt lat="46.586772" lon="11.630583">
+    <name>H Elikos / Pontives</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie und kommerzielle Helikopterbasis; benachbarte ELIGARDENA-Fläche separat ENAC-gelistet | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; Betriebszeiten und Fremdanflug per Operator | PPR: Elikos vorab bestätigen; keine automatische Gastfreigabe | Telefon: +39 331 8877888; +39 335 7880150; +39 335 7880149 | Kontakt: +39 331 8877888; +39 335 7880150; +39 335 7880149; info@elikos.com | Offizielle Platzdaten: webAAI/ENAC: Elikos, 1 FATO, Direktion Nord-Est, Stand 25.06.2024 | Korridor: 14.7 NM | Nutzungsstatus: ppr | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/elikos_EA29 | https://www.elikos.com/helicopter/contact.php | https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/eligardena_EA66</desc>
+  </wpt>
+  <wpt lat="46.865000" lon="11.305556">
+    <name>H Tenne Lodges / Ratschings</name>
+    <desc>Typ: helipad | Status: aktive zivile Elisuperficie; privater Heliport seit 2025 laut Hotel | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; Landung und Transfer nur nach Voranmeldung | PPR: Tenne Lodges vorab schriftlich bestätigen lassen | Telefon: +39 0472 433300 | Kontakt: +39 0472 433300; info@tenne-suedtirol.com | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 29.09.2025 | Korridor: 14.9 NM | Nutzungsstatus: guest | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/tenne-lodges-platform_EC07 | https://www.tenne-suedtirol.com/de/lodges-chalets/preisinfos-faqs | https://www.tenne-suedtirol.com/de/info-service/anreise</desc>
+  </wpt>
+  <wpt lat="45.607483" lon="10.503189">
+    <name>H Salò - Lago di Garda</name>
+    <desc>Typ: helipad | Status: zivile Elisuperficie ENAC/webAAI-gelistet; Koordinaten aus aktueller Detailseite | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR | PPR: Betreiberfreigabe zwingend | Telefon: 3457770606 | Kontakt: 3457770606; paolopern@gmail.com laut früherem ENAC-Eintrag; aktuell über webAAI bestätigen | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Bergamo, Stand 17.03.2025 | Korridor: 7.6 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/lombardia/salo-lago-di-garda_EC10</desc>
+  </wpt>
+  <wpt lat="45.458417" lon="10.603694">
+    <name>H Sirmione</name>
+    <desc>Typ: helipad | Status: zivile Elisuperficie ENAC/webAAI-gelistet; Koordinaten aus aktueller Detailseite | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR | PPR: Betreiberfreigabe zwingend | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakte nach kostenloser webAAI-Anmeldung/über Betreiber | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Bergamo, Stand 14.07.2026 | Korridor: 2.0 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/lombardia/sirmione_EA36</desc>
+  </wpt>
+  <wpt lat="46.645000" lon="11.163611">
+    <name>H Merano - Sinigo</name>
+    <desc>Typ: helipad | Status: zivile Elisuperficie ENAC/webAAI-gelistet; Koordinaten aus aktueller Detailseite | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR | PPR: Betreiber + Südtirol-Schutzgebietslage klären | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakte nach kostenloser webAAI-Anmeldung; zusätzlich Provinz Bozen prüfen | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Nord-Est, Stand 26.08.2024 | Korridor: 2.0 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/merano-sinigo_EA02</desc>
+  </wpt>
+  <wpt lat="46.549681" lon="11.806850">
+    <name>H JEUF DE FREA</name>
+    <desc>Typ: helipad | Status: zivile Elisuperficie ENAC/webAAI-gelistet, Berg-/Schutzgebiet kritisch | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR | PPR: Betreiber + Provinz Bozen klären | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakte nach kostenloser webAAI-Anmeldung; zusätzlich Provinz Bozen | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Nord-Est, Stand 03.06.2024 | Korridor: 20.5 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/jeuf-de-frea_EA45</desc>
+  </wpt>
+  <wpt lat="46.598114" lon="11.727108">
+    <name>H SECEDA</name>
+    <desc>Typ: helipad | Status: zivile Elisuperficie ENAC/webAAI-gelistet, Berg-/Schutzgebiet kritisch | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR | PPR: Betreiber + Provinz Bozen klären | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakte nach kostenloser webAAI-Anmeldung; zusätzlich Provinz Bozen | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Nord-Est, Stand 04.07.2024 | Korridor: 18.5 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/seceda_EA86</desc>
+  </wpt>
+  <wpt lat="46.738294" lon="11.955142">
+    <name>H PLAN DE CORONES</name>
+    <desc>Typ: helipad | Status: zivile Elisuperficie ENAC/webAAI-gelistet, Berg-/Schutzgebiet kritisch | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR | PPR: Betreiber + Provinz Bozen klären | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakte nach kostenloser webAAI-Anmeldung; zusätzlich Provinz Bozen | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Nord-Est, Stand 21.10.2025 | Korridor: 30.8 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/plan-de-corones_EB56</desc>
+  </wpt>
+  <wpt lat="46.221389" lon="11.169167">
+    <name>H Alino / Faedo</name>
+    <desc>Typ: helipad | Status: zivile Elisuperficie ENAC/webAAI-gelistet; Koordinaten aus aktueller Detailseite | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR | PPR: Betreiber + Provinz Trento prüfen | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakte nach kostenloser webAAI-Anmeldung; zusätzlich Provinz Trento | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Nord-Est, Stand 03.10.2025 | Korridor: 1.9 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/alino_EC35</desc>
+  </wpt>
+  <wpt lat="46.185000" lon="11.105000">
+    <name>H Meriggi / Mezzolombardo</name>
+    <desc>Typ: helipad | Status: zivile Elisuperficie ENAC/webAAI-gelistet; Koordinaten aus aktueller Detailseite | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR | PPR: Betreiber + Provinz Trento prüfen | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakte nach kostenloser webAAI-Anmeldung; zusätzlich Provinz Trento | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Nord-Est, Stand 03.10.2025 | Korridor: 3.8 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/meriggi_EC34</desc>
+  </wpt>
+  <wpt lat="46.504252" lon="11.749840">
+    <name>H Rifugio Salei / Canazei</name>
+    <desc>Typ: helipad | Status: zivile Elisuperficie ENAC/webAAI-gelistet, Trentino-Genehmigungslage klären | Fuel: nicht belegt | Zeiten: Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR | PPR: Betreiber + Provinz Trento prüfen | Telefon: noch nicht belastbar verifiziert | Kontakt: Detailkontakte nach kostenloser webAAI-Anmeldung; zusätzlich Provinz Trento | Offizielle Platzdaten: webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Nord-Est, Stand 12.06.2025 | Korridor: 17.7 NM | Nutzungsstatus: unknown | Quellen: https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/rifugio-salei_EC38</desc>
+  </wpt>
+</gpx>

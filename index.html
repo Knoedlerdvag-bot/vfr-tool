@@ -1,0 +1,1628 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Helikopterkarte EDTM - Norditalien</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root {
+      --ink: #18212d;
+      --muted: #647184;
+      --line: #d7e0ea;
+      --paper: #ffffff;
+      --panel: #f7fafc;
+      --bg: #eaf0f5;
+      --deck: #101925;
+      --deck-2: #172434;
+      --airport: #1769aa;
+      --aviosurface: #16805d;
+      --flightfield: #c45f08;
+      --heli: #a72370;
+      --fuel: #11895b;
+      --warn: #c87014;
+      --danger: #b42318;
+      --unknown: #6c7784;
+      --focus: #0a66c2;
+      --shadow: 0 18px 48px rgba(16, 25, 37, .16);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% -8%, rgba(23, 105, 170, .14), transparent 28%),
+        linear-gradient(180deg, #f5f8fb 0%, var(--bg) 100%);
+    }
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid rgba(10, 102, 194, .28);
+      outline-offset: 2px;
+    }
+    a { color: #0b5cab; }
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+    .flight-deck {
+      background: linear-gradient(135deg, var(--deck), var(--deck-2));
+      color: #fff;
+      padding: 18px clamp(16px, 3vw, 28px);
+      border-bottom: 1px solid rgba(255,255,255,.14);
+    }
+    .deck-top {
+      display: grid;
+      gap: 14px;
+    }
+    .eyebrow {
+      color: #9ec6e8;
+      font-size: 12px;
+      font-weight: 760;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    h1 {
+      margin: 3px 0 6px;
+      font-size: clamp(24px, 5.8vw, 40px);
+      line-height: .98;
+      letter-spacing: 0;
+    }
+    .sub {
+      color: #cfdae5;
+      font-size: 14px;
+      line-height: 1.45;
+      max-width: 880px;
+    }
+    .deck-actions,
+    .toolbar,
+    .filter-row,
+    .popup-actions,
+    .export-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .deck-actions { margin-top: 14px; }
+    .btn,
+    .tab-button,
+    .filter-button,
+    .popup-actions a,
+    .popup-actions button,
+    .export-actions button {
+      appearance: none;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 720;
+      line-height: 1;
+      min-height: 40px;
+      padding: 0 12px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+    .btn.primary {
+      background: #f6c25b;
+      border-color: #f6c25b;
+      color: #192131;
+    }
+    .btn.dark {
+      background: rgba(255,255,255,.1);
+      border-color: rgba(255,255,255,.22);
+      color: #fff;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .stat {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 8px;
+      padding: 10px 11px;
+      min-height: 66px;
+    }
+    .stat strong {
+      display: block;
+      font-size: 22px;
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+    .stat span {
+      color: #cfdae5;
+      font-size: 12px;
+      line-height: 1.25;
+    }
+    .main {
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+    }
+    .tabs {
+      background: rgba(255,255,255,.74);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      padding: 4px;
+      position: sticky;
+      top: 0;
+      z-index: 900;
+      backdrop-filter: blur(12px);
+    }
+    .tab-button {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      min-height: 42px;
+    }
+    .tab-button.active {
+      background: var(--deck);
+      color: #fff;
+      box-shadow: 0 8px 22px rgba(16, 25, 37, .16);
+    }
+    .page {
+      display: none;
+    }
+    .page.active {
+      display: grid;
+      gap: 12px;
+    }
+    .mission-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .panel {
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      gap: 4px;
+    }
+    .panel-header b {
+      font-size: 15px;
+    }
+    .panel-header span,
+    .helper {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .control-stack {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+    }
+    .search-input,
+    .select-input {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      padding: 0 12px;
+    }
+    .filter-button {
+      min-height: 34px;
+      font-size: 12px;
+      color: var(--muted);
+      background: #f8fafc;
+    }
+    .filter-button.active {
+      color: #fff;
+      background: var(--deck);
+      border-color: var(--deck);
+    }
+    .legend {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      padding: 12px;
+      border-top: 1px solid var(--line);
+      font-size: 12px;
+    }
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 24px;
+    }
+    .legend-note {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+    .swatch {
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.18);
+      flex: 0 0 auto;
+    }
+    .swatch.airport { background: var(--airport); }
+    .swatch.aviosurface {
+      background: var(--aviosurface);
+      border-radius: 3px;
+      transform: rotate(45deg) scale(.78);
+    }
+    .swatch.flightfield {
+      background: var(--flightfield);
+      border-radius: 4px;
+    }
+    .swatch.heli { background: var(--heli); }
+    .map-card {
+      min-height: 64vh;
+      height: min(70vh, 760px);
+      position: relative;
+    }
+    #map {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .map-watermark {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      z-index: 600;
+      background: rgba(255,255,255,.9);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-size: 12px;
+      line-height: 1.25;
+      box-shadow: 0 10px 28px rgba(16, 25, 37, .12);
+    }
+    .selected-card {
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+    .selected-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .selected-title b {
+      font-size: 17px;
+      line-height: 1.16;
+    }
+    .code-pill {
+      flex: 0 0 auto;
+      border-radius: 5px;
+      background: var(--airport);
+      color: #fff;
+      padding: 5px 7px;
+      font-size: 12px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .code-pill.airport { background: var(--airport); }
+    .code-pill.aviosurface {
+      background: var(--aviosurface);
+      border-radius: 4px;
+    }
+    .code-pill.flightfield { background: var(--flightfield); }
+    .code-pill.helipad {
+      background: var(--heli);
+      border-radius: 999px;
+      min-width: 28px;
+    }
+    .detail-grid {
+      display: grid;
+      gap: 7px;
+      font-size: 13px;
+    }
+    .detail-row {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 10px;
+      line-height: 1.35;
+    }
+    .detail-row span:first-child {
+      color: var(--muted);
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 42px;
+      min-height: 22px;
+      padding: 0 7px;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+    .tag.fuel { background: var(--fuel); }
+    .tag.avgas100 { background: #1769aa; }
+    .tag.no { background: var(--danger); }
+    .tag.unknown { background: var(--unknown); }
+    .tag.warn { background: var(--warn); }
+    .tag.jet { background: #222b35; }
+    .tag.mogas { background: #e7a33e; color: #2c2107; }
+    .tag.unleaded { background: #6e842b; }
+    .tag.airport { background: var(--airport); }
+    .tag.aviosurface { background: var(--aviosurface); }
+    .tag.flightfield { background: var(--flightfield); }
+    .tag.helipad { background: var(--heli); }
+    .tag.access-guest { background: #147a48; }
+    .tag.access-open { background: #91540f; }
+    .tag.corridor { background: #315875; }
+    .tag.regional { background: #737b86; }
+    .list {
+      display: grid;
+      gap: 8px;
+      max-height: 46vh;
+      overflow: auto;
+      padding: 0 12px 12px;
+    }
+    .list.full {
+      max-height: none;
+      padding: 12px;
+      grid-template-columns: 1fr;
+    }
+    .item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fff;
+      cursor: pointer;
+      display: grid;
+      gap: 7px;
+      text-align: left;
+    }
+    .item:hover,
+    .item.active {
+      border-color: #93b5d6;
+      box-shadow: 0 8px 24px rgba(23, 105, 170, .12);
+    }
+    .item-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .item b {
+      display: block;
+      font-size: 13px;
+      line-height: 1.2;
+    }
+    .item .item-meta {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .item-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .export-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      margin: 4px 0 0;
+    }
+    .export-panel {
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+    .briefing-panel {
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+    }
+    .briefing-grid {
+      display: grid;
+      gap: 10px;
+    }
+    .briefing-card {
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--focus);
+      border-radius: 8px;
+      background: #fff;
+      padding: 11px;
+      display: grid;
+      gap: 7px;
+    }
+    .briefing-card.warning { border-left-color: var(--warn); }
+    .briefing-card.danger { border-left-color: var(--danger); }
+    .briefing-card.success { border-left-color: var(--fuel); }
+    .briefing-card b {
+      font-size: 13px;
+      line-height: 1.2;
+    }
+    .briefing-card p {
+      margin: 0;
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.42;
+    }
+    .briefing-card small {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+    .source-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+    .source-strip a {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #f8fafc;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 720;
+      min-height: 34px;
+      padding: 0 9px;
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+    }
+    .source-list {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+    }
+    .source-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 11px;
+      display: grid;
+      gap: 7px;
+    }
+    .source-card b {
+      font-size: 13px;
+      line-height: 1.2;
+    }
+    .source-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .source-card a {
+      justify-self: start;
+      font-size: 12px;
+      font-weight: 720;
+    }
+    .source-grid {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+    }
+    .marker {
+      position: relative;
+      width: 28px;
+      height: 28px;
+      border-radius: 50% 50% 50% 6px;
+      transform: rotate(-45deg);
+      border: 2px solid #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,.35);
+    }
+    .marker.airport { background: var(--airport); }
+    .marker.aviosurface {
+      background: var(--aviosurface);
+      border-radius: 5px;
+      transform: rotate(45deg) scale(.86);
+    }
+    .marker.flightfield {
+      width: 30px;
+      height: 30px;
+      background: var(--flightfield);
+      border: 2px solid #fff;
+      border-radius: 5px;
+      transform: rotate(0deg);
+    }
+    .marker.helipad {
+      background: var(--heli);
+      border-radius: 50%;
+      transform: rotate(0deg);
+    }
+    .marker.warn { box-shadow: 0 0 0 3px rgba(200,112,20,.35), 0 2px 8px rgba(0,0,0,.35); }
+    .marker::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .marker.aviosurface::after,
+    .marker.flightfield::after,
+    .marker.helipad::after {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    .marker.aviosurface::after {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+    .leaflet-popup-content {
+      min-width: 276px;
+      max-width: min(390px, 82vw);
+      font-size: 13px;
+      line-height: 1.38;
+    }
+    .popup-title {
+      font-weight: 780;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+    .popup-grid {
+      display: grid;
+      grid-template-columns: 94px 1fr;
+      gap: 5px 8px;
+      margin: 8px 0;
+    }
+    .popup-grid div:nth-child(odd) {
+      color: var(--muted);
+    }
+    .popup-actions {
+      margin-top: 10px;
+    }
+    .popup-actions a,
+    .popup-actions button,
+    .export-actions button {
+      min-height: 36px;
+      font-size: 12px;
+      padding: 0 9px;
+      background: #f8fafc;
+    }
+    @media (min-width: 780px) {
+      .deck-top {
+        grid-template-columns: 1fr minmax(320px, 440px);
+        align-items: end;
+      }
+      .stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin-top: 0;
+      }
+      .mission-grid {
+        grid-template-columns: minmax(320px, 410px) 1fr;
+        align-items: stretch;
+      }
+      .map-card {
+        min-height: calc(100vh - 238px);
+        height: calc(100vh - 238px);
+      }
+      .list.full {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .briefing-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .source-grid,
+      .source-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (min-width: 1180px) {
+      .main {
+        padding: 16px;
+      }
+      .list.full {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .briefing-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .source-grid,
+      .source-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 520px) {
+      .flight-deck {
+        padding: 15px 12px;
+      }
+      .main {
+        padding: 8px;
+      }
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+      .deck-actions .btn {
+        flex: 1 1 calc(50% - 8px);
+      }
+      .detail-row,
+      .popup-grid {
+        grid-template-columns: 1fr;
+        gap: 2px;
+      }
+      .map-card {
+        height: 62vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="flight-deck">
+      <div class="deck-top">
+        <div>
+          <div class="eyebrow">R44 VFR Arbeitsbriefing</div>
+          <h1>Mengen-Hohentengen nach Norditalien</h1>
+          <div class="sub">Interaktive Arbeitskarte für Bozen, Trento, Verona und Gardasee. Alle Angaben vor Flugtag mit AIP, NOTAM, Betreiber, PPR, Fuel und Rechtslage abgleichen.</div>
+          <div class="deck-actions">
+            <button class="btn primary" type="button" onclick="downloadWaypointsGpx()">SkyDemon GPX</button>
+            <button class="btn dark" type="button" onclick="downloadWaypointsCsv()">CSV</button>
+          </div>
+        </div>
+        <div class="stats" aria-label="Kurzübersicht">
+          <div class="stat"><strong id="statPlaces">0</strong><span>zivile Plätze in der Arbeitskarte</span></div>
+          <div class="stat"><strong id="statFuel">8</strong><span>AVGAS / 100LL relevant</span></div>
+          <div class="stat"><strong id="statCorridor">0</strong><span>im 15-NM-Korridor</span></div>
+          <div class="stat"><strong id="statPpr">0</strong><span>PPR / Klärung offen</span></div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <nav class="tabs" aria-label="Dashboard Ansicht">
+        <button class="tab-button active" type="button" data-tab="mapPage">Karte</button>
+        <button class="tab-button" type="button" data-tab="listPage">Plätze & Export</button>
+        <button class="tab-button" type="button" data-tab="sourcePage">Quellen</button>
+      </nav>
+
+      <section class="page active" id="mapPage">
+        <div class="mission-grid">
+          <aside class="panel" aria-label="Filter und aktive Auswahl">
+            <div class="panel-header">
+              <b>Plätze filtern</b>
+              <span>Nach Code, Ort, Fuel oder PPR suchen und Marker direkt anfliegen.</span>
+            </div>
+            <div class="control-stack">
+              <input class="search-input" id="searchInput" type="search" placeholder="Suchen: LIDT, Trento, AVGAS, Gardasee">
+              <select class="select-input" id="airportSelect" aria-label="Platz direkt auswählen">
+                <option value="">Platz direkt auswählen</option>
+              </select>
+              <div class="filter-row" aria-label="Filter">
+                <button class="filter-button active" type="button" data-filter="all">Alle</button>
+                <button class="filter-button" type="button" data-filter="corridor">15 NM</button>
+                <button class="filter-button" type="button" data-filter="fuel">AVGAS</button>
+                <button class="filter-button" type="button" data-filter="airport">Flugplätze</button>
+                <button class="filter-button" type="button" data-filter="field">Felder</button>
+                <button class="filter-button" type="button" data-filter="helipad">Heli</button>
+                <button class="filter-button" type="button" data-filter="ppr">PPR</button>
+              </div>
+            </div>
+            <div class="selected-card" id="selectedCard"></div>
+            <div class="legend">
+              <div class="legend-row"><span class="swatch airport"></span><span><b>Aeroporto</b> – regulärer Flughafen/Flugplatz, meist mit ICAO-Code</span></div>
+              <div class="legend-row"><span class="swatch aviosurface"></span><span><b>Aviosuperficie</b> – grüner Rhombus; italienische zivile Sonderlandefläche</span></div>
+              <div class="legend-row"><span class="swatch flightfield"></span><span><b>Campo di volo</b> – oranges Quadrat; VDS-/UL-Fluggelände, R44 ausdrücklich bestätigen</span></div>
+              <div class="legend-row"><span class="swatch heli"></span><span><b>Elisuperficie</b> – Helikopter-Landefläche, kein Heliport; Marker H</span></div>
+              <div class="legend-row"><span class="tag avgas100">100LL</span><span>AVGAS 100LL ausdrücklich belegt; Blau folgt der Kraftstofffärbung</span></div>
+              <div class="legend-row"><span class="tag fuel">AVGAS</span><span>AVGAS belegt, Sorte nicht eindeutig genannt</span></div>
+              <div class="legend-row"><span class="tag jet">JET A-1</span><span>Turbinenkraftstoff belegt; Schwarz folgt der Kennzeichnung an Betankungsanlagen</span></div>
+              <div class="legend-row"><span class="tag mogas">MOGAS</span><span>Motorenbenzin / Mogas belegt</span></div>
+              <div class="legend-row"><span class="tag unleaded">BLEIFREI</span><span>bleifreier Kraftstoff, genaue Sorte prüfen</span></div>
+              <div class="legend-row"><span class="tag no">NO AVGAS</span><span>kein AVGAS belegt</span></div>
+              <div class="legend-row"><span class="tag warn">PPR</span><span>Freigabe, Schutzgebiet oder Betreiberkontakt offen</span></div>
+              <div class="legend-row"><span class="tag access-guest">GAST OK</span><span>Gast-/Privatanflug durch Betreiberquelle belegt; PPR bleibt maßgeblich</span></div>
+              <div class="legend-row"><span class="tag access-open">OFFEN</span><span>Zivil veröffentlicht, Fremdnutzung für R44 aber nicht belegt</span></div>
+              <div class="legend-row"><span class="tag corridor">≤15 NM</span><span>maximal 15 NM von Route oder Gardasee-Achse entfernt</span></div>
+              <p class="legend-note">Formen sind die primäre Unterscheidung. Die magentafarbene H-Markierung ist eine Kartenkonvention; die physische ICAO-Heliportmarkierung ist grundsätzlich ein weißes H. Die Dashboard-Farben sind kein ENAV-/AIP-Symbolstandard.</p>
+            </div>
+          </aside>
+
+          <section class="panel map-card" aria-label="Karte">
+            <div id="map"></div>
+            <div class="map-watermark">
+              Arbeitsstand 02.09.2026<br>
+              Keine Navigationsdaten
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="listPage">
+        <section class="panel">
+          <div class="panel-header">
+            <b>Platzliste</b>
+            <span>Antippen öffnet den Platz in der Karte. Fuel- und PPR-Status sind bewusst prominent gesetzt.</span>
+          </div>
+          <div class="control-stack">
+            <input class="search-input" id="listSearchInput" type="search" placeholder="Liste durchsuchen">
+            <div class="filter-row" aria-label="Listenfilter">
+              <button class="filter-button active" type="button" data-filter="all">Alle</button>
+              <button class="filter-button" type="button" data-filter="corridor">15 NM</button>
+              <button class="filter-button" type="button" data-filter="fuel">AVGAS</button>
+              <button class="filter-button" type="button" data-filter="airport">Flugplätze</button>
+              <button class="filter-button" type="button" data-filter="field">Felder</button>
+              <button class="filter-button" type="button" data-filter="helipad">Heli</button>
+              <button class="filter-button" type="button" data-filter="ppr">PPR</button>
+            </div>
+          </div>
+          <div class="list full" id="placeList"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <b>Pflichtprüfung vor Flug</b>
+            <span>Genehmigungen, Schutzgebiete, Mindesthöhen und Flugplanpflicht aus Abschnitt 6/7 des Briefings.</span>
+          </div>
+          <div class="briefing-panel">
+            <div class="briefing-grid">
+              <article class="briefing-card danger">
+                <b>Außenlandung / Privatgrundstück</b>
+                <p>Nicht nur Eigentümerzustimmung einplanen. Für gelegentliche italienische Avio-/Elisuperfici ist seit 01.06.2025 die ENAC-Kommunikation über den digitalen Kanal maßgeblich; ausländische Piloten benötigen dafür ENAC-Akkreditierung. Öffentliche Flächen zusätzlich mit zuständiger Behörde klären.</p>
+                <small>Praktisch: erst regulär in Italien ankommen, dann inneritalienische Außenlandung mit ENAC/Provinz/Gemeinde/Eigentümer prüfen.</small>
+              </article>
+              <article class="briefing-card warning">
+                <b>Südtirol / Bozen</b>
+                <p>Die Provinz führt No-Fly-Zonen, Überflugkorridore und permanente Elisuperfici. Korridore müssen gemeldet werden; für die genannten permanenten Heliflächen ist der jeweilige Betreiber zu kontaktieren.</p>
+                <small>Kontakt: Ufficio Infrastrutture e mobilità sostenibile, +39 0471 414640, inframob@provincia.bz.it.</small>
+              </article>
+              <article class="briefing-card warning">
+                <b>Trentino</b>
+                <p>Oberhalb 1.600 m MSL und in geschützten Gebieten nennt die Provinz Verbote für Start, Landung und niedrige Überflüge. Die offizielle Online-Antragslogik gilt ausdrücklich für bestimmte öffentliche, Forschungs- oder Studienzwecke; touristische/private Fälle vorher separat klären.</p>
+                <small>Kontakt: +39 0461 497981, serv.mobilitapubblica@provincia.tn.it.</small>
+              </article>
+              <article class="briefing-card">
+                <b>Mindesthöhen / Verbotsgebiete</b>
+                <p>SERA-VFR: über Städten/Menschenansammlungen mindestens 300 m/1.000 ft über höchstem Hindernis im 600-m-Radius; sonst mindestens 150 m/500 ft AGL/über Wasser bzw. Hindernis im 150-m-Radius. Behörden können höhere Minima oder verbotene/beschränkte Gebiete festlegen.</p>
+                <small>Für Berge, Parks, Biotope, CTR/ATZ, RAIT, ENAV AIP und NOTAM immer aktuelle Tagesdaten prüfen.</small>
+              </article>
+              <article class="briefing-card success">
+                <b>Flugplan Italien</b>
+                <p>Deutschland -> Italien benötigt wegen Grenzübertritt einen Flugplan. Inneritalienischer VFR-Tagflug benötigt nicht pauschal immer einen vollständigen FPL, aber für ATC-Service, kontrollierte Abschnitte, designierte Gebiete/Routen, militärische Koordination, Nachtflug oder grenzüberschreitende Abschnitte sind FPL-Informationen erforderlich.</p>
+                <small>Abgekürzter Flugplan per Funk kann nur für definierte Abschnitte passen; finale Regel über ENAV AIP ENR 1.10/ATS prüfen.</small>
+              </article>
+              <article class="briefing-card">
+                <b>Quellenprinzip</b>
+                <p>Deutschland über DFS AIS, Italien über ENAV/ENAC, Plätze zusätzlich über Betreiber/PPR und webAAI/Avioportolano prüfen. Europäische Datenplattformen können FIR-übergreifend helfen, ersetzen aber nicht die nationale Zuständigkeit.</p>
+                <small>Militärische-only Plätze und nicht abgeschlossene Istruttoria-Fälle bleiben außerhalb der nutzbaren Kartenebene.</small>
+              </article>
+            </div>
+            <div class="source-strip" aria-label="Offizielle Quellen">
+              <a href="https://www.enac.gov.it/aeroporti/infrastrutture-aeroportuali/avio-eli-idrosuperfici" target="_blank" rel="noopener">ENAC Avio-/Elisuperfici</a>
+              <a href="https://avio-occasionali.enac.gov.it/login" target="_blank" rel="noopener">ENAC Occasional Portal</a>
+              <a href="https://mobilitaet.provinz.bz.it/it/divieto-di-sorvolo" target="_blank" rel="noopener">Südtirol No-Fly</a>
+              <a href="https://www.provincia.tn.it/Servizi/Autorizzazione-attivita-atterraggio-decollo-e-sorvolo-per-motivi-ricerca-studio" target="_blank" rel="noopener">Trentino Antrag</a>
+              <a href="https://www.easa.europa.eu/en/document-library/easy-access-rules/online-publications/easy-access-rules-standardised-european?erules-id=ERULES-1963177438-9807" target="_blank" rel="noopener">EASA SERA</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <b>Übergabe an den Piloten</b>
+            <span>Für SkyDemon die GPX-Datei importieren; die Karte dient als visuelles Briefing mit Quellen und Kontakten.</span>
+          </div>
+          <div class="export-panel">
+            <div class="export-actions">
+              <button type="button" onclick="downloadWaypointsGpx()">SkyDemon GPX herunterladen</button>
+              <button type="button" onclick="downloadWaypointsCsv()">CSV herunterladen</button>
+            </div>
+            <p class="export-note">Die GPX-Datei enthält <span id="exportPlaceCount">alle</span> Karten-Wegpunkte mit Koordinaten, Status, Fuel, Telefon, PPR, Korridorabstand und Quellenlinks. Sie ersetzt keine geprüfte Luftfahrtdatenbank.</p>
+          </div>
+        </section>
+      </section>
+
+      <section class="page" id="sourcePage">
+        <section class="panel">
+          <div class="panel-header">
+            <b>Korridor-Audit</b>
+            <span>Prüfbereich: 15 NM beidseits der Arbeitsroute EDTM - Bozen - Trento - Verona - Gardasee sowie 15 NM um die Gardasee-Achse.</span>
+          </div>
+          <div class="briefing-panel">
+            <div class="briefing-grid">
+              <article class="briefing-card success">
+                <b>Operative Kartenebene</b>
+                <p>Zivile Flugplätze, veröffentlichte Aviosuperfici/Elisuperfici und zivile Heliports. Bestätigte Gastnutzung und reine Registerkandidaten werden getrennt gekennzeichnet.</p>
+              </article>
+              <article class="briefing-card danger">
+                <b>Bewusst ausgeschlossen</b>
+                <p>Militärplätze, Krankenhäuser, HEMS-/Rettungs-, Polizei-, Feuerwehr- und Behördenflächen sowie laufende ENAC-Istruttoria-Verfahren.</p>
+              </article>
+              <article class="briefing-card warning">
+                <b>Vollständigkeitsgrenze</b>
+                <p>Abgedeckt sind die zum Datenstand veröffentlichten und recherchierbaren Quellen. Unveröffentlichte Privatflächen, temporäre Sperrungen und tagesaktuelle NOTAM können nur im Flugtag-Briefing erfasst werden.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+        <section class="panel">
+          <div class="panel-header">
+            <b>Offizielle Basisquellen</b>
+            <span>Diese Links sind die Arbeitsbasis für AIP/NOTAM, ENAC/webAAI, Außenlandungen, Schutzgebiete und SERA-Regeln.</span>
+          </div>
+          <div class="source-grid">
+            <article class="source-card">
+              <b>DFS AIS-Portal</b>
+              <p>Deutsche AIS-Basis für AIP, NfL, Flugplanaufgabe, Folgemeldungen und Briefings zum deutschen Streckenanteil.</p>
+              <a href="https://www.dfs.de/homepage/de/services/allgemeine-luftfahrt/" target="_blank" rel="noopener">DFS AIS öffnen</a>
+            </article>
+            <article class="source-card">
+              <b>Austro Control eAIP</b>
+              <p>Offizielle österreichische AIP-Basis; AD 3 enthält Heliports, Nutzungsbeschränkungen, PPR und Betreiberkontakte.</p>
+              <a href="https://eaip.austrocontrol.at/" target="_blank" rel="noopener">Austro Control eAIP öffnen</a>
+            </article>
+            <article class="source-card">
+              <b>ENAV AIP Italia</b>
+              <p>Italienische AIP-/AIM-Basis für veröffentlichte Luftfahrtdaten. Vor Flugtag zusammen mit NOTAM prüfen.</p>
+              <a href="https://www.enav.it/en/services/online-services/aeronautical-information-management/aip-italia" target="_blank" rel="noopener">ENAV AIP öffnen</a>
+            </article>
+            <article class="source-card">
+              <b>ENAV Online Services</b>
+              <p>Italienische Online-Dienste für AIP-Zugang und Flugplanaufgabe; Registrierung/Servicefreischaltung beachten.</p>
+              <a href="https://www.enav.it/en/online-services" target="_blank" rel="noopener">ENAV Services öffnen</a>
+            </article>
+            <article class="source-card">
+              <b>ENAC Avio-/Eli-/Idrosuperfici</b>
+              <p>Offizielle ENAC-Hinweise zu Avio-, Eli- und Idrosuperfici sowie Migration zu Avioportolano/webAAI.</p>
+              <a href="https://www.enac.gov.it/aeroporti/infrastrutture-aeroportuali/avio-eli-idrosuperfici" target="_blank" rel="noopener">ENAC öffnen</a>
+            </article>
+            <article class="source-card">
+              <b>webAAI / Avioportolano</b>
+              <p>Veröffentlichungsplattform für Avio-/Elisuperfici-Daten nach ENAC-Migration; Detaildaten je Platz gegen Betreiber prüfen.</p>
+              <a href="https://webaai.it/index.php/it/" target="_blank" rel="noopener">webAAI öffnen</a>
+            </article>
+            <article class="source-card">
+              <b>ENAC Occasional Portal</b>
+              <p>Digitaler Kanal für die Kommunikation gelegentlicher Avio-/Eli-/Idrosuperfici; ausländische Piloten nach ENAC-Akkreditierung.</p>
+              <a href="https://avio-occasionali.enac.gov.it/login" target="_blank" rel="noopener">Portal öffnen</a>
+            </article>
+            <article class="source-card">
+              <b>EUROCONTROL EAD</b>
+              <p>Europäische AIS-Datenplattform für AIP/NOTAM/PIB/FIR-übergreifende Daten. EAD Basic ist laut EUROCONTROL nicht für operative Nutzung bestimmt.</p>
+              <a href="https://www.eurocontrol.int/service/european-ais-database" target="_blank" rel="noopener">EAD öffnen</a>
+            </article>
+            <article class="source-card">
+              <b>EASA SERA</b>
+              <p>Basis für Flugplanpflichten und VFR-Mindesthöhen; nationale/regionale Einschränkungen bleiben zusätzlich zu prüfen.</p>
+              <a href="https://www.easa.europa.eu/en/document-library/easy-access-rules/online-publications/easy-access-rules-standardised-european?erules-id=ERULES-1963177438-9807" target="_blank" rel="noopener">SERA öffnen</a>
+            </article>
+            <article class="source-card">
+              <b>Symbol- und Kraftstofflogik</b>
+              <p>FAA-Kartenführer als dokumentierte Referenz für Heliport-H-Symbole; FAA-Handbuch für 100LL blau und Jet A farblos/strohfarben. Die Platzformen im Dashboard sind eine eigene, barrierearme Orientierung.</p>
+              <div class="source-strip">
+                <a href="https://www.faa.gov/air_traffic/flight_info/aeronav/Digital_Products/aero_guide/" target="_blank" rel="noopener">FAA Chart Guide</a>
+                <a href="https://www.faa.gov/sites/faa.gov/files/04_amtp_ch2.pdf" target="_blank" rel="noopener">FAA Fuel Guide</a>
+              </div>
+            </article>
+            <article class="source-card">
+              <b>Südtirol No-Fly / Geocatalogo</b>
+              <p>Provinz Bozen: Überflugverbote, Korridore, permanente Elisuperfici und Geocatalogo-Layer für NoFlyZones.</p>
+              <a href="https://mobilitaet.provinz.bz.it/it/divieto-di-sorvolo" target="_blank" rel="noopener">Provinz Bozen öffnen</a>
+            </article>
+            <article class="source-card">
+              <b>Trentino Schutzgebiete</b>
+              <p>Provinz Trento: Genehmigungs-/Derogationsverfahren für Start, Landung und Überflug in geschützten oder hochgelegenen Bereichen.</p>
+              <a href="https://www.provincia.tn.it/Servizi/Autorizzazione-attivita-atterraggio-decollo-e-sorvolo-per-motivi-ricerca-studio" target="_blank" rel="noopener">Provinz Trento öffnen</a>
+            </article>
+            <article class="source-card">
+              <b>ENAC RAIT</b>
+              <p>Italienische Ergänzungen zu den Luftverkehrsregeln; für Flugplan- und Luftraumfragen mit AIP/NOTAM zusammen prüfen.</p>
+              <a href="https://www.enac.gov.it/la-normativa/normativa-enac/regolamenti/regolamenti-ad-hoc/" target="_blank" rel="noopener">RAIT öffnen</a>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <b>Platzquellen</b>
+            <span>Jeder Marker führt direkt zur konkreten Platzseite. Bei ENAC/webAAI sind Kontakte und weitere Detaildaten teilweise erst nach kostenloser Anmeldung sichtbar.</span>
+          </div>
+          <div class="control-stack">
+            <input class="search-input" id="sourceSearchInput" type="search" placeholder="Quellen suchen: LIDT, ENAC, Gardasee, AVGAS">
+          </div>
+          <div class="source-list" id="sourceList"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const places = [
+      { name: "EDTM Mengen-Hohentengen", type: "airport", label: "EDTM", coords: [48.053, 9.373], fuel: "AVGAS 100LL, Jet A1, Super Plus", status: "Start/Rückkehrbasis, ziviler Verkehrslandeplatz bestätigt", hours: "09:00 bis SS+30, max. 20:00 LT; Sonderzeiten auf Anfrage/OR", ppr: "Sonderzeiten/Parken vorab klären", contact: "+49 07572 711047; +49 07572 769 601 0; info@regio-airport-mengen.de", source: "https://www.regio-airport-mengen.de/piloteninfo/flugplatzdaten/", fuelClass: "fuel" },
+      { name: "EDJA Memmingen / Allgäu Airport", type: "airport", label: "EDJA", coords: [47.9888, 10.2395], fuel: "AVGAS und Jet A1, AVGAS SB-Tankstelle nur mit Airport-Tankkarte/WFS", status: "ziviler Alternate, nicht Startplatz", hours: "06:00-22:00 LT; 22:00-23:00 PPR", ppr: "Fluganmeldung/GA via Ops", contact: "+49 8331 9725 315; ops@edja.info", source: "https://www.memmingen-airport.de/fliegen/general-aviation/", fuelClass: "fuel", warn: true },
+      { name: "EDTU Bad Saulgau", type: "airport", label: "EDTU", coords: [48.029446, 9.507222], fuel: "nicht belegt", status: "ziviler Sonderlandeplatz; R44-Zulassung vor PPR ausdrücklich bestätigen", hours: "Betriebszeiten laut Betreiber; außerhalb nur bestätigtes PPR", ppr: "Online-PPR vor Nutzung; Hubschrauberklasse im Einzelfall bestätigen", contact: "+49 7581 1610; info@edtu.de", source: "https://edtu.de/", fuelClass: "unknown", warn: true, access: "ppr" },
+      { name: "Flugplatz Wildberg", type: "field", label: "WILD", coords: [47.600000, 9.741667], fuel: "kein Kraftstoff laut Betreiber", status: "ziviler Sonderlandeplatz; Hubschrauber ausdrücklich zugelassen", hours: "nur nach Betreiberbestätigung; 50 Stunden Pilotenerfahrung gefordert", ppr: "mindestens 24 Stunden vorher per E-Mail", contact: "+49 8389 271; flugplatz.wildberg@t-online.de", source: "https://flugplatz-wildberg.de/piloten/", fuelClass: "no", warn: true, access: "ppr" },
+      { name: "EDTP Pfullendorf", type: "airport", label: "EDTP", coords: [47.908890, 9.250556], fuel: "AVGAS 100LL und MOGAS laut Betreiber", status: "ziviler Verkehrslandeplatz; R44-Klasse telefonisch bestätigen", hours: "Apr-Okt Sa/So 09:00-20:00 oder SS, Mi 17:00-SS; sonst PPR", ppr: "außerhalb veröffentlichter Zeiten über PPR-Formular", contact: "+49 7552 8670", source: "https://fsv-pfullendorf.de/piloten/", fuelClass: "fuel", warn: true, access: "ppr" },
+      { name: "EDNY Friedrichshafen", type: "airport", label: "EDNY", coords: [47.671299, 9.511490], fuel: "AVGAS 100LL und Jet A1 laut Flughafen", status: "ziviler Verkehrsflughafen mit General Aviation", hours: "aktuelle GA-Betriebszeiten auf Betreiberseite und in AIP/NOTAM prüfen", ppr: "Handling/Abstellung und Slot-/PPR-Lage vorab klären", contact: "+49 7541 284-120; Luftaufsicht@bodensee-airport.eu", source: "https://www.bodensee-airport.eu/en/business-aviation/aviation/hours-of-operation/", sources: [{ label: "Fuel-Information", url: "https://www.bodensee-airport.eu/business-aviation/aviation/fragen-antworten/" }], fuelClass: "fuel", warn: true, access: "ppr" },
+      { name: "EDNL Leutkirch-Unterzeil", type: "airport", label: "EDNL", coords: [47.858891, 10.014167], fuel: "nicht belegt", status: "ziviler Verkehrslandeplatz; Hubschrauber bis 6 t veröffentlicht", hours: "Betriebszeiten/PPR laut Betreiber und AIP prüfen", ppr: "Betreiberkoordination; EU-Auslandsflüge mindestens 3 Stunden vorher anmelden", contact: "+49 7561 3156", source: "https://www.ednl.de/piloten/", fuelClass: "unknown", warn: true, access: "ppr" },
+      { name: "EDMB Biberach", type: "airport", label: "EDMB", coords: [48.112359, 9.764013], fuel: "AVGAS 100LL, Jet A1 und Super Plus laut Betreiber", status: "ziviler Verkehrslandeplatz; HEL zugelassen", hours: "veröffentlichte Betriebszeiten; außerhalb PPR", ppr: "PPR/Flugleitung vorab telefonisch bestätigen", contact: "+49 7351 9734; +49 7351 168402; +49 173 3195223", source: "https://www.edmb.de/fur-piloten/allgemeines/", fuelClass: "fuel", warn: true, access: "ppr" },
+
+      { name: "H LOIC Wucher St. Anton", type: "helipad", category: "heliport", label: "H", coords: [47.119722, 10.240556], fuel: "nicht belegt", status: "ziviler Heliport laut Austro Control AIP AD 3; VFR Tag/Nacht, MTOM 6.000 kg", hours: "nur PPR; aktuelle AIP/NOTAM-Bedingungen prüfen", ppr: "Betreiberfreigabe Wucher Helicopter zwingend", contact: "+43 5446 2732; +43 5550 3880; helicopter@wucher.at", source: "https://eaip.austrocontrol.at/lo/260806/PART_3/AD_3/LO_AD_3_en.pdf", sources: [{ label: "Wucher Helicopter", url: "https://www.wucher-helicopter.at/" }], fuelClass: "unknown", warn: true, access: "ppr" },
+      { name: "H LOJW Wucher Zürs-Lech", type: "helipad", category: "heliport", label: "H", coords: [47.184167, 10.157222], fuel: "nicht belegt", status: "ziviler Heliport laut Austro Control AIP AD 3; MTOM 5.700 kg", hours: "nur PPR; Beleuchtung laut AIP nur für Rettungs-/Ambulanzflüge, Gastplanung daher Tagbetrieb", ppr: "Betreiberfreigabe Wucher Helicopter zwingend", contact: "+43 5446 2732; +43 5550 3880; helicopter@wucher.at", source: "https://eaip.austrocontrol.at/lo/260806/PART_3/AD_3/LO_AD_3_en.pdf", sources: [{ label: "Wucher Helicopter", url: "https://www.wucher-helicopter.at/" }], fuelClass: "unknown", warn: true, access: "ppr" },
+      { name: "H LOJP Karres", type: "helipad", category: "heliport", label: "H", coords: [47.218889, 10.768889], fuel: "nicht belegt", status: "ziviler Heliport laut Austro Control AIP AD 3; VFR Tag/Nacht, MTOM 6.000 kg", hours: "nur PPR; aktuelle AIP/NOTAM-Bedingungen prüfen", ppr: "Betreiberfreigabe Heli Mount zwingend", contact: "+43 5412 61421", source: "https://eaip.austrocontrol.at/lo/260806/PART_3/AD_3/LO_AD_3_en.pdf", sources: [{ label: "Heli Mount", url: "https://www.heli-tirol.at/" }], fuelClass: "unknown", warn: true, access: "ppr" },
+
+      { name: "LIPB Bolzano / Bozen", type: "airport", label: "LIPB", coords: [46.4603, 11.3264], fuel: "Jet A1 06:00-23:00; AVGAS/MOGAS nur Aero Club, PPR/nach Verfügbarkeit", status: "zivil nutzbar bestätigt; kommerziell zivil/militärisch gemischt, GA vorhanden", hours: "Operator 06:30-23:00 CET; Info 06:00-22:00", ppr: "AVGAS zwingend vorab Aero Club", contact: "GA +39 0471 255207; Aero Club +39 0471 250165; info@aeroclub.bz", source: "https://www.bolzanoairport.it/en/fuel", fuelClass: "fuel", warn: true },
+      { name: "LIDT Trento / Mattarello", type: "airport", label: "LIDT", coords: [46.0214, 11.1250], fuel: "AVIO 100LL H24, Jet A1, unleaded laut Betreiber", status: "zivil nutzbar bestätigt, starker Fuel-Anker", hours: "H24; AFIS H24 119.655 MHz", ppr: "Abstellung/Hangar vorab anfragen", contact: "Trentino Trasporti +39 0461 031000; airport@trentinotrasporti.it laut ENAC", source: "https://www.trentinotrasporti.it/en/airport/aeroporto-caproni", fuelClass: "fuel" },
+      { name: "LIPN Verona Boscomantico", type: "airport", label: "LIPN", coords: [45.47305, 10.92693], fuel: "AV-GAS laut Betreiber", status: "ziviler Flugplatz bestätigt, saisonal/Montag geschlossen", hours: "Di-So; saisonale Zeiten siehe Betreiber-Briefing", ppr: "Koordination mit Betreiber", contact: "+39 045 8103661; operations@boscomanticoservizi.it; Aeroclub +39 045 563200", source: "https://www.boscomanticoairport.com/en/contact-us/", fuelClass: "fuel", warn: true },
+      { name: "LIPX Verona Villafranca", type: "airport", label: "LIPX", coords: [45.3964, 10.8878], fuel: "Jet A1; AVGAS nicht verfügbar", status: "zivil/kommerziell mit GA-Handling bestätigt, aber kein R44-Fuel-Stop", hours: "H24; PPR subject to stand availability", ppr: "PPR mandatory für private/GA laut Betreiberseite", contact: "+39 045 8095666; Handler AGS/GH/Sky Services/Argos/Delta", source: "https://www.aeroportoverona.it/en_gb/flights/private-jets", fuelClass: "no" },
+      { name: "LIPO Brescia Montichiari", type: "airport", label: "LIPO", coords: [45.4289, 10.3306], fuel: "Jet A1 only, NO AVGAS laut Betreiber", status: "ziviler Flughafen/GA-Alternate nahe Gardasee, aber kein R44-Fuel-Stop", hours: "Operations H24; Fuel 07:00-15:00 UTC, außerhalb Anfrage per Mail", ppr: "Alle Flüge 3 h vor Ankunft bei Operations anmelden", contact: "+39 030 9656530; +39 030 9656531; +39 335 7973213; operativo@aeroportobrescia.it", source: "https://www.aeroportobrescia.it/it_it/voli-privati", fuelClass: "no", warn: true },
+      { name: "LIDA Asiago", type: "airport", label: "LIDA", coords: [45.887, 11.516], fuel: "unbekannt", status: "ziviler Flugplatz/Alternate-Kandidat; Betreiberseite bestätigt zivil/touristisch", hours: "PPR/öffentliche Betriebszeiten vorab prüfen", ppr: "Betreiber kontaktieren", contact: "+39 0424 465845", source: "https://www.aeroportoasiago.it/it/", fuelClass: "unknown", warn: true },
+      { name: "LIDH Thiene", type: "airport", label: "LIDH", coords: [45.682, 11.496], fuel: "Jet A1, AVGAS und Benzina verde laut Betreiber; Self-Service in Betriebszeiten", status: "ziviler Flugplatz/Alternate-Kandidat; Fuel positiv zu bestätigen", hours: "Betriebszeiten/NOTAM/Betreiber prüfen", ppr: "Betreiber kontaktieren", contact: "+39 0445 362723; info@aeroportothiene.it", source: "https://www.aeroportothiene.it/associazioni/", fuelClass: "fuel", warn: true },
+      { name: "LIDL Legnago", type: "airport", label: "LIDL", coords: [45.1301, 11.2932], fuel: "AV-GAS und MO-GAS laut Betreiber", status: "ziviler Flugplatz, Betreiberbriefing vorhanden", hours: "Sa/So 09:00-19:30/SS; andere Tage nach Koordination", ppr: "Betreiberkoordination, Hangar/Fuel vorab klären", contact: "+39 371 5696638; Präsident +39 335 6191318; info@aeroportolegnago.it", source: "https://www.aeroportolegnago.it/briefing/", fuelClass: "fuel", warn: true },
+      { name: "LIPU Padova", type: "airport", label: "LIPU", coords: [45.3961, 11.8481], fuel: "unbekannt, vorab prüfen", status: "ziviler Flugplatz laut Betreiber; weiter östlich", hours: "08:00-20:00 LT laut Betreiberseite", ppr: "Betreiber kontaktieren", contact: "+39 331 1759481; info@airportpadova.com", source: "https://airportpadova.com/en/", fuelClass: "unknown", warn: true },
+      { name: "LIPV Venezia/Lido - Nicelli", type: "airport", label: "LIPV", coords: [45.4283, 12.3881], fuel: "unbekannt", status: "ziviler Flugplatz laut Betreiber/AIP; weiter östlich", hours: "AIP/NOTAM/Betreiber prüfen", ppr: "Betreiber kontaktieren", contact: "+39 041 770300; operativo@aeroportonicelli.com; info@aeroportonicelli.com", source: "https://aeroportonicelli.com/dove-siamo-eng/", fuelClass: "unknown", warn: true },
+      { name: "LIDB Belluno", type: "airport", label: "LIDB", coords: [46.1666, 12.2504], fuel: "unbekannt", status: "ziviler Flugplatz laut Aero Club/AIP; Alpen-Alternate-Kandidat", hours: "Di-So 09:00-18:00 laut Aero-Club-Seite, AIP/NOTAM prüfen", ppr: "Betreiber kontaktieren; besondere Alpen-/Qualifikationslage prüfen", contact: "+39 0437 30667; +39 345 3056101; segreteria@aeroclubbelluno.org", source: "https://www.aeroclubbelluno.org/", fuelClass: "unknown", warn: true },
+      { name: "LILR Cremona", type: "airport", label: "LILR", coords: [45.1672, 10.0019], fuel: "AVGAS 100LL, Jet A-1, MOGAS laut Aero Club; Verfügbarkeit vorab anrufen", status: "ziviler Flugplatz; südwestlicher Alternate-/Fuel-Kandidat", hours: "Mi-Fr 08:00-16:00/SS; Sa/So 08:00-17:00/SS; Mo/Di geschlossen, Ausnahmen/Extra Öffnung PPR", ppr: "Extra-Öffnung per E-Mail vorab; Betreiber bestätigen lassen", contact: "+39 0372 560895; WhatsApp +39 351 5079340; segreteria@aeroclubcremona.it", source: "https://www.aeroclubcremona.it/charts.html", fuelClass: "fuel", warn: true },
+
+      { name: "BZ02 Colle di Casies", type: "field", label: "BZ02", coords: [46.765994, 12.158525], fuel: "nicht belegt", status: "ENAC/webAAI-gelistete Aviosuperficie; keine Fuel-Angabe", hours: "Nutzungszeiten/Betreiber über webAAI/PPR prüfen", ppr: "Betreiberfreigabe und Südtirol-Schutzgebietslage klären", contact: "Detailkontakte nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Aviosuperficie, 1 Piste, Direktion Nord-Est, Stand 14.01.2026", source: "https://webaai.it/it/aviosuperfici-enac/trentino_alto_adige/colle-di-casies_A051", fuelClass: "unknown", warn: true },
+      { name: "BZ06 Costa / Corvara in Badia", type: "field", label: "BZ06", coords: [46.552456, 11.861800], fuel: "nicht belegt", status: "ENAC/webAAI-gelistete Aviosuperficie; Breite offiziell, Längengrad im webAAI-Text fehlerhaft formatiert und deshalb nur Arbeitsnäherung", hours: "Nutzungszeiten/Betreiber über webAAI/PPR prüfen", ppr: "Betreiberfreigabe und Südtirol-Schutzgebietslage klären", contact: "Detailkontakte nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Aviosuperficie, Direktion Nord-Est, Stand 01.10.2025; publizierter Längengrad unvollständig", source: "https://webaai.it/it/aviosuperfici-enac/trentino_alto_adige/costa_A053", fuelClass: "unknown", warn: true },
+      { name: "BZ05 / LIGT San Genesio", type: "field", label: "LIGT", coords: [46.572800, 11.307736], fuel: "nicht belegt", status: "ENAC/webAAI-gelistete Aviosuperficie; zivil gelistet, PPR offen", hours: "Nutzungszeiten/Betreiber über webAAI/PPR prüfen", ppr: "Betreiberfreigabe und Südtirol-Schutzgebietslage klären", contact: "335218916 laut früherem ENAC-Eintrag; aktuelle Detailkontakte nach webAAI-Anmeldung", officialData: "webAAI/ENAC: Aviosuperficie, Direktion Nord-Est, Stand 10.10.2024", source: "https://webaai.it/it/aviosuperfici-enac/trentino_alto_adige/san-genesio_A103", fuelClass: "unknown", warn: true },
+      { name: "BZ03 Sarentino", type: "field", label: "BZ03", coords: [46.602855, 11.379926], fuel: "nicht belegt", status: "ENAC/webAAI-gelistete Aviosuperficie; Koordinaten aus aktueller Detailseite", hours: "Nutzungszeiten/Betreiber über webAAI/PPR prüfen", ppr: "Betreiberfreigabe und Südtirol-Schutzgebietslage klären", contact: "Detailkontakte nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Aviosuperficie, Direktion Nord-Est, Stand 08.10.2025", source: "https://webaai.it/it/aviosuperfici-enac/trentino_alto_adige/sarentino_A048", fuelClass: "unknown", warn: true },
+      { name: "BZ07 Villa Ottone / Gais", type: "field", label: "BZ07", coords: [46.876119, 11.949072], fuel: "nicht belegt", status: "ENAC/webAAI-gelistete Aviosuperficie; Koordinaten aus aktueller Detailseite", hours: "Nutzungszeiten/Betreiber über webAAI/PPR prüfen", ppr: "Betreiberfreigabe und Südtirol-Schutzgebietslage klären", contact: "Detailkontakte nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Aviosuperficie, Direktion Nord-Est, Stand 15.05.2025", source: "https://webaai.it/it/aviosuperfici-enac/trentino_alto_adige/villa-ottone_A173", fuelClass: "unknown", warn: true },
+      { name: "Tezze di Ceresara", type: "field", label: "AV", coords: [45.263294, 10.583206], fuel: "nicht belegt", status: "aktive zivile Aviosuperficie im ENAC/webAAI-Register; Fremdnutzung für R44 nicht belegt", hours: "Betreiber/PPR vor Nutzung klären", ppr: "Registeraufnahme ist keine Landefreigabe", contact: "Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Aviosuperficie, 1 Piste, Direktion Milano Linate, Stand 25.11.2024", source: "https://webaai.it/it/aviosuperfici-enac/lombardia/tezze-di-ceresara_A111", fuelClass: "unknown", warn: true, access: "unknown" },
+      { name: "Ceresara", type: "field", label: "AV", coords: [45.263611, 10.533333], fuel: "nicht belegt", status: "aktive zivile Aviosuperficie im ENAC/webAAI-Register; Fremdnutzung für R44 nicht belegt", hours: "Betreiber/PPR vor Nutzung klären", ppr: "Registeraufnahme ist keine Landefreigabe", contact: "Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Aviosuperficie, 1 Piste, Direktion Milano Linate, Stand 14.03.2025", source: "https://webaai.it/it/aviosuperfici-enac/lombardia/ceresara_A117", fuelClass: "unknown", warn: true, access: "unknown" },
+
+      { name: "VR17 Garda Lake Airfield / Castelnuovo", type: "field", label: "VR17", coords: [45.4519, 10.7232], fuel: "nicht belegt", status: "ziviles Leichtflug-/ULM-Flugfeld direkt südöstlich Gardasee; nur nach Betreiberfreigabe", hours: "Day VFR; Details Betreiber", ppr: "PPR anfragen", contact: "+39 366 182 7401; info@gardalakeairfield.it", source: "https://www.gardalakeairfield.com/en", fuelClass: "unknown", warn: true },
+      { name: "BS15 Le Panizze / Lonato del Garda", type: "field", label: "BS15", coords: [45.4183, 10.5592], fuel: "nicht belegt", status: "private Aviosuperficie; PPR/Autorisierung zwingend; externer Verkehr laut Website verboten/Runway closed Hinweis", hours: "alle Tage laut Website, aber Betreiberfreigabe entscheidend", ppr: "obligatorisches Formular; Landing 31, Takeoff 13", contact: "Claudio +39 335 5378373; Ugo +39 335 406584; Mattia +39 331 3611207", source: "https://lepanizze.it/en/", fuelClass: "unknown", warn: true },
+      { name: "BS16 Silvio Scaroni / Bedizzole", type: "field", label: "BS16", coords: [45.517338, 10.448269], fuel: "nicht belegt", status: "zivile Aviosuperficie laut webAAI/ENAC; Gardasee-nahe Option", hours: "PPR/Betreiber offen", ppr: "Betreiberdaten via webAAI prüfen", contact: "Detailkontakte nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Aviosuperficie, 1 Piste, Direktion Bergamo, Stand 23.09.2025", source: "https://webaai.it/it/aviosuperfici-enac/lombardia/silvio-scaroni_A123", fuelClass: "unknown", warn: true },
+      { name: "VR15 Arcadia / Pastrengo", type: "field", label: "VR15", coords: [45.5011, 10.7889], fuel: "nicht belegt / Sekundärquelle nennt Jet A1, verifizieren", status: "private Aviosuperficie; zivil/privat ENAC-gelistet", hours: "Betreiber/PPR offen", ppr: "Betreiberfreigabe erforderlich", contact: "Tel. 335224889 laut ENAC-Eintrag", source: "https://avio-superfici.enac.gov.it/en/public/surface/show/1109", fuelClass: "unknown", warn: true },
+      { name: "VR06 ULM Scaligero / Valeggio", type: "field", label: "VR06", coords: [45.3197, 10.7150], fuel: "nicht belegt", status: "Campo di volo/ULM-Kandidat; nur als ULM/Leichtflugplatz-Orientierung, R44/AG-Nutzung offen", hours: "Betreiber/PPR offen", ppr: "Betreiber kontaktieren", contact: "+39 337 460979; +39 347 1047551 laut ULM.it", source: "https://www.ulm.it/mobile/campivolo/scheda.htm?chiave=164&condizione=regione&sel_ordine=nome+asc&valore=veneto", fuelClass: "unknown", warn: true },
+      { name: "VR13 Aliveneta / Isola della Scala", type: "field", label: "VR13", coords: [45.2509, 11.0361], fuel: "nicht belegt", status: "ziviles Campo di volo laut webAAI/Betreiber; R44/AG-Nutzung offen", hours: "Betreiber/PPR offen", ppr: "Betreiber kontaktieren", contact: "+39 340 2238610; info@aliveneta.it", source: "https://www.aliveneta.it/index.php?route=information%2Fcontact", fuelClass: "unknown", warn: true },
+      { name: "VR01 Aquile Randagie / Sorga", type: "field", label: "VR01", coords: [45.214, 10.960], fuel: "nicht belegt", status: "Campo di volo aus webAAI Veneto; R44/AG-Nutzung offen", hours: "Betreiber/PPR offen", ppr: "Betreiberkontakt über webAAI prüfen", contact: "webAAI-Platzdetails; AAI-Daten sind nicht amtlich", source: "https://webaai.it/it/aviostrutture/veneto/aquile-randagie_VR01?free=1", fuelClass: "unknown", warn: true },
+      { name: "VR03 Volo Leggero / Isola Rizza", type: "field", label: "VR03", coords: [45.300, 11.190], fuel: "nicht belegt", status: "Campo di volo aus webAAI Veneto; R44/AG-Nutzung offen", hours: "Betreiber/PPR offen", ppr: "Betreiberkontakt über webAAI prüfen", contact: "webAAI-Platzdetails; AAI-Daten sind nicht amtlich", source: "https://webaai.it/it/aviostrutture/veneto/volo-leggero_VR03?free=1", fuelClass: "unknown", warn: true },
+      { name: "H Moritzing / Bozen", type: "helipad", label: "H", coords: [46.502810, 11.306823], fuel: "nicht belegt", status: "aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt", hours: "Nachtbetrieb nein; Betreiber/PPR vor Nutzung klären", ppr: "Registeraufnahme ist keine Landefreigabe", contact: "Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 08.07.2024", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/moritzing_EA03", fuelClass: "unknown", warn: true, access: "unknown" },
+      { name: "H Schloss Freudenstein", type: "helipad", label: "H", coords: [46.464540, 11.247731], fuel: "nicht belegt", status: "aktive zivile Elisuperficie; privater Helikopteranflug vom Hotel ausdrücklich angeboten", hours: "Nachtbetrieb nein; nur nach Voranmeldung und schriftlicher Betreiberbestätigung", ppr: "Schloss Freudenstein vorab kontaktieren", contact: "+39 0471 661308; info@schlossfreudenstein.com", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 28.10.2025", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/freudenstein_EC40", sources: [{ label: "Betreiber / Anreise", url: "https://schlossfreudenstein.com/it/contatto/dove-siamo-e-come-arrivare/" }], fuelClass: "unknown", warn: true, access: "guest" },
+      { name: "H Hochplatter", type: "helipad", label: "H", coords: [46.630278, 11.195278], fuel: "nicht belegt", status: "aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt", hours: "Nachtbetrieb nein; Betreiber/PPR vor Nutzung klären", ppr: "Registeraufnahme ist keine Landefreigabe; Schutzgebietslage prüfen", contact: "Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 11.06.2025", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/hochplatter_EC28", fuelClass: "unknown", warn: true, access: "unknown" },
+      { name: "H Quinto / Verona", type: "helipad", label: "H", coords: [45.485556, 11.022056], fuel: "nicht belegt", status: "aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt", hours: "Nachtbetrieb laut Register ja; konkrete Zeiten und Beleuchtung per Betreiber", ppr: "Registeraufnahme ist keine Landefreigabe", contact: "Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb ja, Direktion Nord-Est, Stand 05.03.2024", source: "https://webaai.it/it/elisuperfici-enac/veneto/quinto_EA07", fuelClass: "unknown", warn: true, access: "unknown" },
+      { name: "H Tirolo", type: "helipad", label: "H", coords: [46.692833, 11.161028], fuel: "nicht belegt", status: "aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt", hours: "Nachtbetrieb nein; Betreiber/PPR vor Nutzung klären", ppr: "Registeraufnahme ist keine Landefreigabe; Schutzgebietslage prüfen", contact: "Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 20.10.2025", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/tirolo_EB90", fuelClass: "unknown", warn: true, access: "unknown" },
+      { name: "H Air Corporate / Verona", type: "helipad", label: "H", coords: [45.367531, 10.859217], fuel: "nicht belegt", status: "aktive zivile Elisuperficie und kommerzieller Helikopterbetreiber; Fremdanflug nur bestätigt nach PPR", hours: "Nachtbetrieb nein; Betriebszeiten per Operator", ppr: "Air Corporate vorab schriftlich bestätigen lassen", contact: "+39 045 8600910; info@aircorporate.it", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 17.04.2025", source: "https://webaai.it/it/elisuperfici-enac/veneto/air-corporate_EC21", sources: [{ label: "Betreiber", url: "https://www.aircorporate.it/" }], fuelClass: "unknown", warn: true, access: "ppr" },
+      { name: "H Renon / Ritten", type: "helipad", label: "H", coords: [46.549627, 11.492635], fuel: "nicht belegt", status: "aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt", hours: "Nachtbetrieb nein; Betreiber/PPR vor Nutzung klären", ppr: "Registeraufnahme ist keine Landefreigabe; Schutzgebietslage prüfen", contact: "Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 17.07.2025", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/renon_EC31", fuelClass: "unknown", warn: true, access: "unknown" },
+      { name: "H Hotel Andreus / St. Leonhard", type: "helipad", label: "H", coords: [46.769422, 11.225769], fuel: "nicht belegt", status: "aktive zivile Elisuperficie; Anreise mit eigenem Helikopter vom Hotel ausdrücklich angeboten", hours: "Nachtbetrieb nein; Hotel vorab informieren, Landung und Abstellung bestätigen", ppr: "Voranmeldung beim Hotel zwingend", contact: "+39 0473 491330; info@andreus.it", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 30.01.2026", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/hotel-andreus-carina_EB64", sources: [{ label: "Hotel / Anreise", url: "https://www.andreus-resorts.it/en/hosts-team/directions-location/" }], fuelClass: "unknown", warn: true, access: "guest" },
+      { name: "H BMA Bosio Motori Aeronautica", type: "helipad", label: "H", coords: [45.428397, 10.335961], fuel: "nicht belegt", status: "aktive zivile Elisuperficie bei Luftfahrt-Instandhaltungsbetrieb; Fremdanflug nur nach PPR", hours: "Nachtbetrieb nein; Betriebszeiten per Operator", ppr: "BMA vorab schriftlich/telefonisch bestätigen lassen", contact: "+39 030 964285; info@bosiomotori.it", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Bergamo, Stand 15.11.2024", source: "https://webaai.it/it/elisuperfici-enac/lombardia/bma-bosio-motori-aeronautica_EA20", sources: [{ label: "Betreiber", url: "https://www.bosiomotori.it/" }], fuelClass: "unknown", warn: true, access: "ppr" },
+      { name: "H Goldrain / Latsch", type: "helipad", label: "H", coords: [46.623333, 10.822222], fuel: "nicht belegt", status: "aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt", hours: "Nachtbetrieb nein; Betreiber/PPR vor Nutzung klären", ppr: "Registeraufnahme ist keine Landefreigabe; Schutzgebietslage prüfen", contact: "Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 23.10.2024", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/goldrain_EB43", fuelClass: "unknown", warn: true, access: "unknown" },
+      { name: "H San Martino in Passiria", type: "helipad", label: "H", coords: [46.793469, 11.231900], fuel: "nicht belegt", status: "aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt", hours: "Nachtbetrieb nein; zwei FATO veröffentlicht, Zeiten per Betreiber", ppr: "Registeraufnahme ist keine Landefreigabe", contact: "Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Elisuperficie am Boden, 2 FATO, Direktion Nord-Est, Stand 04.10.2024", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/san-martino-in-passiria_EA79", fuelClass: "unknown", warn: true, access: "unknown" },
+      { name: "H Villanderer Alm", type: "helipad", label: "H", coords: [46.648889, 11.490833], fuel: "nicht belegt", status: "aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt", hours: "Nachtbetrieb nein; Betreiber/PPR vor Nutzung klären", ppr: "Registeraufnahme ist keine Landefreigabe; Berg-/Schutzgebietslage prüfen", contact: "Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 22.07.2024", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/villanderer-alm_EA60", fuelClass: "unknown", warn: true, access: "unknown" },
+      { name: "H Felder Alpin Lodge", type: "helipad", label: "H", coords: [46.636944, 11.530556], fuel: "nicht belegt", status: "aktive zivile Elisuperficie; private Helikopteranreise laut Unterkunft ausdrücklich möglich", hours: "Nachtbetrieb nein; Landung/Transfer vorab mit Unterkunft abstimmen", ppr: "schriftliche Bestätigung der Felder Alpin Lodge einholen", contact: "+39 335 8474817 laut Unterkunftsverzeichnis; info@felder-alpin.com", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 02.05.2024", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/felder_EA33", sources: [{ label: "Unterkunft / Anreise", url: "https://www.felder-alpin.com/location/" }], fuelClass: "unknown", warn: true, access: "guest" },
+      { name: "H Brembach", type: "helipad", label: "H", coords: [46.594078, 11.584486], fuel: "nicht belegt", status: "aktive zivile Elisuperficie im ENAC/webAAI-Register; Fremdnutzung nicht öffentlich belegt", hours: "Nachtbetrieb nein; Betreiber/PPR vor Nutzung klären", ppr: "Registeraufnahme ist keine Landefreigabe; Berg-/Schutzgebietslage prüfen", contact: "Detailkontakt nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 27.02.2025", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/brembach_EA21", fuelClass: "unknown", warn: true, access: "unknown" },
+      { name: "H Elikos / Pontives", type: "helipad", category: "heliport", label: "H", coords: [46.586772, 11.630583], fuel: "nicht belegt", status: "aktive zivile Elisuperficie und kommerzielle Helikopterbasis; benachbarte ELIGARDENA-Fläche separat ENAC-gelistet", hours: "Nachtbetrieb nein; Betriebszeiten und Fremdanflug per Operator", ppr: "Elikos vorab bestätigen; keine automatische Gastfreigabe", contact: "+39 331 8877888; +39 335 7880150; +39 335 7880149; info@elikos.com", officialData: "webAAI/ENAC: Elikos, 1 FATO, Direktion Nord-Est, Stand 25.06.2024", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/elikos_EA29", sources: [{ label: "Elikos Betreiber", url: "https://www.elikos.com/helicopter/contact.php" }, { label: "Benachbarte ELIGARDENA-Fläche", url: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/eligardena_EA66" }], fuelClass: "unknown", warn: true, access: "ppr" },
+      { name: "H Tenne Lodges / Ratschings", type: "helipad", category: "heliport", label: "H", coords: [46.865000, 11.305556], fuel: "nicht belegt", status: "aktive zivile Elisuperficie; privater Heliport seit 2025 laut Hotel", hours: "Nachtbetrieb nein; Landung und Transfer nur nach Voranmeldung", ppr: "Tenne Lodges vorab schriftlich bestätigen lassen", contact: "+39 0472 433300; info@tenne-suedtirol.com", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Direktion Nord-Est, Stand 29.09.2025", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/tenne-lodges-platform_EC07", sources: [{ label: "Hotel / Heliport-Information", url: "https://www.tenne-suedtirol.com/de/lodges-chalets/preisinfos-faqs" }, { label: "Hotel / Anreise", url: "https://www.tenne-suedtirol.com/de/info-service/anreise" }], fuelClass: "unknown", warn: true, access: "guest" },
+      { name: "H Salò - Lago di Garda", type: "helipad", label: "H", coords: [45.607483, 10.503189], fuel: "nicht belegt", status: "zivile Elisuperficie ENAC/webAAI-gelistet; Koordinaten aus aktueller Detailseite", hours: "Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR", ppr: "Betreiberfreigabe zwingend", contact: "3457770606; paolopern@gmail.com laut früherem ENAC-Eintrag; aktuell über webAAI bestätigen", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Bergamo, Stand 17.03.2025", source: "https://webaai.it/it/elisuperfici-enac/lombardia/salo-lago-di-garda_EC10", fuelClass: "unknown", warn: true },
+      { name: "H Sirmione", type: "helipad", label: "H", coords: [45.458417, 10.603694], fuel: "nicht belegt", status: "zivile Elisuperficie ENAC/webAAI-gelistet; Koordinaten aus aktueller Detailseite", hours: "Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR", ppr: "Betreiberfreigabe zwingend", contact: "Detailkontakte nach kostenloser webAAI-Anmeldung/über Betreiber", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Bergamo, Stand 14.07.2026", source: "https://webaai.it/it/elisuperfici-enac/lombardia/sirmione_EA36", fuelClass: "unknown", warn: true },
+      { name: "H Merano - Sinigo", type: "helipad", label: "H", coords: [46.645000, 11.163611], fuel: "nicht belegt", status: "zivile Elisuperficie ENAC/webAAI-gelistet; Koordinaten aus aktueller Detailseite", hours: "Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR", ppr: "Betreiber + Südtirol-Schutzgebietslage klären", contact: "Detailkontakte nach kostenloser webAAI-Anmeldung; zusätzlich Provinz Bozen prüfen", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Nord-Est, Stand 26.08.2024", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/merano-sinigo_EA02", fuelClass: "unknown", warn: true },
+      { name: "H JEUF DE FREA", type: "helipad", label: "H", coords: [46.549681, 11.806850], fuel: "nicht belegt", status: "zivile Elisuperficie ENAC/webAAI-gelistet, Berg-/Schutzgebiet kritisch", hours: "Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR", ppr: "Betreiber + Provinz Bozen klären", contact: "Detailkontakte nach kostenloser webAAI-Anmeldung; zusätzlich Provinz Bozen", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Nord-Est, Stand 03.06.2024", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/jeuf-de-frea_EA45", fuelClass: "unknown", warn: true },
+      { name: "H SECEDA", type: "helipad", label: "H", coords: [46.598114, 11.727108], fuel: "nicht belegt", status: "zivile Elisuperficie ENAC/webAAI-gelistet, Berg-/Schutzgebiet kritisch", hours: "Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR", ppr: "Betreiber + Provinz Bozen klären", contact: "Detailkontakte nach kostenloser webAAI-Anmeldung; zusätzlich Provinz Bozen", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Nord-Est, Stand 04.07.2024", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/seceda_EA86", fuelClass: "unknown", warn: true },
+      { name: "H PLAN DE CORONES", type: "helipad", label: "H", coords: [46.738294, 11.955142], fuel: "nicht belegt", status: "zivile Elisuperficie ENAC/webAAI-gelistet, Berg-/Schutzgebiet kritisch", hours: "Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR", ppr: "Betreiber + Provinz Bozen klären", contact: "Detailkontakte nach kostenloser webAAI-Anmeldung; zusätzlich Provinz Bozen", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Nord-Est, Stand 21.10.2025", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/plan-de-corones_EB56", fuelClass: "unknown", warn: true },
+      { name: "H Alino / Faedo", type: "helipad", label: "H", coords: [46.221389, 11.169167], fuel: "nicht belegt", status: "zivile Elisuperficie ENAC/webAAI-gelistet; Koordinaten aus aktueller Detailseite", hours: "Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR", ppr: "Betreiber + Provinz Trento prüfen", contact: "Detailkontakte nach kostenloser webAAI-Anmeldung; zusätzlich Provinz Trento", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Nord-Est, Stand 03.10.2025", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/alino_EC35", fuelClass: "unknown", warn: true },
+      { name: "H Meriggi / Mezzolombardo", type: "helipad", label: "H", coords: [46.185000, 11.105000], fuel: "nicht belegt", status: "zivile Elisuperficie ENAC/webAAI-gelistet; Koordinaten aus aktueller Detailseite", hours: "Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR", ppr: "Betreiber + Provinz Trento prüfen", contact: "Detailkontakte nach kostenloser webAAI-Anmeldung; zusätzlich Provinz Trento", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Nord-Est, Stand 03.10.2025", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/meriggi_EC34", fuelClass: "unknown", warn: true },
+      { name: "H Rifugio Salei / Canazei", type: "helipad", label: "H", coords: [46.504252, 11.749840], fuel: "nicht belegt", status: "zivile Elisuperficie ENAC/webAAI-gelistet, Trentino-Genehmigungslage klären", hours: "Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR", ppr: "Betreiber + Provinz Trento prüfen", contact: "Detailkontakte nach kostenloser webAAI-Anmeldung; zusätzlich Provinz Trento", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Nord-Est, Stand 12.06.2025", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/rifugio-salei_EC38", fuelClass: "unknown", warn: true }
+    ];
+
+    const map = L.map("map", { scrollWheelZoom: true }).setView([46.50, 10.55], 7);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    const route = [
+      [48.053, 9.373],
+      [46.4603, 11.3264],
+      [46.0214, 11.1250],
+      [45.47305, 10.92693],
+      [45.4183, 10.5592]
+    ];
+    const gardaAxis = [
+      [45.40, 10.66],
+      [45.55, 10.67],
+      [45.72, 10.72],
+      [45.88, 10.84]
+    ];
+
+    function distanceToLineNm(point, line) {
+      const referenceLat = point[0] * Math.PI / 180;
+      const project = ([lat, lon]) => [lon * 60 * Math.cos(referenceLat), lat * 60];
+      const p = project(point);
+      let minimum = Infinity;
+      for (let index = 0; index < line.length - 1; index += 1) {
+        const a = project(line[index]);
+        const b = project(line[index + 1]);
+        const dx = b[0] - a[0];
+        const dy = b[1] - a[1];
+        const lengthSquared = dx * dx + dy * dy;
+        const raw = lengthSquared ? ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / lengthSquared : 0;
+        const t = Math.max(0, Math.min(1, raw));
+        const x = a[0] + t * dx;
+        const y = a[1] + t * dy;
+        minimum = Math.min(minimum, Math.hypot(p[0] - x, p[1] - y));
+      }
+      return minimum;
+    }
+
+    places.forEach((place) => {
+      place.corridorNm = Math.min(distanceToLineNm(place.coords, route), distanceToLineNm(place.coords, gardaAxis));
+      place.inCorridor = place.corridorNm <= 15;
+      if (!place.access) {
+        place.access = place.type === "airport" ? (place.warn ? "ppr" : "guest") : "unknown";
+      }
+    });
+    L.polyline(route, { color: "#1f6f9f", weight: 3, opacity: 0.75, dashArray: "8 8" }).addTo(map);
+    L.polyline(gardaAxis, { color: "#315875", weight: 2, opacity: 0.55, dashArray: "3 7" }).addTo(map);
+
+    function markerIcon(place) {
+      const typeClass = typeClassForPlace(place);
+      const cls = `${typeClass}${place.warn ? " warn" : ""}`;
+      return L.divIcon({
+        className: "",
+        html: `<div class="marker ${cls}" data-label="${place.label}"></div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 28],
+        popupAnchor: [0, -26]
+      });
+    }
+
+    function fuelTag(place) {
+      const fuel = String(place.fuel || "").toUpperCase();
+      const verifiedFuel = place.fuelClass === "fuel" || place.fuelClass === "no";
+      const tags = [];
+
+      if (place.fuelClass === "fuel") {
+        const label = /100\s*LL/.test(fuel) ? "100LL" : "AVGAS";
+        tags.push(`<span class="tag ${label === "100LL" ? "avgas100" : "fuel"}">${label}</span>`);
+      } else if (place.fuelClass === "no") {
+        tags.push('<span class="tag no">NO AVGAS</span>');
+      }
+
+      if (verifiedFuel && /JET\s*A[\s-]?1/.test(fuel)) {
+        tags.push('<span class="tag jet">JET A-1</span>');
+      }
+      if (verifiedFuel && /(MO[\s-]?GAS|SUPER PLUS|BENZINA VERDE)/.test(fuel)) {
+        tags.push('<span class="tag mogas">MOGAS</span>');
+      }
+      if (verifiedFuel && /UNLEADED/.test(fuel)) {
+        tags.push('<span class="tag unleaded">BLEIFREI</span>');
+      }
+
+      return tags.length ? tags.join(" ") : '<span class="tag unknown">?</span>';
+    }
+
+    function deText(value) {
+      return String(value ?? "")
+        .replaceAll("Rückkehrbasis", "Rückkehrbasis")
+        .replaceAll("bestätigt", "bestätigt")
+        .replaceAll("Bestätigt", "Bestätigt")
+        .replaceAll("verfügbar", "verfügbar")
+        .replaceAll("Verfügbar", "Verfügbar")
+        .replaceAll("Verfügbarkeit", "Verfügbarkeit")
+        .replaceAll("Fuegbarkeit", "Fügbarkeit")
+        .replaceAll("prüfen", "prüfen")
+        .replaceAll("Prüfen", "Prüfen")
+        .replaceAll("klären", "klären")
+        .replaceAll("Klären", "Klären")
+        .replaceAll("Flüge", "Flüge")
+        .replaceAll("Flügel", "Flügel")
+        .replaceAll("für", "für")
+        .replaceAll("Für", "Für")
+        .replaceAll("über", "über")
+        .replaceAll("Über", "Über")
+        .replaceAll("öffentliche", "öffentliche")
+        .replaceAll("Öffentliche", "Öffentliche")
+        .replaceAll("Öffnungszeiten", "Öffnungszeiten")
+        .replaceAll("Südtirol", "Südtirol")
+        .replaceAll("möglich", "möglich")
+        .replaceAll("Koordinate nur Arbeitsnäherung", "Koordinate nur Arbeitsnäherung")
+        .replaceAll("Arbeitsnäherung", "Arbeitsnäherung")
+        .replaceAll("Präsident", "Präsident")
+        .replaceAll("Aktivitätszeiten", "Aktivitätszeiten")
+        .replaceAll("außerhalb", "außerhalb")
+        .replaceAll("außer", "außer")
+        .replaceAll("südöstlich", "südöstlich")
+        .replaceAll("südwestlicher", "südwestlicher")
+        .replaceAll("noerdlich", "nördlich")
+        .replaceAll("östlich", "östlich")
+        .replaceAll("grün", "grün")
+        .replaceAll("Grün", "Grün");
+    }
+
+    function xmlEscape(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&apos;");
+    }
+
+    function csvEscape(value) {
+      return `"${String(value ?? "").replaceAll('"', '""')}"`;
+    }
+
+    function dms(value, axis) {
+      const absolute = Math.abs(value);
+      const deg = Math.floor(absolute);
+      const minutesFull = (absolute - deg) * 60;
+      const min = Math.floor(minutesFull);
+      const sec = ((minutesFull - min) * 60).toFixed(2);
+      const suffix = axis === "lat"
+        ? (value >= 0 ? "N" : "S")
+        : (value >= 0 ? "E" : "W");
+      return `${deg}°${String(min).padStart(2, "0")}'${String(sec).padStart(5, "0")}"${suffix}`;
+    }
+
+    function decimalCoords(place) {
+      return `${place.coords[0].toFixed(6)}, ${place.coords[1].toFixed(6)}`;
+    }
+
+    function dmsCoords(place) {
+      return `${dms(place.coords[0], "lat")} ${dms(place.coords[1], "lon")}`;
+    }
+
+    function operatorPhone(place) {
+      const matches = String(place.contact || "").match(/(?:\+?\d[\d\s()./-]{5,}\d)/g);
+      return matches ? matches.map((phone) => phone.trim()).join("; ") : "noch nicht belastbar verifiziert";
+    }
+
+    function waypointName(place) {
+      return place.name.startsWith(place.label) ? place.name : `${place.label} ${place.name}`;
+    }
+
+    function placeSources(place) {
+      const sources = [{ label: sourceLabel(place, true), url: place.source }, ...(place.sources || [])];
+      return sources.filter((source, index) => source.url && sources.findIndex((item) => item.url === source.url) === index);
+    }
+
+    function sourceLinksHtml(place, longLabel = false) {
+      return placeSources(place)
+        .map((source, index) => `<a href="${source.url}" target="_blank" rel="noopener">${index === 0 && longLabel ? sourceLabel(place) : source.label}</a>`)
+        .join("");
+    }
+
+    function allSourceUrls(place) {
+      return placeSources(place).map((source) => source.url).join(" | ");
+    }
+
+    function phoneHref(phone) {
+      const first = phone.split(";")[0] || "";
+      const normalized = first.replace(/[^\d+]/g, "");
+      return normalized && normalized !== "noch" ? `tel:${normalized}` : "";
+    }
+
+    function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text);
+        return;
+      }
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.style.position = "fixed";
+      area.style.left = "-9999px";
+      document.body.appendChild(area);
+      area.focus();
+      area.select();
+      document.execCommand("copy");
+      document.body.removeChild(area);
+    }
+
+    window.copyCoords = function(index) {
+      const place = places[index];
+      copyText(`${place.name}: ${decimalCoords(place)} / ${dmsCoords(place)}`);
+    };
+
+    window.copyActiveSummary = function(index) {
+      const place = places[index];
+      copyText([
+        waypointName(place),
+        `Koordinaten: ${decimalCoords(place)} / ${dmsCoords(place)}`,
+        `Fuel: ${deText(place.fuel)}`,
+        `Telefon: ${operatorPhone(place)}`,
+        `PPR: ${deText(place.ppr)}`,
+        ...(place.officialData ? [`Offizielle Platzdaten: ${place.officialData}`] : []),
+        `Quellen: ${allSourceUrls(place)}`
+      ].join("\n"));
+    };
+
+    function downloadFile(filename, mimeType, content) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    window.downloadWaypointsGpx = function() {
+      const waypoints = places.map((place) => {
+        const desc = [
+          `Typ: ${place.type}`,
+          `Status: ${deText(place.status)}`,
+          `Fuel: ${deText(place.fuel)}`,
+          `Zeiten: ${deText(place.hours)}`,
+          `PPR: ${deText(place.ppr)}`,
+          `Telefon: ${operatorPhone(place)}`,
+          `Kontakt: ${deText(place.contact)}`,
+          ...(place.officialData ? [`Offizielle Platzdaten: ${place.officialData}`] : []),
+          `Korridor: ${place.corridorNm.toFixed(1)} NM`,
+          `Quellen: ${allSourceUrls(place)}`
+        ].join(" | ");
+        return `  <wpt lat="${place.coords[0].toFixed(6)}" lon="${place.coords[1].toFixed(6)}">
+    <name>${xmlEscape(waypointName(place))}</name>
+    <desc>${xmlEscape(desc)}</desc>
+  </wpt>`;
+      }).join("\n");
+      const gpx = `<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Codex Helikopter Italien Briefing" xmlns="http://www.topografix.com/GPX/1/1">
+${waypoints}
+</gpx>
+`;
+      downloadFile("helikopter-italien-waypoints.waypoints.gpx", "application/gpx+xml;charset=utf-8", gpx);
+    };
+
+    window.downloadWaypointsCsv = function() {
+      const header = ["name", "code", "type", "lat", "lon", "dms", "corridor_nm", "in_15nm_corridor", "access", "fuel", "phone", "contact", "ppr", "hours", "official_data", "sources"];
+      const rows = places.map((place) => [
+        place.name,
+        place.label,
+        place.type,
+        place.coords[0].toFixed(6),
+        place.coords[1].toFixed(6),
+        dmsCoords(place),
+        place.corridorNm.toFixed(1),
+        place.inCorridor ? "yes" : "no",
+        place.access,
+        deText(place.fuel),
+        operatorPhone(place),
+        deText(place.contact),
+        deText(place.ppr),
+        deText(place.hours),
+        deText(place.officialData || ""),
+        allSourceUrls(place)
+      ].map(csvEscape).join(","));
+      downloadFile("helikopter-italien-waypoints.csv", "text/csv;charset=utf-8", `${header.join(",")}\n${rows.join("\n")}\n`);
+    };
+
+    const markers = new Map();
+    const markerBounds = [];
+    let currentFilter = "all";
+    let activeIndex = 0;
+
+    function typeLabel(place) {
+      if (place.type === "airport") return "Flugplatz";
+      if (place.type === "field") {
+        return /AVIOSUPERFICIE/i.test(`${place.status} ${place.officialData || ""}`)
+          ? "Aviosuperficie"
+          : "Campo di volo";
+      }
+      if (place.category === "heliport") return "Hubschrauberlandeplatz / Heliport";
+      return "Elisuperficie";
+    }
+
+    function isAviosurface(place) {
+      return place.type === "field" && /AVIOSUPERFICIE/i.test(`${place.status} ${place.officialData || ""}`);
+    }
+
+    function typeClassForPlace(place) {
+      if (place.type === "airport") return "airport";
+      if (place.type === "field") return isAviosurface(place) ? "aviosurface" : "flightfield";
+      return "helipad";
+    }
+
+    function typeClass(place) {
+      return typeClassForPlace(place);
+    }
+
+    function sourceLabel(place, short = false) {
+      const officialWebAai = /webaai\.it\/it\/(avio|eli)superfici-enac\//.test(place.source);
+      if (officialWebAai) return short ? "ENAC-Platzseite" : "Offizielle ENAC-Platzseite öffnen";
+      return short ? "Platzquelle" : "Direkte Platzquelle öffnen";
+    }
+
+    function accessTag(place) {
+      if (place.access === "guest") return '<span class="tag access-guest">GAST OK</span>';
+      if (place.access === "ppr") return '<span class="tag warn">PPR</span>';
+      return '<span class="tag access-open">OFFEN</span>';
+    }
+
+    function corridorTag(place) {
+      return place.inCorridor
+        ? '<span class="tag corridor">≤15 NM</span>'
+        : '<span class="tag regional">REGIONAL</span>';
+    }
+
+    function filterMatch(place, query, filter) {
+      const haystack = [
+        place.name,
+        place.label,
+        place.fuel,
+        place.status,
+        place.hours,
+        place.ppr,
+        place.contact,
+        place.officialData || ""
+      ].join(" ").toLowerCase();
+      const normalizedQuery = query.trim().toLowerCase();
+      const textMatch = !normalizedQuery || haystack.includes(normalizedQuery);
+      if (!textMatch) return false;
+      if (filter === "all") return true;
+      if (filter === "fuel") return place.fuelClass === "fuel";
+      if (filter === "ppr") return Boolean(place.warn);
+      if (filter === "corridor") return place.inCorridor;
+      return place.type === filter;
+    }
+
+    function activeQuery() {
+      const mapSearch = document.getElementById("searchInput");
+      const listSearch = document.getElementById("listSearchInput");
+      return (mapSearch?.value || listSearch?.value || "").trim();
+    }
+
+    function popupHtml(place, index) {
+      const phone = operatorPhone(place);
+      const phoneUrl = phoneHref(phone);
+      const phoneDisplay = phoneUrl ? `<a href="${phoneUrl}">${phone}</a>` : phone;
+      const googleMaps = `https://www.google.com/maps/search/?api=1&query=${place.coords[0]},${place.coords[1]}`;
+      const osm = `https://www.openstreetmap.org/?mlat=${place.coords[0]}&mlon=${place.coords[1]}#map=14/${place.coords[0]}/${place.coords[1]}`;
+      return `
+          <div class="popup-title">${place.name}</div>
+          ${fuelTag(place)} ${accessTag(place)} ${corridorTag(place)}
+          <div class="popup-grid">
+            <div>Status</div><div>${deText(place.status)}</div>
+            <div>Routenkorridor</div><div>${place.corridorNm.toFixed(1)} NM ${place.inCorridor ? "(innerhalb 15 NM)" : "(regionaler Zusatz)"}</div>
+            <div>Koordinaten</div><div>${decimalCoords(place)}<br>${dmsCoords(place)}</div>
+            <div>Fuel</div><div>${deText(place.fuel)}</div>
+            <div>Zeiten</div><div>${deText(place.hours)}</div>
+            <div>PPR</div><div>${deText(place.ppr)}</div>
+            <div>Betreiber-Tel.</div><div>${phoneDisplay}</div>
+            <div>Kontakt</div><div>${deText(place.contact)}</div>
+            ${place.officialData ? `<div>Offizielle Platzdaten</div><div>${deText(place.officialData)}</div>` : ""}
+          </div>
+          <div class="popup-actions">
+            <button type="button" onclick="copyCoords(${index})">Koordinaten kopieren</button>
+            <a href="${googleMaps}" target="_blank" rel="noopener">Google Maps</a>
+            <a href="${osm}" target="_blank" rel="noopener">OSM</a>
+            ${sourceLinksHtml(place)}
+          </div>
+        `;
+    }
+
+    places.forEach((place, index) => {
+      markerBounds.push(place.coords);
+      const marker = L.marker(place.coords, { icon: markerIcon(place) })
+        .bindPopup(popupHtml(place, index));
+      marker.on("click", () => selectPlace(index, false));
+      markers.set(index, marker);
+      marker.addTo(map);
+    });
+    map.fitBounds(markerBounds, { padding: [40, 40] });
+
+    function tagLine(place) {
+      return `${fuelTag(place)} ${accessTag(place)} ${corridorTag(place)} <span class="tag ${typeClass(place)}">${typeLabel(place)}</span>`;
+    }
+
+    function renderSelected(index) {
+      activeIndex = index;
+      const place = places[index];
+      const card = document.getElementById("selectedCard");
+      const phone = operatorPhone(place);
+      const phoneUrl = phoneHref(phone);
+      const phoneDisplay = phoneUrl ? `<a href="${phoneUrl}">${phone}</a>` : phone;
+      card.innerHTML = `
+        <div class="selected-title">
+          <b>${place.name}</b>
+          <span class="code-pill ${typeClass(place)}">${place.label}</span>
+        </div>
+        <div class="item-tags">${tagLine(place)}</div>
+        <div class="detail-grid">
+          <div class="detail-row"><span>Koordinaten</span><div>${decimalCoords(place)}<br>${dmsCoords(place)}</div></div>
+          <div class="detail-row"><span>Korridor</span><div>${place.corridorNm.toFixed(1)} NM ${place.inCorridor ? "zur Route/Gardasee-Achse" : "· regionaler Zusatz"}</div></div>
+          <div class="detail-row"><span>Fuel</span><div>${deText(place.fuel)}</div></div>
+          <div class="detail-row"><span>PPR</span><div>${deText(place.ppr)}</div></div>
+          <div class="detail-row"><span>Telefon</span><div>${phoneDisplay}</div></div>
+          ${place.officialData ? `<div class="detail-row"><span>Offizielle Platzdaten</span><div>${deText(place.officialData)}</div></div>` : ""}
+        </div>
+        <div class="popup-actions">
+          <button type="button" onclick="copyActiveSummary(${index})">Briefingdaten kopieren</button>
+          ${sourceLinksHtml(place, true)}
+        </div>
+      `;
+    }
+
+    function renderList() {
+      const list = document.getElementById("placeList");
+      const query = activeQuery();
+      list.innerHTML = "";
+      places.forEach((place, index) => {
+        if (!filterMatch(place, query, currentFilter)) return;
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = `item${index === activeIndex ? " active" : ""}`;
+        row.innerHTML = `
+          <div class="item-head">
+            <b>${place.name}</b>
+            <span class="code-pill ${typeClass(place)}">${place.label}</span>
+          </div>
+          <div class="item-tags">${tagLine(place)}</div>
+          <span class="item-meta">${deText(place.status)}</span>
+          <span class="item-meta">${decimalCoords(place)} · Tel. ${operatorPhone(place)}</span>
+        `;
+        row.addEventListener("click", () => selectPlace(index, true));
+        list.appendChild(row);
+      });
+      if (!list.children.length) {
+        const empty = document.createElement("div");
+        empty.className = "item";
+        empty.innerHTML = "<b>Keine Treffer</b><span class=\"item-meta\">Filter oder Suche anpassen.</span>";
+        list.appendChild(empty);
+      }
+    }
+
+    function sourceMatch(place, query) {
+      const haystack = [
+        place.name,
+        place.label,
+        place.type,
+        place.fuel,
+        place.status,
+        place.contact,
+        place.officialData || "",
+        allSourceUrls(place)
+      ].join(" ").toLowerCase();
+      return !query || haystack.includes(query);
+    }
+
+    function renderSources() {
+      const list = document.getElementById("sourceList");
+      const input = document.getElementById("sourceSearchInput");
+      if (!list) return;
+      const query = (input?.value || "").trim().toLowerCase();
+      list.innerHTML = "";
+      places.forEach((place) => {
+        if (!sourceMatch(place, query)) return;
+        const card = document.createElement("article");
+        card.className = "source-card";
+        card.innerHTML = `
+          <div class="item-tags">
+            <span class="code-pill ${typeClass(place)}">${place.label}</span>
+            ${fuelTag(place)}
+            ${accessTag(place)}
+            ${corridorTag(place)}
+          </div>
+          <b>${place.name}</b>
+          <p>${deText(place.status)}</p>
+          ${place.officialData ? `<p>${deText(place.officialData)}</p>` : ""}
+          <p>Kontakt: ${deText(place.contact)}</p>
+          <div class="source-strip">${sourceLinksHtml(place, true)}</div>
+        `;
+        list.appendChild(card);
+      });
+      if (!list.children.length) {
+        const empty = document.createElement("article");
+        empty.className = "source-card";
+        empty.innerHTML = "<b>Keine Quellen gefunden</b><p>Suchbegriff anpassen.</p>";
+        list.appendChild(empty);
+      }
+    }
+
+    function renderMarkers() {
+      const query = activeQuery();
+      places.forEach((place, index) => {
+        const marker = markers.get(index);
+        const visible = filterMatch(place, query, currentFilter);
+        if (visible && !map.hasLayer(marker)) marker.addTo(map);
+        if (!visible && map.hasLayer(marker)) marker.remove();
+      });
+    }
+
+    function selectPlace(index, openMap) {
+      renderSelected(index);
+      renderList();
+      document.getElementById("airportSelect").value = String(index);
+      if (openMap) {
+        showTab("mapPage");
+        setTimeout(() => {
+          map.invalidateSize();
+          map.setView(places[index].coords, 12);
+          markers.get(index).openPopup();
+        }, 40);
+      }
+    }
+
+    function applyFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll(".filter-button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.filter === filter);
+      });
+      renderMarkers();
+      renderList();
+    }
+
+    function showTab(tabId) {
+      document.querySelectorAll(".tab-button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.tab === tabId);
+      });
+      document.querySelectorAll(".page").forEach((page) => {
+        page.classList.toggle("active", page.id === tabId);
+      });
+      if (tabId === "mapPage") {
+        setTimeout(() => map.invalidateSize(), 60);
+      }
+    }
+
+    function populateSelect() {
+      const select = document.getElementById("airportSelect");
+      places.forEach((place, index) => {
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = `${place.label} · ${place.name}`;
+        select.appendChild(option);
+      });
+    }
+
+    function hydrateStats() {
+      document.getElementById("statPlaces").textContent = places.length;
+      document.getElementById("statFuel").textContent = places.filter((place) => place.fuelClass === "fuel").length;
+      document.getElementById("statCorridor").textContent = places.filter((place) => place.inCorridor).length;
+      document.getElementById("statPpr").textContent = places.filter((place) => place.warn).length;
+      document.getElementById("exportPlaceCount").textContent = places.length;
+    }
+
+    document.querySelectorAll(".tab-button").forEach((button) => {
+      button.addEventListener("click", () => showTab(button.dataset.tab));
+    });
+    document.querySelectorAll(".filter-button").forEach((button) => {
+      button.addEventListener("click", () => applyFilter(button.dataset.filter));
+    });
+    document.getElementById("searchInput").addEventListener("input", (event) => {
+      document.getElementById("listSearchInput").value = event.target.value;
+      renderMarkers();
+      renderList();
+    });
+    document.getElementById("listSearchInput").addEventListener("input", (event) => {
+      document.getElementById("searchInput").value = event.target.value;
+      renderMarkers();
+      renderList();
+    });
+    document.getElementById("airportSelect").addEventListener("change", (event) => {
+      if (event.target.value !== "") selectPlace(Number(event.target.value), true);
+    });
+    document.getElementById("sourceSearchInput").addEventListener("input", renderSources);
+
+    populateSelect();
+    hydrateStats();
+    renderSelected(0);
+    renderList();
+    renderSources();
+  </script>
+</body>
+</html>
