@@ -1030,14 +1030,14 @@
     .aviation-pin.medium_airport .aviation-symbol,
     .aviation-pin.small_airport .aviation-symbol,
     .aviation-pin.helipad .aviation-symbol { width: 31px; height: 31px; border: 0; box-shadow: none; }
-    .aviation-pin .place-symbol-aerodrome circle { fill: #fff; stroke: #143f75; stroke-width: 2; }
-    .aviation-pin .place-symbol-aerodrome path { fill: none; stroke: #143f75; stroke-width: 2.4; stroke-linecap: round; }
-    .aviation-pin .place-symbol-aerodrome.international circle:first-child { stroke-width: 2.4; }
-    .aviation-pin .place-symbol-glider path { fill: #fff; stroke: #a3318e; stroke-width: 2.2; stroke-linejoin: round; }
-    .aviation-pin .place-symbol-field rect { fill: #fff; stroke: currentColor; stroke-width: 2; }
-    .aviation-pin .place-symbol-field path { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
-    .aviation-pin .place-symbol-heli circle { fill: #fff; stroke: #0879aa; stroke-width: 1.7; }
-    .aviation-pin .place-symbol-heli path { fill: none; stroke: #0879aa; stroke-width: 2.4; stroke-linecap: round; }
+    .aviation-pin .place-symbol-aerodrome .symbol-ring,
+    .aviation-pin .place-symbol-private circle,
+    .aviation-pin .place-symbol-glider circle,
+    .aviation-pin .place-symbol-heli circle { fill: #fff; stroke: #164778; stroke-width: 2.2; }
+    .aviation-pin .place-symbol-aerodrome .symbol-ticks,
+    .aviation-pin .place-symbol-private path,
+    .aviation-pin .place-symbol-heli path { fill: none; stroke: #164778; stroke-width: 2.2; stroke-linecap: square; }
+    .aviation-pin .place-symbol-aerodrome .symbol-runway { fill: none; stroke: #164778; stroke-width: 4.4; stroke-linecap: butt; }
     .aviation-pin.aviosurface .aviation-symbol { transform: none; }
     #map.compact-map .aviation-label { display: none; }
     #map.compact-map .aviation-pin.major .aviation-label { display: block; }
@@ -1052,19 +1052,18 @@
     #map.compact-map .aviation-pin .aviation-symbol svg { width: 22px; height: 22px; }
     #map.compact-map .aviation-pin.major .aviation-symbol svg,
     #map.compact-map .aviation-pin.large_airport .aviation-symbol svg { width: 27px; height: 27px; }
-    .nav-marker { display: grid; justify-items: center; width: 74px; transform: translateX(-50%); color: #164778; pointer-events: none; }
-    .nav-marker .nav-symbol { position: relative; display: grid; place-items: center; width: 25px; height: 25px; border: 2px solid currentColor; background: #fff; box-shadow: 0 1px 5px #16394d66; pointer-events: auto; }
-    .nav-marker.vor .nav-symbol { border-radius: 50%; }
-    .nav-marker.vor .nav-symbol::before { content: ""; width: 17px; height: 17px; border: 2px solid currentColor; border-radius: 50%; }
-    .nav-marker.vor-dme .nav-symbol::after { content: ""; position: absolute; width: 30px; height: 30px; border: 1.5px solid currentColor; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: transparent; }
-    .nav-marker.ndb { color: #705026; }
-    .nav-marker.ndb .nav-symbol { border-radius: 50%; border-style: dotted; }
-    .nav-marker.ndb .nav-symbol::before { content: "•"; font-size: 19px; line-height: 1; }
-    .nav-marker.fix { color: #42607c; }
-    .nav-marker.fix .nav-symbol { width: 0; height: 0; border-left: 11px solid transparent; border-right: 11px solid transparent; border-bottom: 19px solid currentColor; border-top: 0; background: none; box-shadow: none; position: relative; }
-    .nav-marker.fix .nav-symbol::after { content: ""; position: absolute; left: -7px; top: 5px; border-left: 7px solid transparent; border-right: 7px solid transparent; border-bottom: 12px solid #fff; }
+    .nav-marker { display: grid; justify-items: center; width: 82px; transform: translateX(-50%); color: #392b92; pointer-events: none; }
+    .nav-marker .nav-symbol { display: grid; place-items: center; width: 34px; height: 34px; background: rgba(255,255,255,.72); filter: drop-shadow(0 1px 1px #fff) drop-shadow(0 1px 2px #162f4970); pointer-events: auto; }
+    .nav-marker.vor-dme .nav-symbol { width: 38px; }
+    .nav-marker .nav-symbol svg { width: 100%; height: 100%; overflow: visible; }
+    .nav-marker .nav-outline, .nav-marker .ndb-ring { fill: #fff; stroke: currentColor; stroke-width: 2; vector-effect: non-scaling-stroke; }
+    .nav-marker .nav-fill { fill: currentColor; }
+    .nav-marker .ndb-ring { fill: none; stroke-linecap: round; }
+    .nav-marker .ndb-ring.outer { stroke-dasharray: .6 2.3; stroke-width: 2.3; }
+    .nav-marker .ndb-ring.inner { stroke-dasharray: .6 2; stroke-width: 2; }
+    .nav-marker.fix .nav-symbol { width: 27px; height: 27px; background: transparent; }
     .nav-marker .nav-label { max-width: 74px; padding: 2px 4px; margin-top: 2px; border-radius: 3px; background: rgba(255,255,255,.95); font: 800 10px/1.1 sans-serif; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; pointer-events: none; }
-    #map.compact-map .nav-marker .nav-label { display: none; }
+    #map.compact-map .nav-marker .nav-label, #map.nav-labels-hidden .nav-marker .nav-label { display: none; }
     .camera-marker .bearing { display: none; }
     .camera-marker .view-sector { position: absolute; left: 50%; top: 50%; width: 51px; height: 51px; transform: translate(-50%,-50%) rotate(var(--bearing)); pointer-events: none; overflow: visible; filter: drop-shadow(0 1px 1px #ffffff); }
     .camera-marker .view-sector path { fill: #0b759d66; stroke: #075377; stroke-width: 2; }
@@ -1289,7 +1288,7 @@
                   <div class="dock-options layer-toggles">
                     <label><input type="checkbox" id="vorLayer"> VOR / DME</label>
                     <label><input type="checkbox" id="ndbLayer"> NDB</label>
-                    <label><input type="checkbox" id="fixLayer"> GPS / RNAV</label>
+                    <label><input type="checkbox" id="fixLayer"> VFR-Punkte / RNAV</label>
                     <label><input type="checkbox" id="ofmLayer"> OpenFlightMaps VFR</label>
                   </div>
                   <small id="navigationMeta">Datenstand und Quellen im Punktdetail</small>
@@ -1321,10 +1320,10 @@
               <div class="legend-row"><span class="swatch flightfield"></span><span><b>Campo di volo</b> – oranges Quadrat; VDS-/UL-Fluggelände, R44 ausdrücklich bestätigen</span></div>
               <div class="legend-row"><span class="swatch heli"></span><span><b>Helikopterfläche</b> – rundes H; Heliport oder Elisuperficie laut Platzdetail</span></div>
               <div class="legend-row"><span class="legend-map-symbol glider-symbol">⋈</span><span><b>Segelflugbetrieb</b> – magentafarbenes Doppelkegel-Symbol nur bei entsprechend belegter Platzklassifikation</span></div>
-              <div class="legend-row"><span class="nav-symbol-legend">◎</span><span><b>VOR / DME</b> – runder Sender, DME mit äußerem Ring</span></div>
-              <div class="legend-row"><span class="nav-symbol-legend">◉</span><span><b>NDB</b> – punktförmiges Funkfeuer im Kreis</span></div>
-              <div class="legend-row"><span class="nav-symbol-legend">△</span><span><b>GPS / RNAV</b> – offenes Dreieck; NOAA-Ausschnitt erst bei näherem Zoom</span></div>
-              <div class="legend-row"><span></span><span>Darstellung in enger V500-/ICAO-Kartenanalogie; keine amtliche DFS-/ENAV-Karte. Pistenoberfläche und Segelflugbetrieb werden nur bei belegten Quelldaten dargestellt. <a href="https://www.swisstopo.admin.ch/dam/de/sd-web/oAbJkfKRzznX/LegendeICAO_A4_2026.pdf" target="_blank" rel="noopener">Amtliche ICAO-Zeichenerklärung 2026</a></span></div>
+              <div class="legend-row"><span class="nav-symbol-legend">⬡</span><span><b>VOR</b> – ICAO-Sechseck mit Mittelpunkt; VOR/DME zusätzlich im Rechteck</span></div>
+              <div class="legend-row"><span class="nav-symbol-legend">◉</span><span><b>NDB</b> – Mittelpunkt mit zwei gepunkteten Kreisringen</span></div>
+              <div class="legend-row"><span class="nav-symbol-legend">▲</span><span><b>VFR-Punkte / RNAV</b> – Meldepunktdreieck; Kennungen ab näherem Zoom</span></div>
+              <div class="legend-row"><span></span><span>Flugplatz-, Funkfeuer- und Meldepunktsymbole folgen den Formen der amtlichen ICAO-Zeichenerklärung 2026. Die Karte bleibt eine Planungshilfe und keine amtliche DFS-/ENAV-Karte. <a href="https://www.swisstopo.admin.ch/dam/de/sd-web/oAbJkfKRzznX/LegendeICAO_A4_2026.pdf" target="_blank" rel="noopener">Amtliche ICAO-Zeichenerklärung 2026</a></span></div>
               <div class="legend-row"><span class="tag avgas100">100LL</span><span>AVGAS 100LL ausdrücklich belegt; Blau folgt der Kraftstofffärbung</span></div>
               <div class="legend-row"><span class="tag fuel">AVGAS</span><span>AVGAS belegt, Sorte nicht eindeutig genannt</span></div>
               <div class="legend-row"><span class="tag jet">JET A-1</span><span>Turbinenkraftstoff belegt; Schwarz folgt der Kennzeichnung an Betankungsanlagen</span></div>
@@ -1776,13 +1775,11 @@
 
     function markerSymbol(place) {
       const description = `${place.name} ${place.status || ""} ${place.officialData || ""}`;
-      if (place.type === "helipad") return '<svg class="place-symbol-heli" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13"/><circle cx="16" cy="16" r="10"/><path d="M11 9v14M21 9v14M11 16h10"/></svg>';
-      if (/SEGLER|SEGELFLUG|GLIDER/i.test(description)) return '<svg class="place-symbol-glider" viewBox="0 0 36 28" aria-hidden="true"><path d="M2 14h9l4-6h6l4 6h9l-9 3-4 6h-6l-4-6z"/></svg>';
-      if (place.type === "airport" && place.referenceType === "large_airport") return '<svg class="place-symbol-aerodrome international" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="14"/><circle cx="18" cy="18" r="10"/><path d="M7 18h22M12 9l12 18"/></svg>';
-      if (place.type === "airport" && place.referenceType === "medium_airport") return '<svg class="place-symbol-aerodrome regional" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="13"/><path d="M7 18h22M12 10l12 16"/></svg>';
-      if (place.type === "airport") return '<svg class="place-symbol-aerodrome airfield" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="12"/><path d="M7 18h22"/></svg>';
-      if (place.type === "field") return '<svg class="place-symbol-field" viewBox="0 0 32 32" aria-hidden="true"><rect x="6" y="6" width="20" height="20" rx="2" transform="rotate(45 16 16)"/><path d="M8 16h16"/></svg>';
-      return '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11"/><path d="M7 16h18"/></svg>';
+      if (place.type === "helipad") return '<svg class="place-symbol-heli" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="11"/><path d="M13 11v14M23 11v14M13 18h10"/></svg>';
+      if (/SEGLER|SEGELFLUG|GLIDER/i.test(description)) return '<svg class="place-symbol-glider" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="11"/></svg>';
+      if (place.type === "airport") return '<svg class="place-symbol-aerodrome" viewBox="0 0 36 36" aria-hidden="true"><circle class="symbol-ring" cx="18" cy="18" r="9.5"/><path class="symbol-ticks" d="M18 3v5M18 28v5M3 18h5M28 18h5"/><path class="symbol-runway" d="M11 25 25 11"/></svg>';
+      if (place.type === "field" || place.type === "aviosurface") return '<svg class="place-symbol-private" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="10.5"/><path d="M10 26 26 10"/></svg>';
+      return '<svg class="place-symbol-private" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="10.5"/><path d="M10 26 26 10"/></svg>';
     }
 
     function markerIcon(place) {
@@ -2515,7 +2512,7 @@ ${waypoints}
   </script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script>window.lucide?.createIcons();</script>
-  <script src="navaids.js"></script>
+  <script src="navaids.js?v=20260925b"></script>
   <script src="planner.js"></script>
 </body>
 </html>

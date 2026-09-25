@@ -13,6 +13,7 @@ Interaktive Europa-Beta für VFR-Piloten mit Schwerpunkt Italien, Deutschland un
 - Druckansicht als PDF mit Etappen und Platzinformationen zu Start, Landestopps und Ziel.
 - GPX-Route (`rtept`) für SkyDemon und separate Platz-Wegpunkte (`wpt`); CSV mit Entfernungen und Zeiten. Export jeweils Route, Plätze oder beides; Plätze aus dem gewählten Korridor oder dem aktuellen Kartenausschnitt.
 - Zuschaltbar: NOAA-METAR/TAF, OGN-Verkehr mit Geräte-Opt-in-Prüfung, foto-webcam.eu-Kameras und eine transparente OpenFlightMaps-VFR-Ebene. Die Wetterkategorien sind US-METAR-Kategorien, keine Entscheidung über italienische VFR-Minima.
+- Navigationshilfen: VOR, VOR/DME und NDB sowie 896 OpenFlightMaps-VFR-Melde-/Streckenpunkte für Deutschland und Italien plus veröffentlichte LOWI-RNP-Punkte. Der OFMX-Stand wird mit AIRAC-Zyklus angezeigt; Kennungen erscheinen ab näherem Zoom.
 - Kartenlineal mit beliebig vielen Messpunkten, Distanz und rechtweisendem Anfangskurs je Abschnitt sowie Gesamtstrecke.
 
 ## Dateien
@@ -22,7 +23,9 @@ Interaktive Europa-Beta für VFR-Piloten mit Schwerpunkt Italien, Deutschland un
 - `server.py`: lokaler HTTP- und Wetter-/OGN-Dienst
 - `data/foto-webcams.json`: öffentlicher Kameraindex mit Quelle und Blickrichtung
 - `data/route-airports.json`: Flugplatzcode-Index aus den öffentlichen OurAirports-Daten (keine amtliche ICAO-Code-Liste)
+- `data/navigation-points.json`: kompakter OpenFlightMaps-OFMX-Index der VFR-Melde-/Streckenpunkte mit AIRAC-Stand
 - `scripts/build_route_airports.py`: reproduzierbarer Import des Code-Indexes
+- `scripts/build_ofm_navigation.py`: reproduzierbarer AIRAC-Import der veröffentlichten ED-/LI-OFMX-Snapshots
 - `scripts/scan_foto_webcams.py`: reproduzierbarer Kameraindex-Import
 - `data/webaai-public-scan.json`: öffentlicher WebAAI/ENAC-Scan für ganz Italien
 - `data/webaai-public-scan.csv`: CSV-Version des WebAAI/ENAC-Scans
@@ -36,7 +39,7 @@ Interaktive Europa-Beta für VFR-Piloten mit Schwerpunkt Italien, Deutschland un
 
 Arbeitsunterlage, keine Navigationsdaten und kein operatives Flight Briefing. ENAC/WebAAI-Daten werden mit Quellenlink und Abrufstand geführt, Kontakte/Services/Obstacles können registrierungspflichtig sein. Alle Angaben vor dem Flug mit aktueller AIP, NOTAM/PIB, Wetter, Betreiber/PPR, Fuel-Verfügbarkeit und den einschlägigen Genehmigungen abgleichen. Die Flugvorbereitung und Entscheidung verbleiben beim verantwortlichen Piloten.
 
-Die freie Lesbarkeit einer Website ist keine Wiederverwendungslizenz. RadarVirtuel-API, openAIP-Datenübernahme und EDDH-PIREP-Zusammenfassungen bleiben bis zur Klärung der Nutzungsrechte aus. Auch der Ausbau um Pflichtmeldepunkte, Funk-/Luftraumgrenzen und Navigationseinrichtungen braucht eine verlässliche, aktualisierbare Datenquelle.
+Die freie Lesbarkeit einer Website ist keine Wiederverwendungslizenz. RadarVirtuel-API, openAIP-Datenübernahme und EDDH-PIREP-Zusammenfassungen bleiben bis zur Klärung der Nutzungsrechte aus. OpenFlightMaps-Punkte und -Kacheln werden mit Quelle, AIRAC-Stand und ausdrücklichem Nicht-Navigationshinweis geführt.
 
 Die optionale OpenFlightMaps-Ebene nutzt die von OpenFlightMaps veröffentlichten EPSG:3857-Kacheln und nennt die Quelle sichtbar in der Kartenattribution. OpenFlightMaps beschreibt die Daten selbst als nicht zertifiziert und nur als ergänzende Information; die Ebene bleibt deshalb standardmäßig ausgeschaltet und ersetzt weder AIP/NOTAM noch ein zugelassenes Navigations- oder Flugplanungssystem.
 
