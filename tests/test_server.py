@@ -58,6 +58,13 @@ class OgnPrivacyTests(unittest.TestCase):
         _, position = server.parse_beacon(BEACON, devices)
         self.assertEqual(position["category"], "helicopter")
 
+    def test_known_fixed_wing_model_overrides_wrong_helicopter_category(self):
+        for model in ("WT9 Dynamic", "A22 Foxbat", "R300"):
+            with self.subTest(model=model):
+                devices = {("F", "DDDEAD"): {"tracked": "Y", "identified": "Y", "registration": "D-TEST", "aircraft_type": "3", "aircraft_model": model}}
+                _, position = server.parse_beacon(BEACON, devices)
+                self.assertEqual(position["category"], "plane")
+
 
 class TrafficMergeTests(unittest.TestCase):
     def test_adsb_normalization_and_stale_filter(self):

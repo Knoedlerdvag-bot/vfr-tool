@@ -1,6 +1,6 @@
-# VFR Italia - Flugplätze & Landeplätze
+# flugschüler.de — VFR Flight Planner
 
-Interaktive Arbeitskarte für VFR-Piloten in Italien. Start, Ziel, Überflugpunkte und echte Landestopps sind frei wählbar. Die App kombiniert kuratierte Platzdaten mit einem öffentlichen ENAC/WebAAI-Scan für Avio-/Idro-/Elisuperfici in ganz Italien.
+Interaktive Europa-Beta für VFR-Piloten mit Schwerpunkt Italien, Deutschland und Österreich. Frankreich, Spanien und Portugal sind als nächste Ausbaustufen vorgesehen. Start, Ziel, Überflugpunkte und echte Landestopps sind frei wählbar. Die App kombiniert kuratierte Platzdaten mit öffentlichen Verzeichnissen; sie ersetzt keine operative Flugvorbereitung.
 
 ## Lokal starten
 

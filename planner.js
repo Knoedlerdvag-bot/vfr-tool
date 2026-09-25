@@ -90,18 +90,27 @@
       if (sequence && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         const targetIndex = Math.max(0, flapWheel.indexOf(character));
         const startIndex = (targetIndex + 3 + index * 5) % flapWheel.length;
-        const wheelSequence = Array.from({ length: flapWheel.length }, (_, step) => flapWheel[(startIndex + step) % flapWheel.length]);
+        const wheelSequence = Array.from({ length: 16 }, (_, step) => flapWheel[(startIndex + step * 3) % flapWheel.length]);
         wheelSequence.push(character);
         const advance = (step = 0) => {
-          if (generation !== boardAnimationGeneration || !tile.isConnected) return;
+          if (!tile.isConnected) return;
+          if (generation !== boardAnimationGeneration) {
+            glyph.textContent = character;
+            tile.classList.remove("wheel-step-a", "wheel-step-b");
+            return;
+          }
           glyph.textContent = wheelSequence[step];
-          tile.classList.remove("wheel-step");
-          void tile.offsetWidth;
-          tile.classList.add("wheel-step");
-          if (step + 1 < wheelSequence.length) setTimeout(() => advance(step + 1), 52);
-          else setTimeout(() => tile.classList.remove("wheel-step"), 60);
+          tile.classList.remove("wheel-step-a", "wheel-step-b");
+          tile.classList.add(step % 2 ? "wheel-step-a" : "wheel-step-b");
+          if (step + 1 < wheelSequence.length) setTimeout(() => advance(step + 1), 76);
+          else setTimeout(() => tile.classList.remove("wheel-step-a", "wheel-step-b"), 80);
         };
         setTimeout(advance, index * 17);
+        setTimeout(() => {
+          if (!tile.isConnected) return;
+          glyph.textContent = character;
+          tile.classList.remove("wheel-step-a", "wheel-step-b");
+        }, 2200 + index * 17);
       }
       return tile;
     }));
@@ -191,7 +200,7 @@
     const departureSun = sunTimes(departure, resolvedPoints[0].coords);
     const arrivalSun = sunTimes(arrival, resolvedPoints.at(-1).coords);
     const setSunEvent = (prefix, date, code) => {
-      const label = prefix === "boardSunrise" ? "SUNRISE" : "SUNSET";
+      const label = prefix === "boardSunrise" ? "SR" : "SS";
       const local = date ? boardTime(date, "Europe/Berlin") : "--:--";
       const utc = date ? boardTime(date, "UTC") : "--:--";
       setBoardValue(`${prefix}Label`, label, animate, generation);
@@ -235,8 +244,8 @@
     const values = {
       boardDepartureTitle: "DEPARTURE",
       boardArrivalTitle: "ARRIVAL",
-      boardStart: `AIRPORT ${code(resolvedPoints[0])}`,
-      boardDestination: `AIRPORT ${code(resolvedPoints.at(-1))}`,
+      boardStart: code(resolvedPoints[0]),
+      boardDestination: code(resolvedPoints.at(-1)),
       boardDistanceLabel: "STRECKE",
       boardDistance: `${totalNm.toFixed(1)} NM`,
       boardTimeLabel: "FLUGZEIT",
@@ -254,7 +263,7 @@
       const animate = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const generation = ++boardAnimationGeneration;
       Object.entries(values).forEach(([id, value]) => setBoardValue(id, value, animate, generation));
-      document.getElementById("boardKm").textContent = `${(totalNm * 1.852).toFixed(1)} km · Luftlinie je Etappe · ohne Wind`;
+      setBoardValue("boardKm", `${(totalNm * 1.852).toFixed(1)} KM · ETAPPEN-LUFTLINIE · OHNE WIND`, animate, generation);
       if (departure && arrival) {
         setBoardValue("boardDepartureDate", `DATE ${boardDate(departure)}`, animate, generation);
         setBoardValue("boardDepartureTime", `${boardTime(departure, "Europe/Berlin")} LCL / ${boardTime(departure, "UTC")} UTC`, animate, generation);
@@ -848,11 +857,12 @@
     } else document.querySelector(".planner-box").scrollIntoView({ behavior: "smooth", block: "start" });
   });
   document.getElementById("addStop").addEventListener("click", () => { points.splice(points.length - 1, 0, { kind: "stop", value: "" }); renderPointRows(); recalculate(); });
-  document.getElementById("cruiseSpeed").addEventListener("input", recalculate);
-  document.getElementById("fuelBurn").addEventListener("input", recalculate);
+  document.getElementById("cruiseSpeed").addEventListener("input", () => { recalculate(); if (measuring) renderMeasurement(); });
+  document.getElementById("fuelBurn").addEventListener("input", () => { recalculate(); if (measuring) renderMeasurement(); });
   document.getElementById("fuelUnit").addEventListener("change", (event) => {
     document.getElementById("fuelRateUnit").textContent = `${event.target.value}/h`;
     recalculate();
+    if (measuring) renderMeasurement();
   });
   const departureInput = document.getElementById("departureTime");
   const departureDateInput = document.getElementById("departureDate");
@@ -926,6 +936,9 @@
     const undo = document.getElementById("measureUndo");
     undo.hidden = !measuring || measurePoints.length === 0;
     let totalNm = 0;
+    const speed = Number(document.getElementById("cruiseSpeed").value);
+    const burn = Number(document.getElementById("fuelBurn").value);
+    const fuelUnit = document.getElementById("fuelUnit").value;
     measurePoints.forEach((point, index) => {
       L.circleMarker(point, { radius: 5, color: "#0879aa", fillColor: "white", fillOpacity: 1, weight: 2 }).addTo(measureLayer);
       if (!index) return;
@@ -933,12 +946,16 @@
       const nm = haversineNm(previous, point);
       totalNm += nm;
       const course = String(Math.round(bearing(previous, point)) % 360).padStart(3, "0");
+      const minutes = speed > 0 ? Math.round(nm / speed * 60) : null;
+      const fuel = speed > 0 && burn > 0 ? nm / speed * burn : null;
+      const performance = minutes === null ? "" : `<br>${minutes} MIN @ ${Math.round(speed)} KT${fuel === null ? "" : ` · ${fuel.toFixed(1)} ${fuelUnit}`}`;
       L.polyline([previous, point], { color: "#0879aa", weight: 3, dashArray: "5 5" })
-        .bindTooltip(`${nm.toFixed(1)} NM · ${course}°`, { permanent: true, direction: "center", className: "measure-label" })
+        .bindTooltip(`${nm.toFixed(1)} NM · ${course}°${performance}`, { permanent: true, direction: "center", className: "measure-label" })
         .addTo(measureLayer);
     });
+    const totalMinutes = speed > 0 ? Math.round(totalNm / speed * 60) : null;
     document.getElementById("measureStatus").textContent = measurePoints.length > 1
-      ? `Gesamt ${formatNm(totalNm)}`
+      ? `Gesamt ${formatNm(totalNm)}${totalMinutes === null ? "" : ` · ${totalMinutes} min @ ${Math.round(speed)} kt`}`
       : measuring ? "Punkte auf der Karte wählen" : "";
   }
   map.on("click", (event) => {

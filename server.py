@@ -122,6 +122,26 @@ BEACON_RE = re.compile(r"^([A-Z]{3})([A-F0-9]{6})>.*?([0-8]\d)([0-5]\d\.\d+)([NS
 COURSE_SPEED_RE = re.compile(r"(\d{3})/(\d{3})")
 ALTITUDE_RE = re.compile(r"/A=(\d{6})")
 
+FIXED_WING_MODEL_RE = re.compile(
+    r"\b(WT[\s-]?9|DYNAMIC|A[\s-]?22|FOXBAT|R[\s-]?3000?|C[\s-]?\d{3}|PA[\s-]?\d{2}|"
+    r"DA[\s-]?\d{2}|SR[\s-]?2[02]|P[\s-]?200\d|DV[\s-]?20|FK[\s-]?9|CTSW|CTLS)\b", re.I)
+GLIDER_MODEL_RE = re.compile(r"\b(ASW|ASK|DG[\s-]?\d|LS[\s-]?\d|JS[\s-]?\d|DUO|VENTUS|DISCUS|ARCUS)\b", re.I)
+HELICOPTER_MODEL_RE = re.compile(
+    r"\b(AS[\s-]?(350|50)|EC[\s-]?(35|45|120|130|135|145)|H[\s-]?(120|125|130|135|145|160|175)|"
+    r"R[\s-]?(22|44|66)|AW[\s-]?\d{3}|B[\s-]?(06|407|412|429)|CABRI|GUIMBAL)\b", re.I)
+
+
+def classify_aircraft(model, reported_category="aircraft"):
+    """Prefer an identified model over unreliable/self-declared traffic categories."""
+    value = str(model or "").strip()
+    if FIXED_WING_MODEL_RE.search(value):
+        return "plane"
+    if GLIDER_MODEL_RE.search(value):
+        return "glider"
+    if HELICOPTER_MODEL_RE.search(value):
+        return "helicopter"
+    return reported_category
+
 
 def parse_beacon(line, devices):
     match = BEACON_RE.match(line)
@@ -148,8 +168,7 @@ def parse_beacon(line, devices):
     course_speed = COURSE_SPEED_RE.search(remainder)
     altitude = ALTITUDE_RE.search(remainder)
     model = str(device.get("aircraft_model") or "")[:48] if identified else ""
-    if re.search(r"\b(AS\s?350|EC\s?1\d\d|H\s?1\d\d|R\s?\d\d|AW\s?\d\d\d|B\s?4\d\d)\b", model, re.I):
-        category = "helicopter"
+    category = classify_aircraft(model, category)
     return (prefix, device_id), {"lat": round(latitude, 5), "lon": round(longitude, 5),
                                   "observed_at": time.time(), "label": label[:24], "category": category,
                                   "model": model, "device_id": device_id,
@@ -219,14 +238,15 @@ def normalize_adsb_aircraft(aircraft):
         return None
     model = str(aircraft.get("t") or "").strip()[:48]
     category_code = str(aircraft.get("category") or "")
-    if category_code == "A7" or re.search(r"^(AS35|EC\d|H\d|R\d\d|AW\d|B4\d)", model, re.I):
+    if category_code == "A7":
         category = "helicopter"
-    elif category_code == "B1" or re.search(r"^(ASW|ASK|DG\d|LS\d|JS\d|DUO|VENTUS)", model, re.I):
+    elif category_code == "B1":
         category = "glider"
     elif category_code == "B3":
         category = "parachute"
     else:
         category = "plane"
+    category = classify_aircraft(model, category)
     altitude = aircraft.get("alt_baro")
     try:
         altitude = round(float(altitude)) if altitude is not None else None
