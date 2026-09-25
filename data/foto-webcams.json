@@ -1,0 +1,2652 @@
+{
+  "source": "https://www.foto-webcam.eu/webcam/infos/",
+  "fetched_at": "2026-09-24T12:31:26.335888+00:00",
+  "cameras": [
+    {
+      "name": "Color Hotel - Bardolino - Lago di Garda",
+      "url": "https://www.foto-webcam.eu/webcam/bardolino/",
+      "latitude": 45.542968,
+      "longitude": 10.725714,
+      "slug": "bardolino",
+      "direction_deg": 210,
+      "display_name": "Bardolino"
+    },
+    {
+      "name": "Malcesine Val di Sogno / Stickl Sportcamp - Blick nach Campione",
+      "url": "https://www.foto-webcam.eu/webcam/malcesine/",
+      "latitude": 45.744855,
+      "longitude": 10.800445,
+      "slug": "malcesine",
+      "direction_deg": 290,
+      "display_name": "Malcesine"
+    },
+    {
+      "name": "Helmut List Halle / Graz - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/helmut-list-halle/",
+      "latitude": 47.079697,
+      "longitude": 15.412366,
+      "slug": "helmut-list-halle",
+      "direction_deg": 120,
+      "display_name": "Helmut List Halle"
+    },
+    {
+      "name": "Prebl / Schulterkogelhütte - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/schulterkogel/",
+      "latitude": 46.93127,
+      "longitude": 14.762633,
+      "slug": "schulterkogel",
+      "direction_deg": 160,
+      "display_name": "Schulterkogel"
+    },
+    {
+      "name": "Pörtschach am Wörthersee - Windischberg - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/poertschach-a-w/",
+      "latitude": 46.6439,
+      "longitude": 14.130025,
+      "slug": "poertschach-a-w",
+      "direction_deg": 145,
+      "display_name": "Pörtschach Süd"
+    },
+    {
+      "name": "Gnesau - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/gnesau/",
+      "latitude": 46.779738,
+      "longitude": 14.005642,
+      "slug": "gnesau",
+      "direction_deg": 120,
+      "display_name": "Gnesau"
+    },
+    {
+      "name": "Turracher Höhe / Hirschkogel - Blick nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/turrach-ost/",
+      "latitude": 46.921064,
+      "longitude": 13.860498,
+      "slug": "turrach-ost",
+      "direction_deg": 100,
+      "display_name": "Turrach Ost"
+    },
+    {
+      "name": "Turracher Höhe / Weitentallift Berg - Blick auf den Turracher See",
+      "url": "https://www.foto-webcam.eu/webcam/turrach-west/",
+      "latitude": 46.921556,
+      "longitude": 13.889706,
+      "slug": "turrach-west",
+      "direction_deg": 260,
+      "display_name": "Turrach West"
+    },
+    {
+      "name": "Heidi Alm Falkert - Blick nach Westen zum Falkertspitz",
+      "url": "https://www.foto-webcam.eu/webcam/falkert/",
+      "latitude": 46.867848,
+      "longitude": 13.832825,
+      "slug": "falkert",
+      "direction_deg": 230,
+      "display_name": "Falkert Heidialm"
+    },
+    {
+      "name": "Heidi Alm Falkert - Blick nach Nordosten",
+      "url": "https://www.foto-webcam.eu/webcam/falkert-nord/",
+      "latitude": 46.854345,
+      "longitude": 13.823363,
+      "slug": "falkert-nord",
+      "direction_deg": 15,
+      "display_name": "Falkert Nord"
+    },
+    {
+      "name": "Falkertsee - Blick nach Norden zum Heidi-Hotel",
+      "url": "https://www.foto-webcam.eu/webcam/heidi-hotel/",
+      "latitude": 46.861309,
+      "longitude": 13.829691,
+      "slug": "heidi-hotel",
+      "direction_deg": 350,
+      "display_name": "Heidi-Hotel"
+    },
+    {
+      "name": "Heidi-Chalets - UNESCO-Weltnaturerbe Falkertsee 1.850m - Blick Richtung Falkertspitz",
+      "url": "https://www.foto-webcam.eu/webcam/heidi-chalets/",
+      "latitude": 46.861564,
+      "longitude": 13.837807,
+      "slug": "heidi-chalets",
+      "direction_deg": 270,
+      "display_name": "Heidi-Chalets"
+    },
+    {
+      "name": "Bad Kleinkirchheim / Strohsack - Blick in den Biosphärenpark Nockberge",
+      "url": "https://www.foto-webcam.eu/webcam/strohsack/",
+      "latitude": 46.790409,
+      "longitude": 13.800447,
+      "slug": "strohsack",
+      "direction_deg": 340,
+      "display_name": "BKK - Strohsack"
+    },
+    {
+      "name": "Bad Kleinkirchheim / Blick zur Kaiserburg Bergstation",
+      "url": "https://www.foto-webcam.eu/webcam/kaiserburg/",
+      "latitude": 46.786094,
+      "longitude": 13.818127,
+      "slug": "kaiserburg",
+      "direction_deg": 55,
+      "display_name": "BKK - Kaiserburg"
+    },
+    {
+      "name": "Bad Kleinkirchheim / Flow Country Trail – Kaiserburgbahn",
+      "url": "https://www.foto-webcam.eu/webcam/countrytrail/",
+      "latitude": 46.78337,
+      "longitude": 13.826816,
+      "slug": "countrytrail",
+      "direction_deg": 190,
+      "display_name": "BKK - Country Trail"
+    },
+    {
+      "name": "Bad Kleinkirchheim / Kaiserburg Bob",
+      "url": "https://www.foto-webcam.eu/webcam/rollbob/",
+      "latitude": 46.812242,
+      "longitude": 13.798735,
+      "slug": "rollbob",
+      "direction_deg": 180,
+      "display_name": "BKK - Rollbob"
+    },
+    {
+      "name": "Bad Kleinkirchheim / Aktiv Park – Biosphärenparkbahn Brunnach",
+      "url": "https://www.foto-webcam.eu/webcam/brunnach/",
+      "latitude": 46.856838,
+      "longitude": 13.750324,
+      "slug": "brunnach",
+      "direction_deg": 20,
+      "display_name": "BKK - Aktiv Park"
+    },
+    {
+      "name": "Zechneralm / Nockalmstraße - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/zechneralm/",
+      "latitude": 46.946702,
+      "longitude": 13.748674,
+      "slug": "zechneralm",
+      "direction_deg": 180,
+      "display_name": "Zechneralm"
+    },
+    {
+      "name": "Bad Kleinkirchheim / Spitzeck - Blick zur BPB Brunnach Bergstation",
+      "url": "https://www.foto-webcam.eu/webcam/spitzeck/",
+      "latitude": 46.849685,
+      "longitude": 13.749365,
+      "slug": "spitzeck",
+      "direction_deg": 360,
+      "display_name": "BKK - Spitzeck"
+    },
+    {
+      "name": "Bad Kleinkirchheim / Wiesernock - Blick nach St. Oswald",
+      "url": "https://www.foto-webcam.eu/webcam/wiesernock/",
+      "latitude": 46.829511,
+      "longitude": 13.745009,
+      "slug": "wiesernock",
+      "direction_deg": 30,
+      "display_name": "BKK - Wiesernock"
+    },
+    {
+      "name": "Bad Kleinkirchheim / Nockalm - Blick nach Bad Kleinkirchheim",
+      "url": "https://www.foto-webcam.eu/webcam/nockalm-berg/",
+      "latitude": 46.828107,
+      "longitude": 13.742373,
+      "slug": "nockalm-berg",
+      "direction_deg": 110,
+      "display_name": "BKK - Nockalm"
+    },
+    {
+      "name": "Bad Kleinkirchheim / Thermenschuss - Blick zur Kaiserburg",
+      "url": "https://www.foto-webcam.eu/webcam/kaiserburg-tal/",
+      "latitude": 46.813377,
+      "longitude": 13.799184,
+      "slug": "kaiserburg-tal",
+      "direction_deg": 160,
+      "display_name": "BKK - Thermenschuss"
+    },
+    {
+      "name": "Dobratsch - Villacher Alpe - Blick nach Westen ins Gailtal",
+      "url": "https://www.foto-webcam.eu/webcam/dobratsch/",
+      "latitude": 46.60355,
+      "longitude": 13.67034,
+      "slug": "dobratsch",
+      "direction_deg": 270,
+      "display_name": "Dobratsch"
+    },
+    {
+      "name": "Mauthen / Polinik - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/polinik/",
+      "latitude": 46.628185,
+      "longitude": 12.982435,
+      "slug": "polinik",
+      "direction_deg": 270,
+      "display_name": "Polinik"
+    },
+    {
+      "name": "Hagener Hütte - Blick nach Südwesten zum Vorderen Geißlkopf",
+      "url": "https://www.foto-webcam.eu/webcam/hagener-huette/",
+      "latitude": 47.027605,
+      "longitude": 13.089053,
+      "slug": "hagener-huette",
+      "direction_deg": 190,
+      "display_name": "Hagener Hütte"
+    },
+    {
+      "name": "Ankogel Bergbahnen / Mittelstation - Blick nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/ankogel-sued/",
+      "latitude": 47.027039,
+      "longitude": 13.19056,
+      "slug": "ankogel-sued",
+      "direction_deg": 200,
+      "display_name": "Ankogel Süd"
+    },
+    {
+      "name": "Ankogel Bergbahnen / Bergstation - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/ankogel-nord/",
+      "latitude": 47.042463,
+      "longitude": 13.215336,
+      "slug": "ankogel-nord",
+      "direction_deg": 150,
+      "display_name": "Ankogel Berg"
+    },
+    {
+      "name": "Mallnitz / Auernig - Blick nach Nordwesten",
+      "url": "https://www.foto-webcam.eu/webcam/auernig/",
+      "latitude": 46.994158,
+      "longitude": 13.190163,
+      "slug": "auernig",
+      "direction_deg": 310,
+      "display_name": "Auernig"
+    },
+    {
+      "name": "Thomaseck - Blick nach Nordosten",
+      "url": "https://www.foto-webcam.eu/webcam/thomaseck/",
+      "latitude": 47.070811,
+      "longitude": 13.115401,
+      "slug": "thomaseck",
+      "direction_deg": 55,
+      "display_name": "Thomaseck"
+    },
+    {
+      "name": "Mölltaler Gletscher / Schareck - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/gletscher-schareck/",
+      "latitude": 47.039846,
+      "longitude": 13.02068,
+      "slug": "gletscher-schareck",
+      "direction_deg": 255,
+      "display_name": "Gletscher - Schareck"
+    },
+    {
+      "name": "Mölltaler Gletscher / Bergstation Gondelbahn Eissee - Blick nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/gletscher-sued/",
+      "latitude": 47.031013,
+      "longitude": 13.01057,
+      "slug": "gletscher-sued",
+      "direction_deg": 190,
+      "display_name": "Gletscher - Eissee"
+    },
+    {
+      "name": "Mölltaler Gletscher / Bergstation Panoramabahn Klühspies - Blick nach Nordosten",
+      "url": "https://www.foto-webcam.eu/webcam/gletscher-nord/",
+      "latitude": 47.031879,
+      "longitude": 13.010373,
+      "slug": "gletscher-nord",
+      "direction_deg": 50,
+      "display_name": "Gletscher - Panorama"
+    },
+    {
+      "name": "Mölltaler Gletscher / Bergstation Altecklift - Blick nach Nordosten",
+      "url": "https://www.foto-webcam.eu/webcam/gletscher-alteck/",
+      "latitude": 47.03193,
+      "longitude": 12.983222,
+      "slug": "gletscher-alteck",
+      "direction_deg": 60,
+      "display_name": "Gletscher - Alteck"
+    },
+    {
+      "name": "Flattach / Raggaschlucht - Blick zum Wasserfall",
+      "url": "https://www.foto-webcam.eu/webcam/raggaschlucht2/",
+      "latitude": 46.924031,
+      "longitude": 13.140279,
+      "slug": "raggaschlucht2",
+      "direction_deg": 170,
+      "display_name": "Raggaschlucht 2"
+    },
+    {
+      "name": "Flattach / Grafenberg - Blick zum Appartementhaus Lercher",
+      "url": "https://www.foto-webcam.eu/webcam/flattach/",
+      "latitude": 46.936398,
+      "longitude": 13.077082,
+      "slug": "flattach",
+      "direction_deg": 98,
+      "display_name": "Flattach"
+    },
+    {
+      "name": "Flattach / Flattachberg - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/flattach-west/",
+      "latitude": 46.944325,
+      "longitude": 13.150382,
+      "slug": "flattach-west",
+      "direction_deg": 270,
+      "display_name": "Flattach West"
+    },
+    {
+      "name": "Rangersdorf / Hotel Margarethenbad - Blick nach Nordosten",
+      "url": "https://www.foto-webcam.eu/webcam/rangersdorf/",
+      "latitude": 46.851116,
+      "longitude": 12.928944,
+      "slug": "rangersdorf",
+      "direction_deg": 40,
+      "display_name": "Rangersdorf"
+    },
+    {
+      "name": "Rangersdorf / Ederplan - Blick nach Nordosten",
+      "url": "https://www.foto-webcam.eu/webcam/ederplan/",
+      "latitude": 46.824917,
+      "longitude": 12.897797,
+      "slug": "ederplan",
+      "direction_deg": 40,
+      "display_name": "Ederplan"
+    },
+    {
+      "name": "Winklern im Mölltal / Penzelberg - Blick nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/winklern/",
+      "latitude": 46.872885,
+      "longitude": 12.86306,
+      "slug": "winklern",
+      "direction_deg": 111,
+      "display_name": "Winklern"
+    },
+    {
+      "name": "Mörtschach im Mölltal / Lorenzalm - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/lorenzalm/",
+      "latitude": 46.896542,
+      "longitude": 12.915701,
+      "slug": "lorenzalm",
+      "direction_deg": 348,
+      "display_name": "Mörtschach"
+    },
+    {
+      "name": "Mörtschach / Mörtschachberg - Blick in die Lienzer Dolomiten",
+      "url": "https://www.foto-webcam.eu/webcam/moertschach/",
+      "latitude": 46.928205,
+      "longitude": 12.916311,
+      "slug": "moertschach",
+      "direction_deg": 200,
+      "display_name": "Mörtschachberg"
+    },
+    {
+      "name": "Astental / Burgstalleralm - Blick nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/burgstalleralm/",
+      "latitude": 46.962005,
+      "longitude": 12.98232,
+      "slug": "burgstalleralm",
+      "direction_deg": 263,
+      "display_name": "Astental West"
+    },
+    {
+      "name": "Heiligenblut / Zirbenhof - Blick zum Großglockner",
+      "url": "https://www.foto-webcam.eu/webcam/heiligenblut/",
+      "latitude": 47.021,
+      "longitude": 12.8773,
+      "slug": "heiligenblut",
+      "direction_deg": 300,
+      "display_name": "Heiligenblut"
+    },
+    {
+      "name": "Wallackhaus RegioJet Hotels - Heiligenblut - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/wallackhaus/",
+      "latitude": 47.072917,
+      "longitude": 12.839589,
+      "slug": "wallackhaus",
+      "direction_deg": 190,
+      "display_name": "Wallackhaus Süd"
+    },
+    {
+      "name": "Wallackhaus RegioJet Hotels - Heiligenblut - Blick nach Norden zum Hochtor",
+      "url": "https://www.foto-webcam.eu/webcam/wallackhaus-nord/",
+      "latitude": 47.069218,
+      "longitude": 12.838868,
+      "slug": "wallackhaus-nord",
+      "direction_deg": 360,
+      "display_name": "Wallackhaus Nord"
+    },
+    {
+      "name": "Freiwandeck - Blick zum Großglockner",
+      "url": "https://www.foto-webcam.eu/webcam/freiwandeck/",
+      "latitude": 47.078201,
+      "longitude": 12.756396,
+      "slug": "freiwandeck",
+      "direction_deg": 280,
+      "display_name": "Freiwandeck"
+    },
+    {
+      "name": "Adlersruhe / Blick nach Westen zum Großglockner",
+      "url": "https://www.foto-webcam.eu/webcam/adlersruhe/",
+      "latitude": 47.069958,
+      "longitude": 12.701578,
+      "slug": "adlersruhe",
+      "direction_deg": 275,
+      "display_name": "Adlersruhe"
+    },
+    {
+      "name": "Oberwalderhütte - Blick nach Süden zum Großglockner",
+      "url": "https://www.foto-webcam.eu/webcam/oberwalderhuette/",
+      "latitude": 47.106224,
+      "longitude": 12.71515,
+      "slug": "oberwalderhuette",
+      "direction_deg": 190,
+      "display_name": "Oberwalderhütte"
+    },
+    {
+      "name": "Dellach im Drautal - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/dellach/",
+      "latitude": 46.730812,
+      "longitude": 13.088379,
+      "slug": "dellach",
+      "direction_deg": 360,
+      "display_name": "Dellach im Drautal"
+    },
+    {
+      "name": "Lienz / Zettersfeld - Blick in die Lienzer Dolomiten",
+      "url": "https://www.foto-webcam.eu/webcam/lienz/",
+      "latitude": 46.860338,
+      "longitude": 12.803983,
+      "slug": "lienz",
+      "direction_deg": 200,
+      "display_name": "Lienz Zettersfeld"
+    },
+    {
+      "name": "Dolomitenhütte - Blick in die Lienzer Dolomiten",
+      "url": "https://www.foto-webcam.eu/webcam/dolomitenhuette/",
+      "latitude": 46.789667,
+      "longitude": 12.78353,
+      "slug": "dolomitenhuette",
+      "direction_deg": 200,
+      "display_name": "Dolomitenhütte"
+    },
+    {
+      "name": "Lienz / Zettersfeld - Blick ins Skigebiet Faschingalm",
+      "url": "https://www.foto-webcam.eu/webcam/faschingalm/",
+      "latitude": 46.86035,
+      "longitude": 12.80399,
+      "slug": "faschingalm",
+      "direction_deg": 5,
+      "display_name": "Lienz Faschingalm"
+    },
+    {
+      "name": "Wangenitztal / Feldkopf - Blick über den Wangenitzsee nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/feldkopf/",
+      "latitude": 46.928982,
+      "longitude": 12.789711,
+      "slug": "feldkopf",
+      "direction_deg": 110,
+      "display_name": "Feldkopf Ost"
+    },
+    {
+      "name": "Feldkopf - Blick nach Westen zum Glödis und Hochschober",
+      "url": "https://www.foto-webcam.eu/webcam/feldkopf-west/",
+      "latitude": 46.928982,
+      "longitude": 12.789711,
+      "slug": "feldkopf-west",
+      "direction_deg": 280,
+      "display_name": "Feldkopf West"
+    },
+    {
+      "name": "Kreuzspitze / Villgratental - Blick nach Innervillgraten",
+      "url": "https://www.foto-webcam.eu/webcam/kreuzspitze/",
+      "latitude": 46.827946,
+      "longitude": 12.312059,
+      "slug": "kreuzspitze",
+      "direction_deg": 120,
+      "display_name": "Kreuzspitze"
+    },
+    {
+      "name": "Kals am Großglockner - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/kals/",
+      "latitude": 47.007477,
+      "longitude": 12.647537,
+      "slug": "kals",
+      "direction_deg": 280,
+      "display_name": "Kals"
+    },
+    {
+      "name": "Kals am Großglockner - Blick nach Nordosten",
+      "url": "https://www.foto-webcam.eu/webcam/kals-nord/",
+      "latitude": 46.98332,
+      "longitude": 12.626943,
+      "slug": "kals-nord",
+      "direction_deg": 40,
+      "display_name": "Kals Nord"
+    },
+    {
+      "name": "Kalsertal - Blick nach Norden zum Großglockner",
+      "url": "https://www.foto-webcam.eu/webcam/kalsertal/",
+      "latitude": 46.913221,
+      "longitude": 12.58326,
+      "slug": "kalsertal",
+      "direction_deg": 33,
+      "display_name": "Kalsertal"
+    },
+    {
+      "name": "Glocknerwinkel / Blick nach Norden zum Großglockner",
+      "url": "https://www.foto-webcam.eu/webcam/glocknerwinkel/",
+      "latitude": 47.021832,
+      "longitude": 12.689609,
+      "slug": "glocknerwinkel",
+      "direction_deg": 3,
+      "display_name": "Glocknerwinkel"
+    },
+    {
+      "name": "Lucknerhaus - Blick zum Großglockner",
+      "url": "https://www.foto-webcam.eu/webcam/lucknerhaus/",
+      "latitude": 47.020987,
+      "longitude": 12.687957,
+      "slug": "lucknerhaus",
+      "direction_deg": 1,
+      "display_name": "Lucknerhaus"
+    },
+    {
+      "name": "St.Veit im Defereggental - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/stveit/",
+      "latitude": 46.927657,
+      "longitude": 12.435715,
+      "slug": "stveit",
+      "direction_deg": 252,
+      "display_name": "St.Veit in Defereggen"
+    },
+    {
+      "name": "St. Jakob in Defereggen - Blick nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/stjakob/",
+      "latitude": 46.917213,
+      "longitude": 12.322638,
+      "slug": "stjakob",
+      "direction_deg": 90,
+      "display_name": "St. Jakob i. Def."
+    },
+    {
+      "name": "Hopfgarten im Defereggental - Blick nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/hopfgarten/",
+      "latitude": 46.909794,
+      "longitude": 12.479249,
+      "slug": "hopfgarten",
+      "direction_deg": 60,
+      "display_name": "Hopfgarten"
+    },
+    {
+      "name": "Matrei in Osttirol / Bethuberhof - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/bethuberhof/",
+      "latitude": 46.986122,
+      "longitude": 12.530486,
+      "slug": "bethuberhof",
+      "direction_deg": 18,
+      "display_name": "Matrei - Bretterwand"
+    },
+    {
+      "name": "Matrei in Osttirol / Steigerhof - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/steigerhof/",
+      "latitude": 46.994612,
+      "longitude": 12.547861,
+      "slug": "steigerhof",
+      "direction_deg": 290,
+      "display_name": "Matrei Hintereggkogel"
+    },
+    {
+      "name": "Matrei in Osttirol / Strumerhof - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/strumerhof/",
+      "latitude": 47.010288,
+      "longitude": 12.518056,
+      "slug": "strumerhof",
+      "direction_deg": 150,
+      "display_name": "Matrei - Goldried"
+    },
+    {
+      "name": "Virgen / Sonnberg - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/virgen-west/",
+      "latitude": 47.00832,
+      "longitude": 12.470775,
+      "slug": "virgen-west",
+      "direction_deg": 258,
+      "display_name": "Virgen Sonnberg"
+    },
+    {
+      "name": "Virgen / Würfelehütte - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/virgen-nord/",
+      "latitude": 46.990593,
+      "longitude": 12.44769,
+      "slug": "virgen-nord",
+      "direction_deg": 10,
+      "display_name": "Virgen Würfelehütte"
+    },
+    {
+      "name": "Sexten / Berghotel - Blick nach Süden zur Sextner Sonnenuhr",
+      "url": "https://www.foto-webcam.eu/webcam/sexten-sued/",
+      "latitude": 46.691585,
+      "longitude": 12.367589,
+      "slug": "sexten-sued",
+      "direction_deg": 184,
+      "display_name": "Sexten Süd"
+    },
+    {
+      "name": "Sexten / Berghotel - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/sexten-west/",
+      "latitude": 46.691585,
+      "longitude": 12.367589,
+      "slug": "sexten-west",
+      "direction_deg": 285,
+      "display_name": "Sexten West"
+    },
+    {
+      "name": "Alpenhotel Ratsberg - Toblach - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/toblach/",
+      "latitude": 46.748771,
+      "longitude": 12.217415,
+      "slug": "toblach",
+      "direction_deg": 170,
+      "display_name": "Toblach Ratsberg"
+    },
+    {
+      "name": "Apparthotel Germania - Neu-Toblach - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/neu-toblach/",
+      "latitude": 46.724241,
+      "longitude": 12.222665,
+      "slug": "neu-toblach",
+      "direction_deg": 5,
+      "display_name": "Neu-Toblach"
+    },
+    {
+      "name": "Toblach / Dobbiaco - Drei-Zinnen-Blick / Vista Tre Cime / View of the Three Peaks",
+      "url": "https://www.foto-webcam.eu/webcam/dreizinnenblick/",
+      "latitude": 46.641364,
+      "longitude": 12.23141,
+      "slug": "dreizinnenblick",
+      "direction_deg": 115,
+      "display_name": "Drei Zinnenblick"
+    },
+    {
+      "name": "Haeuslerhof.bz.it - Niederdorf / Villabassa - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/niederdorf/",
+      "latitude": 46.7469037,
+      "longitude": 12.1399113,
+      "slug": "niederdorf",
+      "direction_deg": 135,
+      "display_name": "Niederdorf"
+    },
+    {
+      "name": "Hotel Alpen Tesitin - Taisten / Pustertal - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/taisten/",
+      "latitude": 46.766892,
+      "longitude": 12.102741,
+      "slug": "taisten",
+      "direction_deg": 145,
+      "display_name": "Taisten Pustertal"
+    },
+    {
+      "name": "Hotel Berger - Rein in Taufers - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/rein/",
+      "latitude": 46.948463,
+      "longitude": 12.061304,
+      "slug": "rein",
+      "direction_deg": 110,
+      "display_name": "Rein in Taufers"
+    },
+    {
+      "name": "Rieserferner I Vedrette di Ries - Rein in Taufers, Südtirol I Valle di Riva di Tures, Alto Adige",
+      "url": "https://www.foto-webcam.eu/webcam/rieserferner/",
+      "latitude": 46.927043,
+      "longitude": 12.135505,
+      "slug": "rieserferner",
+      "direction_deg": 205,
+      "display_name": "Rieserferner"
+    },
+    {
+      "name": "Hotel Markus - St. Jakob im Ahrntal",
+      "url": "https://www.foto-webcam.eu/webcam/st-jakob/",
+      "latitude": 47.014746,
+      "longitude": 12.019725,
+      "slug": "st-jakob",
+      "direction_deg": 225,
+      "display_name": "St. Jakob Ahrntal"
+    },
+    {
+      "name": "Mühlen in Taufers / AMONTI Chalets",
+      "url": "https://www.foto-webcam.eu/webcam/amonti/",
+      "latitude": 46.898628,
+      "longitude": 11.928105,
+      "slug": "amonti",
+      "direction_deg": 160,
+      "display_name": "AMONTI"
+    },
+    {
+      "name": "Berghotel Zirm - Olang / Geiselsberg",
+      "url": "https://www.foto-webcam.eu/webcam/olang/",
+      "latitude": 46.746433,
+      "longitude": 12.001198,
+      "slug": "olang",
+      "direction_deg": 55,
+      "display_name": "Olang Geiselsberg"
+    },
+    {
+      "name": "Hotel Purvita - Meransen am Gitschberg",
+      "url": "https://www.foto-webcam.eu/webcam/meransen/",
+      "latitude": 46.815739,
+      "longitude": 11.663701,
+      "slug": "meransen",
+      "direction_deg": 50,
+      "display_name": "Meransen"
+    },
+    {
+      "name": "Bruneck - Pustertal / Südtirol - Blick nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/bruneck/",
+      "latitude": 46.796379,
+      "longitude": 11.941309,
+      "slug": "bruneck",
+      "direction_deg": 185,
+      "display_name": "Bruneck"
+    },
+    {
+      "name": "Alta Badia / San Cassiano - La Villa",
+      "url": "https://www.foto-webcam.eu/webcam/st-kassian/",
+      "latitude": 46.581471,
+      "longitude": 11.919009,
+      "slug": "st-kassian",
+      "direction_deg": 300,
+      "display_name": "San Cassiano"
+    },
+    {
+      "name": "Dorfhotel Beludei - St. Christina - Gröden",
+      "url": "https://www.foto-webcam.eu/webcam/st-christina/",
+      "latitude": 46.559822,
+      "longitude": 11.716049,
+      "slug": "st-christina",
+      "direction_deg": 150,
+      "display_name": "St. Christina Gröden"
+    },
+    {
+      "name": "Gummer / Sternwarte Max Valier - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/gummer/",
+      "latitude": 46.453071,
+      "longitude": 11.462664,
+      "slug": "gummer",
+      "direction_deg": 145,
+      "display_name": "Gummer"
+    },
+    {
+      "name": "Lüsen / Gruberhof - Blick nach Südwesten in die Sarntaler Alpen",
+      "url": "https://www.foto-webcam.eu/webcam/luesen/",
+      "latitude": 46.765186,
+      "longitude": 11.718519,
+      "slug": "luesen",
+      "direction_deg": 238,
+      "display_name": "Lüsen"
+    },
+    {
+      "name": "Rittner Horn - Blick über das Grödnertal zur Sellagruppe",
+      "url": "https://www.foto-webcam.eu/webcam/rittnerhorn/",
+      "latitude": 46.615522,
+      "longitude": 11.460433,
+      "slug": "rittnerhorn",
+      "direction_deg": 105,
+      "display_name": "Rittner Horn"
+    },
+    {
+      "name": "Berggasthof Plörr - Ritten - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/ritten/",
+      "latitude": 46.563828,
+      "longitude": 11.413713,
+      "slug": "ritten",
+      "direction_deg": 135,
+      "display_name": "Ritten"
+    },
+    {
+      "name": "Ferienwohnungen Huebenburg - St.Pauls / Eppan - Blick nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/huebenburg/",
+      "latitude": 46.475163,
+      "longitude": 11.252172,
+      "slug": "huebenburg",
+      "direction_deg": 80,
+      "display_name": "St.Pauls - Eppan"
+    },
+    {
+      "name": "Hotel Ansitz Rungghof / Girlan Eppan - Blick nach Nordwesten",
+      "url": "https://www.foto-webcam.eu/webcam/eppan/",
+      "latitude": 46.450095,
+      "longitude": 11.287846,
+      "slug": "eppan",
+      "direction_deg": 335,
+      "display_name": "Girlan - Eppan"
+    },
+    {
+      "name": "Gasthof Steinegger - Eppan Berg - Blick nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/eppan-berg/",
+      "latitude": 46.454609,
+      "longitude": 11.240582,
+      "slug": "eppan-berg",
+      "direction_deg": 70,
+      "display_name": "Eppan Berg"
+    },
+    {
+      "name": "Kalterer See",
+      "url": "https://www.foto-webcam.eu/webcam/kalterersee/",
+      "latitude": 46.385495,
+      "longitude": 11.261942,
+      "slug": "kalterersee",
+      "direction_deg": 110,
+      "display_name": "Kalterer See"
+    },
+    {
+      "name": "Gantkofel / Mt. Macaion - Blick über Bozen in die Dolomiten",
+      "url": "https://www.foto-webcam.eu/webcam/gantkofel/",
+      "latitude": 46.49324,
+      "longitude": 11.21057,
+      "slug": "gantkofel",
+      "direction_deg": 95,
+      "display_name": "Gantkofel"
+    },
+    {
+      "name": "Marlinger Berg - Meran - Blick nach Nordosten",
+      "url": "https://www.foto-webcam.eu/webcam/meran/",
+      "latitude": 46.662312,
+      "longitude": 11.1279,
+      "slug": "meran",
+      "direction_deg": 65,
+      "display_name": "Meran"
+    },
+    {
+      "name": "Berggasthaus Hochmuth - Dorf Tirol / Meran - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/hochmuth/",
+      "latitude": 46.701997,
+      "longitude": 11.131521,
+      "slug": "hochmuth",
+      "direction_deg": 157,
+      "display_name": "Meran Hochmuth"
+    },
+    {
+      "name": "Weißbrunnferner | Ghiacciaio di Fontana Bianca - Ulten, Südtirol | Val d’Ultimo, Alto Adige",
+      "url": "https://www.foto-webcam.eu/webcam/weissbrunnferner/",
+      "latitude": 46.488461,
+      "longitude": 10.801753,
+      "slug": "weissbrunnferner",
+      "direction_deg": 255,
+      "display_name": "Weißbrunnferner"
+    },
+    {
+      "name": "Die Gletscher des Cevedale-Gebiets | I ghiacciai del Cevedale - Martell, Südtirol | Val Martello, Alto Adige",
+      "url": "https://www.foto-webcam.eu/webcam/langenferner/",
+      "latitude": 46.485263,
+      "longitude": 10.621184,
+      "slug": "langenferner",
+      "direction_deg": 185,
+      "display_name": "Langenferner"
+    },
+    {
+      "name": "Piz Chavalatsch - Sulden / Vinschgau - Blick nach Südosten zum Ortler",
+      "url": "https://www.foto-webcam.eu/webcam/chavalatsch/",
+      "latitude": 46.614799,
+      "longitude": 10.492088,
+      "slug": "chavalatsch",
+      "direction_deg": 150,
+      "display_name": "Piz Chavalatsch"
+    },
+    {
+      "name": "Die Gletscher des Ortlergebiets | I ghiacciai del Gruppo dell’Ortles - Trafoi, Südtirol | Valle di Trafoi, Alto Adige",
+      "url": "https://www.foto-webcam.eu/webcam/trafoi/",
+      "latitude": 46.569023,
+      "longitude": 10.511569,
+      "slug": "trafoi",
+      "direction_deg": 180,
+      "display_name": "Trafoi"
+    },
+    {
+      "name": "Hotel Watles - Mals / Vinschgau - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/mals/",
+      "latitude": 46.701102,
+      "longitude": 10.506797,
+      "slug": "mals",
+      "direction_deg": 120,
+      "display_name": "Mals Vinschgau"
+    },
+    {
+      "name": "Hotel Langtaufererhof - Graun im Vinschgau",
+      "url": "https://www.foto-webcam.eu/webcam/graun/",
+      "latitude": 46.839911,
+      "longitude": 10.641531,
+      "slug": "graun",
+      "direction_deg": 100,
+      "display_name": "Graun im Vinschgau"
+    },
+    {
+      "name": "Hintereisferner - Blick Richtung Weißkugel und Langtaufererspitze",
+      "url": "https://www.foto-webcam.eu/webcam/hintereisferner1/",
+      "latitude": 46.7959,
+      "longitude": 10.7828,
+      "slug": "hintereisferner1",
+      "direction_deg": 270,
+      "display_name": "Hintereisferner 1"
+    },
+    {
+      "name": "Hintereisferner - Blick Richtung Hintere Hintereisspitze",
+      "url": "https://www.foto-webcam.eu/webcam/hintereisferner2/",
+      "latitude": 46.7959,
+      "longitude": 10.7828,
+      "slug": "hintereisferner2",
+      "direction_deg": 340,
+      "display_name": "Hintereisferner 2"
+    },
+    {
+      "name": "Tisenjoch - Blick nach Südwesten zur Ötzi Fundstelle",
+      "url": "https://www.foto-webcam.eu/webcam/tisenjoch/",
+      "latitude": 46.779567,
+      "longitude": 10.840917,
+      "slug": "tisenjoch",
+      "direction_deg": 260,
+      "display_name": "Tisenjoch"
+    },
+    {
+      "name": "Braunschweiger Hütte - Blick zum Mittelbergferner und zur Wildspitze",
+      "url": "https://www.foto-webcam.eu/webcam/braunschweigerhuette/",
+      "latitude": 46.935176,
+      "longitude": 10.909495,
+      "slug": "braunschweigerhuette",
+      "direction_deg": 220,
+      "display_name": "Braunschweiger H."
+    },
+    {
+      "name": "Wannenkogel - Blick zum Schrankogel",
+      "url": "https://www.foto-webcam.eu/webcam/wannenkogel/",
+      "latitude": 47.0217027,
+      "longitude": 11.0733583,
+      "slug": "wannenkogel",
+      "direction_deg": 40,
+      "display_name": "Wannenkogel"
+    },
+    {
+      "name": "Sulzkogel - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/sulzkogel/",
+      "latitude": 47.0378416,
+      "longitude": 11.0624805,
+      "slug": "sulzkogel",
+      "direction_deg": 115,
+      "display_name": "Sulzkogel"
+    },
+    {
+      "name": "Bockkogel - Blick zum Schrankogel",
+      "url": "https://www.foto-webcam.eu/webcam/bockkogel/",
+      "latitude": 47.025269,
+      "longitude": 11.095297,
+      "slug": "bockkogel",
+      "direction_deg": 15,
+      "display_name": "Bockkogel"
+    },
+    {
+      "name": "Übeltalferner | Ghiacciaio di Malavalle - Ridnaun, Südtirol | Val Ridanna, Alto Adige",
+      "url": "https://www.foto-webcam.eu/webcam/becherhaus/",
+      "latitude": 46.96076,
+      "longitude": 11.192327,
+      "slug": "becherhaus",
+      "direction_deg": 208,
+      "display_name": "Becherhaus"
+    },
+    {
+      "name": "Becherhaus - Blick nach Südosten ins Ridnauntal",
+      "url": "https://www.foto-webcam.eu/webcam/ridnaun/",
+      "latitude": 46.96076,
+      "longitude": 11.192327,
+      "slug": "ridnaun",
+      "direction_deg": 120,
+      "display_name": "Ridnaun"
+    },
+    {
+      "name": "Brunnen / Vierwaldstättersee - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/brunnen/",
+      "latitude": 46.995571,
+      "longitude": 8.598627,
+      "slug": "brunnen",
+      "direction_deg": 180,
+      "display_name": "Brunnen"
+    },
+    {
+      "name": "Konkordiahütte - Unesco Weltnaturerbe Jungfrau - Aletsch",
+      "url": "https://www.foto-webcam.eu/webcam/konkordiahuette/",
+      "latitude": 46.50027,
+      "longitude": 8.053442,
+      "slug": "konkordiahuette",
+      "direction_deg": 294,
+      "display_name": "Konkordiahütte"
+    },
+    {
+      "name": "Glecksteinhütte - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/glecksteinhuette/",
+      "latitude": 46.62547,
+      "longitude": 8.096951,
+      "slug": "glecksteinhuette",
+      "direction_deg": 270,
+      "display_name": "Glecksteinhütte"
+    },
+    {
+      "name": "Wildalpen - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/wildalpen/",
+      "latitude": 47.671391,
+      "longitude": 14.984086,
+      "slug": "wildalpen",
+      "direction_deg": 170,
+      "display_name": "Wildalpen"
+    },
+    {
+      "name": "Hochkar - Blick über Wildalpen nach Südosten zum Hochschwab",
+      "url": "https://www.foto-webcam.eu/webcam/hochkar/",
+      "latitude": 47.708967,
+      "longitude": 14.912624,
+      "slug": "hochkar",
+      "direction_deg": 140,
+      "display_name": "Hochkar"
+    },
+    {
+      "name": "Hieflau / Tamischbachturm - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/hieflau/",
+      "latitude": 47.617371,
+      "longitude": 14.717003,
+      "slug": "hieflau",
+      "direction_deg": 270,
+      "display_name": "Hieflau"
+    },
+    {
+      "name": "Wald am Schoberpass - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/wald-am-schoberpass/",
+      "latitude": 47.452965,
+      "longitude": 14.668936,
+      "slug": "wald-am-schoberpass",
+      "direction_deg": 270,
+      "display_name": "Wald am Schoberpass"
+    },
+    {
+      "name": "Steirische Krakau / Klausen - Blick nach Nordwesten zum Preber",
+      "url": "https://www.foto-webcam.eu/webcam/krakau/",
+      "latitude": 47.186973,
+      "longitude": 13.951427,
+      "slug": "krakau",
+      "direction_deg": 300,
+      "display_name": "Krakau"
+    },
+    {
+      "name": "Irdning - Blick nach Nordwesten zum Grimming",
+      "url": "https://www.foto-webcam.eu/webcam/grimming/",
+      "latitude": 47.49606,
+      "longitude": 14.065594,
+      "slug": "grimming",
+      "direction_deg": 310,
+      "display_name": "Grimming"
+    },
+    {
+      "name": "Hochleckenhaus - Blick nach Westnordwesten ins Alpenvorland mit Mondsee und Attersee",
+      "url": "https://www.foto-webcam.eu/webcam/hochleckenhaus/",
+      "latitude": 47.82876,
+      "longitude": 13.605403,
+      "slug": "hochleckenhaus",
+      "direction_deg": 300,
+      "display_name": "Hochleckenhaus"
+    },
+    {
+      "name": "Dachstein / Simonyhütte - Blick zum Hallstättergletscher",
+      "url": "https://www.foto-webcam.eu/webcam/simonyhuette/",
+      "latitude": 47.500701,
+      "longitude": 13.624408,
+      "slug": "simonyhuette",
+      "direction_deg": 170,
+      "display_name": "Simonyhütte"
+    },
+    {
+      "name": "Gjaidstein - Blick zum Hohen Dachstein und zum Hallstätter Gletscher",
+      "url": "https://www.foto-webcam.eu/webcam/gjaidstein/",
+      "latitude": 47.479774,
+      "longitude": 13.629813,
+      "slug": "gjaidstein",
+      "direction_deg": 250,
+      "display_name": "Gjaidstein"
+    },
+    {
+      "name": "Ramsau / Lindenhof - Ramsbergerhof - Blick zum Dachstein",
+      "url": "https://www.foto-webcam.eu/webcam/hotel-lindenhof/",
+      "latitude": 47.42725,
+      "longitude": 13.644859,
+      "slug": "hotel-lindenhof",
+      "direction_deg": 330,
+      "display_name": "Ramsau"
+    },
+    {
+      "name": "Buchau-Hütte am Gernkogel - St. Johann im Pongau - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/gernkogel/",
+      "latitude": 47.308876,
+      "longitude": 13.232803,
+      "slug": "gernkogel",
+      "direction_deg": 340,
+      "display_name": "Gernkogel"
+    },
+    {
+      "name": "Pass Lueg - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/passlueg/",
+      "latitude": 47.545856,
+      "longitude": 13.170266,
+      "slug": "passlueg",
+      "direction_deg": 350,
+      "display_name": "Pass Lueg"
+    },
+    {
+      "name": "Söldenhütte - Blick nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/hackelhuette/",
+      "latitude": 47.483955,
+      "longitude": 13.290477,
+      "slug": "hackelhuette",
+      "direction_deg": 240,
+      "display_name": "Söldenhütte"
+    },
+    {
+      "name": "Söldenhütte Nord - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/hackelhuette-nord/",
+      "latitude": 47.480731,
+      "longitude": 13.292459,
+      "slug": "hackelhuette-nord",
+      "direction_deg": 300,
+      "display_name": "Söldenhütte Nord"
+    },
+    {
+      "name": "Matrashaus am Hochkönig - Blick über den Königsjodler nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/hochkoenig/",
+      "latitude": 47.420139,
+      "longitude": 13.06214,
+      "slug": "hochkoenig",
+      "direction_deg": 230,
+      "display_name": "Hochkönig"
+    },
+    {
+      "name": "Goldbergkees - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/goldbergkees/",
+      "latitude": 47.051699,
+      "longitude": 12.964414,
+      "slug": "goldbergkees",
+      "direction_deg": 150,
+      "display_name": "Goldbergkees"
+    },
+    {
+      "name": "Goldbergkees 2 / Blick nach Nordwesten zum Hohen Sonnblick",
+      "url": "https://www.foto-webcam.eu/webcam/goldbergkees2/",
+      "latitude": 47.038717,
+      "longitude": 12.967853,
+      "slug": "goldbergkees2",
+      "direction_deg": 335,
+      "display_name": "Goldbergkees 2"
+    },
+    {
+      "name": "Sonnblick Observatorium - Blick nach Südwesten Richtung Lienzer Dolomiten",
+      "url": "https://www.foto-webcam.eu/webcam/sonnblick/",
+      "latitude": 47.053979,
+      "longitude": 12.957484,
+      "slug": "sonnblick",
+      "direction_deg": 200,
+      "display_name": "Sonnblick"
+    },
+    {
+      "name": "Kleinfleißkees - Blick nach Nordosten zum Hohen Sonnblick",
+      "url": "https://www.foto-webcam.eu/webcam/kleinfleisskees/",
+      "latitude": 47.046266,
+      "longitude": 12.943059,
+      "slug": "kleinfleisskees",
+      "direction_deg": 22,
+      "display_name": "Kleinfleißkees"
+    },
+    {
+      "name": "Kolm-Saigurn / Naturfreundehaus - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/sonnblickbasis/",
+      "latitude": 47.069481,
+      "longitude": 12.984603,
+      "slug": "sonnblickbasis",
+      "direction_deg": 200,
+      "display_name": "Kolm-Saigurn"
+    },
+    {
+      "name": "Rauris / Gamskopf - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/rauris/",
+      "latitude": 47.136667,
+      "longitude": 12.940556,
+      "slug": "rauris",
+      "direction_deg": 10,
+      "display_name": "Rauris"
+    },
+    {
+      "name": "Saalach - Teufelssteg | lofer.com",
+      "url": "https://www.foto-webcam.eu/webcam/lofer/",
+      "latitude": 47.588412,
+      "longitude": 12.694699,
+      "slug": "lofer",
+      "direction_deg": 90,
+      "display_name": "Lofer"
+    },
+    {
+      "name": "Saalfelden / Ritzensee - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/saalfelden/",
+      "latitude": 47.416719,
+      "longitude": 12.84778,
+      "slug": "saalfelden",
+      "direction_deg": 350,
+      "display_name": "Saalfelden"
+    },
+    {
+      "name": "Großer Asitz Gipfelkreuz - Blick in die Leoganger Steinberge",
+      "url": "https://www.foto-webcam.eu/webcam/asitz/",
+      "latitude": 47.402468,
+      "longitude": 12.702289,
+      "slug": "asitz",
+      "direction_deg": 20,
+      "display_name": "Leogang - Asitz"
+    },
+    {
+      "name": "Maishofen / Sausteige - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/sausteige/",
+      "latitude": 47.382239,
+      "longitude": 12.764779,
+      "slug": "sausteige",
+      "direction_deg": 140,
+      "display_name": "Maishofen Sausteige"
+    },
+    {
+      "name": "Maishofen Dorfplatz - Blick nach Osten zur Schwalbenwand",
+      "url": "https://www.foto-webcam.eu/webcam/maishofen/",
+      "latitude": 47.36121327195,
+      "longitude": 12.80524082032,
+      "slug": "maishofen",
+      "direction_deg": 90,
+      "display_name": "Maishofen Dorfplatz"
+    },
+    {
+      "name": "Maishofen / Schloss Kammer - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/schlosskammer/",
+      "latitude": 47.365283,
+      "longitude": 12.820947,
+      "slug": "schlosskammer",
+      "direction_deg": 200,
+      "display_name": "Schloss Kammer"
+    },
+    {
+      "name": "Zell am See-Kaprun - Blick zum Kitzsteinhorn und zur Schmittenhöhe",
+      "url": "https://www.foto-webcam.eu/webcam/zellamsee/",
+      "latitude": 47.334816,
+      "longitude": 12.822689,
+      "slug": "zellamsee",
+      "direction_deg": 237,
+      "display_name": "Zell am See"
+    },
+    {
+      "name": "Heinrich-Schwaiger-Haus - Kaprun Hochgebirgsstauseen - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/schwaigerhaus/",
+      "latitude": 47.162799,
+      "longitude": 12.738906,
+      "slug": "schwaigerhaus",
+      "direction_deg": 290,
+      "display_name": "Schwaigerhaus"
+    },
+    {
+      "name": "Kaprun Hochgebirgsstauseen - Mooserboden - Blick Richtung Wiesbachhorn",
+      "url": "https://www.foto-webcam.eu/webcam/mooserboden/",
+      "latitude": 47.166238,
+      "longitude": 12.711459,
+      "slug": "mooserboden",
+      "direction_deg": 100,
+      "display_name": "Mooserboden"
+    },
+    {
+      "name": "Kaprun Hochgebirgsstauseen - Wasserfallboden - Blick nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/wasserfallboden/",
+      "latitude": 47.18192,
+      "longitude": 12.7006,
+      "slug": "wasserfallboden",
+      "direction_deg": 92,
+      "display_name": "Wasserfallboden"
+    },
+    {
+      "name": "Berghotel Rudolfshütte - Weißsee Gletscherwelt - Blick nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/rudolfshuette/",
+      "latitude": 47.135232,
+      "longitude": 12.627536,
+      "slug": "rudolfshuette",
+      "direction_deg": 205,
+      "display_name": "Rudolfshütte"
+    },
+    {
+      "name": "***Aparthotel Hohe Brücke - Pass Thurn - Blick in die Hohen Tauern / Oberpinzgau",
+      "url": "https://www.foto-webcam.eu/webcam/passthurn/",
+      "latitude": 47.295192,
+      "longitude": 12.43088,
+      "slug": "passthurn",
+      "direction_deg": 240,
+      "display_name": "Pass Thurn"
+    },
+    {
+      "name": "Kürsingerhütte - Blick nach Süden zum Großen Geiger",
+      "url": "https://www.foto-webcam.eu/webcam/kuersingerhuette/",
+      "latitude": 47.122508,
+      "longitude": 12.299828,
+      "slug": "kuersingerhuette",
+      "direction_deg": 180,
+      "display_name": "Kürsingerhütte"
+    },
+    {
+      "name": "Kürsingerhütte - Blick nach Osten zum Großvenediger",
+      "url": "https://www.foto-webcam.eu/webcam/grossvenediger/",
+      "latitude": 47.122508,
+      "longitude": 12.299828,
+      "slug": "grossvenediger",
+      "direction_deg": 110,
+      "display_name": "Großvenediger"
+    },
+    {
+      "name": "Kitzbühel / Zielhaus Hahnenkamm - Blick nach Osten in die Südberge",
+      "url": "https://www.foto-webcam.eu/webcam/zielhaus-hahnenkamm/",
+      "latitude": 47.443202,
+      "longitude": 12.383487,
+      "slug": "zielhaus-hahnenkamm",
+      "direction_deg": 80,
+      "display_name": "Zielhaus HKR"
+    },
+    {
+      "name": "Kitzbühel / Starthaus Hahnenkamm - Blick nach Norden zum Kitzbüheler Horn",
+      "url": "https://www.foto-webcam.eu/webcam/starthaus-hahnenkamm/",
+      "latitude": 47.425915,
+      "longitude": 12.370907,
+      "slug": "starthaus-hahnenkamm",
+      "direction_deg": 20,
+      "display_name": "Starthaus HKR"
+    },
+    {
+      "name": "St. Johann in Tirol - Blick zum Kitzbüheler Horn",
+      "url": "https://www.foto-webcam.eu/webcam/st-johann-in-tirol/",
+      "latitude": 47.54576,
+      "longitude": 12.39558,
+      "slug": "st-johann-in-tirol",
+      "direction_deg": 153,
+      "display_name": "St. Johann i.T. Ost"
+    },
+    {
+      "name": "St. Johann in Tirol - Blick zum Kitzbüheler Horn und Wilder Kaiser",
+      "url": "https://www.foto-webcam.eu/webcam/st-johann-in-tirol-west/",
+      "latitude": 47.52612,
+      "longitude": 12.487678,
+      "slug": "st-johann-in-tirol-west",
+      "direction_deg": 258,
+      "display_name": "St. Johann i.T. West"
+    },
+    {
+      "name": "St. Johann in Tirol - Blick zum Wilden Kaiser",
+      "url": "https://www.foto-webcam.eu/webcam/wilder-kaiser/",
+      "latitude": 47.52612,
+      "longitude": 12.487678,
+      "slug": "wilder-kaiser",
+      "direction_deg": 290,
+      "display_name": "Wilder Kaiser"
+    },
+    {
+      "name": "Schlegeis Stausee - Zillertaler Alpen - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/schlegeis/",
+      "latitude": 47.040543,
+      "longitude": 11.702469,
+      "slug": "schlegeis",
+      "direction_deg": 170,
+      "display_name": "Schlegeis"
+    },
+    {
+      "name": "Tux / Alpinhotel Berghaus - Blick nach Südwesten zum Hintertuxer Gletscher",
+      "url": "https://www.foto-webcam.eu/webcam/hotel-berghaus/",
+      "latitude": 47.126081,
+      "longitude": 11.696721,
+      "slug": "hotel-berghaus",
+      "direction_deg": 230,
+      "display_name": "Alpinhotel Berghaus"
+    },
+    {
+      "name": "Wanglspitz - Tuxertal - Blick nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/tuxertal/",
+      "latitude": 47.184268,
+      "longitude": 11.775214,
+      "slug": "tuxertal",
+      "direction_deg": 235,
+      "display_name": "Tuxertal"
+    },
+    {
+      "name": "Gamshütte / Zillertal - Blick nach Südosten zum Tristner",
+      "url": "https://www.foto-webcam.eu/webcam/gamshuette/",
+      "latitude": 47.129953,
+      "longitude": 11.795856,
+      "slug": "gamshuette",
+      "direction_deg": 120,
+      "display_name": "Gamshütte"
+    },
+    {
+      "name": "Tristner - Ginzling / Zillertal - Blick nach Südwesten zum Schlegeis",
+      "url": "https://www.foto-webcam.eu/webcam/tristner/",
+      "latitude": 47.109119,
+      "longitude": 11.8257,
+      "slug": "tristner",
+      "direction_deg": 220,
+      "display_name": "Tristner Ginzling"
+    },
+    {
+      "name": "Neuhaus Zillertal Resort / Mayrhofen - Blick nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/mayrhofen/",
+      "latitude": 47.166807,
+      "longitude": 11.860466,
+      "slug": "mayrhofen",
+      "direction_deg": 220,
+      "display_name": "Mayrhofen"
+    },
+    {
+      "name": "Kaltenbach - Zillertal - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/das-kaltenbach/",
+      "latitude": 47.284186,
+      "longitude": 11.875363,
+      "slug": "das-kaltenbach",
+      "direction_deg": 1,
+      "display_name": "Kaltenbach"
+    },
+    {
+      "name": "Seegrube - Innsbruck - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/innsbruck/",
+      "latitude": 47.305572,
+      "longitude": 11.377861,
+      "slug": "innsbruck",
+      "direction_deg": 170,
+      "display_name": "Innsbruck"
+    },
+    {
+      "name": "Universität Innsbruck / Blick nach Nordosten ins Unterinntal",
+      "url": "https://www.foto-webcam.eu/webcam/innsbruck-uni/",
+      "latitude": 47.259998,
+      "longitude": 11.384167,
+      "slug": "innsbruck-uni",
+      "direction_deg": 68,
+      "display_name": "UNI Innsbruck"
+    },
+    {
+      "name": "Universität Innsbruck / Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/innsbruck-uni-west/",
+      "latitude": 47.264167,
+      "longitude": 11.384111,
+      "slug": "innsbruck-uni-west",
+      "direction_deg": 250,
+      "display_name": "UNI Innsbruck West"
+    },
+    {
+      "name": "Bremer Hütte - Blick nach Osten ins Gschnitztal",
+      "url": "https://www.foto-webcam.eu/webcam/bremerhuette/",
+      "latitude": 46.995787,
+      "longitude": 11.26339,
+      "slug": "bremerhuette",
+      "direction_deg": 60,
+      "display_name": "Bremer Hütte"
+    },
+    {
+      "name": "Berliner Hütte - Blick nach Südwesten zum Waxeggkees",
+      "url": "https://www.foto-webcam.eu/webcam/berlinerhuette/",
+      "latitude": 47.025049,
+      "longitude": 11.813689,
+      "slug": "berlinerhuette",
+      "direction_deg": 210,
+      "display_name": "Berliner Hütte"
+    },
+    {
+      "name": "Trins / Adlerblick - Blick nach Südwesten ins Gschnitztal",
+      "url": "https://www.foto-webcam.eu/webcam/trins/",
+      "latitude": 47.088028,
+      "longitude": 11.420534,
+      "slug": "trins",
+      "direction_deg": 220,
+      "display_name": "Trins"
+    },
+    {
+      "name": "Leutasch - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/leutasch/",
+      "latitude": 47.378603,
+      "longitude": 11.145101,
+      "slug": "leutasch",
+      "direction_deg": 150,
+      "display_name": "Leutasch"
+    },
+    {
+      "name": "Seefeld in Tirol / Brunschkopf - Blick nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/seefeld/",
+      "latitude": 47.329114,
+      "longitude": 11.16102,
+      "slug": "seefeld",
+      "direction_deg": 90,
+      "display_name": "Seefeld"
+    },
+    {
+      "name": "Seefeld / Friedensglocke Mösern - Blick nach Westen ins Inntal",
+      "url": "https://www.foto-webcam.eu/webcam/moesern/",
+      "latitude": 47.31269,
+      "longitude": 11.142919,
+      "slug": "moesern",
+      "direction_deg": 255,
+      "display_name": "Mösern"
+    },
+    {
+      "name": "Obergarten - Blick nach Nordosten",
+      "url": "https://www.foto-webcam.eu/webcam/obergarten/",
+      "latitude": 47.409977,
+      "longitude": 10.855217,
+      "slug": "obergarten",
+      "direction_deg": 40,
+      "display_name": "Obergarten"
+    },
+    {
+      "name": "Bad Aussee / Sarstein - Blick nach Nordwesten",
+      "url": "https://www.foto-webcam.eu/webcam/sarstein/",
+      "latitude": 47.594399,
+      "longitude": 13.701127,
+      "slug": "sarstein",
+      "direction_deg": 290,
+      "display_name": "Sarstein"
+    },
+    {
+      "name": "Burg Altpernstein - Blick auf Micheldorf und das Kremstal",
+      "url": "https://www.foto-webcam.eu/webcam/burg-altpernstein/",
+      "latitude": 47.885125,
+      "longitude": 14.157028,
+      "slug": "burg-altpernstein",
+      "direction_deg": 250,
+      "display_name": "Burg Altpernstein"
+    },
+    {
+      "name": "Gmundner Hütte am Traunstein - Oberösterreich - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/traunstein/",
+      "latitude": 47.872985,
+      "longitude": 13.833632,
+      "slug": "traunstein",
+      "direction_deg": 250,
+      "display_name": "Traunstein West"
+    },
+    {
+      "name": "Gmundner Hütte am Traunstein - Oberösterreich - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/traunstein-sued/",
+      "latitude": 47.872932,
+      "longitude": 13.833658,
+      "slug": "traunstein-sued",
+      "direction_deg": 170,
+      "display_name": "Traunstein Süd"
+    },
+    {
+      "name": "Seekarhaus Obertauern - Talstation Seekarspitzbahn",
+      "url": "https://www.foto-webcam.eu/webcam/obertauern1/",
+      "latitude": 47.264331,
+      "longitude": 13.563861,
+      "slug": "obertauern1",
+      "direction_deg": 300,
+      "display_name": "Seekarspitz Tal"
+    },
+    {
+      "name": "Seekarhaus Obertauern - Bergstation Seekarspitzbahn",
+      "url": "https://www.foto-webcam.eu/webcam/obertauern2/",
+      "latitude": 47.270653,
+      "longitude": 13.546783,
+      "slug": "obertauern2",
+      "direction_deg": 140,
+      "display_name": "Seekarspitz Berg"
+    },
+    {
+      "name": "Hotel Das Seekarhaus Obertauern",
+      "url": "https://www.foto-webcam.eu/webcam/obertauern3/",
+      "latitude": 47.26401,
+      "longitude": 13.565353,
+      "slug": "obertauern3",
+      "direction_deg": 250,
+      "display_name": "Seekarhaus"
+    },
+    {
+      "name": "Hundsfeldsee - Obertauern - Blick zum Seekarhaus",
+      "url": "https://www.foto-webcam.eu/webcam/hundsfeldsee/",
+      "latitude": 47.258751,
+      "longitude": 13.563356,
+      "slug": "hundsfeldsee",
+      "direction_deg": 15,
+      "display_name": "Hundsfeldsee"
+    },
+    {
+      "name": "Fanningberg - das schneesichere Familienskigebiet",
+      "url": "https://www.foto-webcam.eu/webcam/fanningberg/",
+      "latitude": 47.169367,
+      "longitude": 13.69333,
+      "slug": "fanningberg",
+      "direction_deg": 260,
+      "display_name": "Fanningberg"
+    },
+    {
+      "name": "Funtenseetauern - Nationalpark Berchtesgaden - Blick über den Königssee nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/funtenseetauern/",
+      "latitude": 47.486425,
+      "longitude": 12.971453,
+      "slug": "funtenseetauern",
+      "direction_deg": 359,
+      "display_name": "Funtenseetauern"
+    },
+    {
+      "name": "Kärlingerhaus am Funtensee - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/funtensee/",
+      "latitude": 47.495277,
+      "longitude": 12.93716,
+      "slug": "funtensee",
+      "direction_deg": 145,
+      "display_name": "Funtensee"
+    },
+    {
+      "name": "Carl-von-Stahl-Haus / Berchtesgadener Alpen - Blick nach Süden ins Hagengebirge",
+      "url": "https://www.foto-webcam.eu/webcam/stahlhaus/",
+      "latitude": 47.574606,
+      "longitude": 13.042405,
+      "slug": "stahlhaus",
+      "direction_deg": 168,
+      "display_name": "Carl-von-Stahl-Haus"
+    },
+    {
+      "name": "Jennerbahn am Königssee - Blick nach Osten zum Hohen Brett",
+      "url": "https://www.foto-webcam.eu/webcam/jenner-ost/",
+      "latitude": 47.5756085,
+      "longitude": 13.0246708,
+      "slug": "jenner-ost",
+      "direction_deg": 60,
+      "display_name": "Jenner Ost"
+    },
+    {
+      "name": "Jennerbahn am Königssee - Blick ins Hagengebirge und zum Steinernen Meer",
+      "url": "https://www.foto-webcam.eu/webcam/jenner-sued/",
+      "latitude": 47.5756085,
+      "longitude": 13.0246708,
+      "slug": "jenner-sued",
+      "direction_deg": 180,
+      "display_name": "Jenner Süd"
+    },
+    {
+      "name": "Windbeutelbaron - Obersalzberg / Berchtesgaden - Blick zum Watzmann",
+      "url": "https://www.foto-webcam.eu/webcam/windbeutelbaron/",
+      "latitude": 47.613461,
+      "longitude": 13.017874,
+      "slug": "windbeutelbaron",
+      "direction_deg": 250,
+      "display_name": "Windbeutelbaron"
+    },
+    {
+      "name": "Vorderloiplsau - Berchtesgadener Land - Blick zum Hochkalter und zur Reiteralm",
+      "url": "https://www.foto-webcam.eu/webcam/vorderloiplsau/",
+      "latitude": 47.62069,
+      "longitude": 12.91171,
+      "slug": "vorderloiplsau",
+      "direction_deg": 237,
+      "display_name": "Vorderloiplsau"
+    },
+    {
+      "name": "Stöhrhaus am Untersberg - Blick über Berchtesgaden nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/stoehrhaus/",
+      "latitude": 47.6931,
+      "longitude": 12.98049,
+      "slug": "stoehrhaus",
+      "direction_deg": 190,
+      "display_name": "Stöhrhaus"
+    },
+    {
+      "name": "Windpark Munderfing - MUF01",
+      "url": "https://www.foto-webcam.eu/webcam/wp-munderfing/",
+      "latitude": 48.060026,
+      "longitude": 13.241444,
+      "slug": "wp-munderfing",
+      "direction_deg": 100,
+      "display_name": "WP Munderfing"
+    },
+    {
+      "name": "Marquartstein / Schnappenberg - Blick übers Achental nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/marquartstein/",
+      "latitude": 47.762132,
+      "longitude": 12.479953,
+      "slug": "marquartstein",
+      "direction_deg": 232,
+      "display_name": "Marquartstein"
+    },
+    {
+      "name": "Schleching / Gscheuerwand - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/schleching/",
+      "latitude": 47.720568,
+      "longitude": 12.434531,
+      "slug": "schleching",
+      "direction_deg": 275,
+      "display_name": "Schleching"
+    },
+    {
+      "name": "Kampenwand / Andachtskreuz - Blick nach Norden über den Chiemsee",
+      "url": "https://www.foto-webcam.eu/webcam/kampenwand/",
+      "latitude": 47.754811,
+      "longitude": 12.356723,
+      "slug": "kampenwand",
+      "direction_deg": 7,
+      "display_name": "Kampenwand"
+    },
+    {
+      "name": "Hochrieshütte - DAV Sektion Rosenheim - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/hochries-nord/",
+      "latitude": 47.747205,
+      "longitude": 12.249036,
+      "slug": "hochries-nord",
+      "direction_deg": 330,
+      "display_name": "Hochries Nord"
+    },
+    {
+      "name": "Hochrieshütte - DAV Sektion Rosenheim - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/hochries-sued/",
+      "latitude": 47.7467,
+      "longitude": 12.249175,
+      "slug": "hochries-sued",
+      "direction_deg": 200,
+      "display_name": "Hochries Süd"
+    },
+    {
+      "name": "Hochrieshütte - DAV Sektion Rosenheim - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/hochries/",
+      "latitude": 47.747205,
+      "longitude": 12.249036,
+      "slug": "hochries",
+      "direction_deg": 260,
+      "display_name": "Hochries West"
+    },
+    {
+      "name": "Samerberg - Blick über Törwang zur Hochries",
+      "url": "https://www.foto-webcam.eu/webcam/samerberg/",
+      "latitude": 47.781651,
+      "longitude": 12.207622,
+      "slug": "samerberg",
+      "direction_deg": 130,
+      "display_name": "Samerberg"
+    },
+    {
+      "name": "Pendlinghaus - Kufstein - Blick nach Osten ins Kaisergebirge",
+      "url": "https://www.foto-webcam.eu/webcam/pendling-ost/",
+      "latitude": 47.57291,
+      "longitude": 12.11221,
+      "slug": "pendling-ost",
+      "direction_deg": 90,
+      "display_name": "Pendling Ost"
+    },
+    {
+      "name": "Pendlinghaus - Kufstein - Blick über Hinterthiersee nach Nordwesten",
+      "url": "https://www.foto-webcam.eu/webcam/pendling-west/",
+      "latitude": 47.57289,
+      "longitude": 12.11197,
+      "slug": "pendling-west",
+      "direction_deg": 285,
+      "display_name": "Pendling West"
+    },
+    {
+      "name": "Wendelsteinbahn Bergstation - Gacher Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/wendelstein-ost/",
+      "latitude": 47.701793,
+      "longitude": 12.012,
+      "slug": "wendelstein-ost",
+      "direction_deg": 120,
+      "display_name": "Wendelstein Ost"
+    },
+    {
+      "name": "Wendelsteinbahn Bergstation - Gacher Blick nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/wendelstein-west/",
+      "latitude": 47.7018,
+      "longitude": 12.0118,
+      "slug": "wendelstein-west",
+      "direction_deg": 255,
+      "display_name": "Wendelstein West"
+    },
+    {
+      "name": "Oest Skizentrum Sonnenbichl - Bad Wiessee",
+      "url": "https://www.foto-webcam.eu/webcam/sonnenbichl/",
+      "latitude": 47.699882,
+      "longitude": 11.710077,
+      "slug": "sonnenbichl",
+      "direction_deg": 40,
+      "display_name": "Sonnenbichl"
+    },
+    {
+      "name": "Staffel / Jachenau - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/jachenau/",
+      "latitude": 47.58986,
+      "longitude": 11.45209,
+      "slug": "jachenau",
+      "direction_deg": 350,
+      "display_name": "Jachenau"
+    },
+    {
+      "name": "Tölzer Hütte am Schafreuter - Blick ins Karwendel",
+      "url": "https://www.foto-webcam.eu/webcam/toelzer-huette/",
+      "latitude": 47.50413,
+      "longitude": 11.49251,
+      "slug": "toelzer-huette",
+      "direction_deg": 210,
+      "display_name": "Tölzer Hütte"
+    },
+    {
+      "name": "Murnau am Staffelsee / Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/murnau/",
+      "latitude": 47.669679,
+      "longitude": 11.194753,
+      "slug": "murnau",
+      "direction_deg": 200,
+      "display_name": "Murnau"
+    },
+    {
+      "name": "Herzogstand / Fahrenbergkopf - Blick über den Kochelsee ins Oberland",
+      "url": "https://www.foto-webcam.eu/webcam/kochelsee/",
+      "latitude": 47.607013,
+      "longitude": 11.316456,
+      "slug": "kochelsee",
+      "direction_deg": 20,
+      "display_name": "Herzogstand Nord"
+    },
+    {
+      "name": "Herzogstand / Fahrenbergkopf - Blick über den Walchensee ins Karwendel",
+      "url": "https://www.foto-webcam.eu/webcam/herzogstand/",
+      "latitude": 47.606633,
+      "longitude": 11.316126,
+      "slug": "herzogstand",
+      "direction_deg": 180,
+      "display_name": "Herzogstand Süd"
+    },
+    {
+      "name": "Wankhaus - Garmisch-Partenkirchen - Blick nach Südwesten zur Zugspitze",
+      "url": "https://www.foto-webcam.eu/webcam/wank/",
+      "latitude": 47.50833,
+      "longitude": 11.14322,
+      "slug": "wank",
+      "direction_deg": 240,
+      "display_name": "Wankhaus"
+    },
+    {
+      "name": "Gsteig - Blick zur Zugspitze",
+      "url": "https://www.foto-webcam.eu/webcam/gsteig/",
+      "latitude": 47.487315,
+      "longitude": 11.128385,
+      "slug": "gsteig",
+      "direction_deg": 210,
+      "display_name": "Gsteig"
+    },
+    {
+      "name": "Meilerhütte - Wetterstein - Blick nach Nordwesten zur Zugspitze",
+      "url": "https://www.foto-webcam.eu/webcam/meilerhuette/",
+      "latitude": 47.41246,
+      "longitude": 11.128825,
+      "slug": "meilerhuette",
+      "direction_deg": 290,
+      "display_name": "Meilerhütte West"
+    },
+    {
+      "name": "Meilerhütte - Wetterstein - Blick zur Hütte",
+      "url": "https://www.foto-webcam.eu/webcam/meilerhuette-haus/",
+      "latitude": 47.412296,
+      "longitude": 11.1273695,
+      "slug": "meilerhuette-haus",
+      "direction_deg": 90,
+      "display_name": "Meilerhütte Haus"
+    },
+    {
+      "name": "Kreuzeck Bergstation - Garmisch-Classic - Blick zur Alpspitze und Zugspitze",
+      "url": "https://www.foto-webcam.eu/webcam/kreuzeck/",
+      "latitude": 47.452252,
+      "longitude": 11.074358,
+      "slug": "kreuzeck",
+      "direction_deg": 250,
+      "display_name": "Kreuzeck"
+    },
+    {
+      "name": "Sonnalpin - Gletscher-Skigebiet Zugspitze - Blick zum Schneefernerkopf",
+      "url": "https://www.foto-webcam.eu/webcam/sonnalpin/",
+      "latitude": 47.413465,
+      "longitude": 10.97971,
+      "slug": "sonnalpin",
+      "direction_deg": 250,
+      "display_name": "Sonnalpin"
+    },
+    {
+      "name": "Wetterwarte Zugspitze - Blick über den Gipfel nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/zugspitze/",
+      "latitude": 47.42083,
+      "longitude": 10.98473,
+      "slug": "zugspitze",
+      "direction_deg": 80,
+      "display_name": "Zugspitze Gipfel"
+    },
+    {
+      "name": "Wetterwarte Zugspitze - Blick über das Zugspitzplatt nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/zugspitze-sued/",
+      "latitude": 47.42082,
+      "longitude": 10.98472,
+      "slug": "zugspitze-sued",
+      "direction_deg": 190,
+      "display_name": "Zugspitze Süd"
+    },
+    {
+      "name": "Bayerische Zugspitzbahn - Blick vom Gipfel nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/zugspitze-nord/",
+      "latitude": 47.421483,
+      "longitude": 10.985454,
+      "slug": "zugspitze-nord",
+      "direction_deg": 355,
+      "display_name": "Zugspitze Nord"
+    },
+    {
+      "name": "Bayerische Zugspitzbahn - Blick über das Höllental nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/zugspitze-ost/",
+      "latitude": 47.421501,
+      "longitude": 10.985628,
+      "slug": "zugspitze-ost",
+      "direction_deg": 55,
+      "display_name": "Zugspitze Ost"
+    },
+    {
+      "name": "Seilbahn Zugspitze - Blick zum Gipfel von Westen",
+      "url": "https://www.foto-webcam.eu/webcam/bzb-gipfel/",
+      "latitude": 47.421449,
+      "longitude": 10.984445,
+      "slug": "bzb-gipfel",
+      "direction_deg": 90,
+      "display_name": "Zugspitze West"
+    },
+    {
+      "name": "Seilbahn Zugspitze - Weltrekord-Stütze - Blick über den Eibsee nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/eibsee-nord/",
+      "latitude": 47.4463836,
+      "longitude": 10.987823,
+      "slug": "eibsee-nord",
+      "direction_deg": 340,
+      "display_name": "Eibsee Nord"
+    },
+    {
+      "name": "Bayerische Zugspitzbahn - Seilbahn Zugspitze - Talstation",
+      "url": "https://www.foto-webcam.eu/webcam/bzb-tal/",
+      "latitude": 47.454979,
+      "longitude": 10.993231,
+      "slug": "bzb-tal",
+      "direction_deg": 340,
+      "display_name": "Zugspitze Tal"
+    },
+    {
+      "name": "Eibsee-Hotel - Grainau - Blick nach Südwesten zur Zugspitze",
+      "url": "https://www.foto-webcam.eu/webcam/eibsee-hotel/",
+      "latitude": 47.45824,
+      "longitude": 10.989387,
+      "slug": "eibsee-hotel",
+      "direction_deg": 205,
+      "display_name": "Eibsee-Hotel"
+    },
+    {
+      "name": "Unterammergau - Blick nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/unterammergau/",
+      "latitude": 47.618658298,
+      "longitude": 11.041950416,
+      "slug": "unterammergau",
+      "direction_deg": 244,
+      "display_name": "Unterammergau"
+    },
+    {
+      "name": "Tegelberg - Ostallgäu - Blick auf Füssen, Schwangau und den Forggensee",
+      "url": "https://www.foto-webcam.eu/webcam/tegelberg/",
+      "latitude": 47.559653,
+      "longitude": 10.7790032,
+      "slug": "tegelberg",
+      "direction_deg": 285,
+      "display_name": "Tegelberg"
+    },
+    {
+      "name": "Tannheimertal - Blick nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/tannheimertal/",
+      "latitude": 47.50004,
+      "longitude": 10.506507,
+      "slug": "tannheimertal",
+      "direction_deg": 100,
+      "display_name": "Tannheimertal"
+    },
+    {
+      "name": "Sonthofen / Oberallgäu – Blick vom Sonthofer Hof nach Nordwesten",
+      "url": "https://www.foto-webcam.eu/webcam/sonthofen/",
+      "latitude": 47.48474,
+      "longitude": 10.327536,
+      "slug": "sonthofen",
+      "direction_deg": 320,
+      "display_name": "Sonthofen"
+    },
+    {
+      "name": "Nebelhornbahn Gipfelstation - Oberstdorf - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/nebelhorn/",
+      "latitude": 47.421681,
+      "longitude": 10.342512,
+      "slug": "nebelhorn",
+      "direction_deg": 130,
+      "display_name": "Nebelhorn"
+    },
+    {
+      "name": "Oberstdorf / Scheibenhaus - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/scheibenhaus/",
+      "latitude": 47.393347,
+      "longitude": 10.281679,
+      "slug": "scheibenhaus",
+      "direction_deg": 180,
+      "display_name": "Oberstdorf"
+    },
+    {
+      "name": "Heini-Klopfer-Skiflugschanze - Oberstdorf - Blick nach Nordosten",
+      "url": "https://www.foto-webcam.eu/webcam/skiflugschanze/",
+      "latitude": 47.377001,
+      "longitude": 10.267085,
+      "slug": "skiflugschanze",
+      "direction_deg": 40,
+      "display_name": "Skiflugschanze"
+    },
+    {
+      "name": "Fellhornbahn Gipfelstation - Oberstdorf - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/fellhorn/",
+      "latitude": 47.348075,
+      "longitude": 10.216169,
+      "slug": "fellhorn",
+      "direction_deg": 140,
+      "display_name": "Fellhorn"
+    },
+    {
+      "name": "Oberstdorf / Jägersberg -  Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/jaegersberg/",
+      "latitude": 47.432947,
+      "longitude": 10.263093,
+      "slug": "jaegersberg",
+      "direction_deg": 175,
+      "display_name": "Jägersberg"
+    },
+    {
+      "name": "Kleinwalsertal / Alpenhotel DAS KÜREN - Blick nach Südosten ins Wäldele",
+      "url": "https://www.foto-webcam.eu/webcam/kueren/",
+      "latitude": 47.35123,
+      "longitude": 10.148186,
+      "slug": "kueren",
+      "direction_deg": 130,
+      "display_name": "Kleinwalsertal"
+    },
+    {
+      "name": "Obermaiselstein / Großer Herrenberg - Blick nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/obermaiselstein/",
+      "latitude": 47.44399,
+      "longitude": 10.23208,
+      "slug": "obermaiselstein",
+      "direction_deg": 75,
+      "display_name": "Obermaiselstein"
+    },
+    {
+      "name": "Balderschwang / Kreuzle - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/balderschwang-kreuzle/",
+      "latitude": 47.458518,
+      "longitude": 10.144696,
+      "slug": "balderschwang-kreuzle",
+      "direction_deg": 275,
+      "display_name": "Balderschwang"
+    },
+    {
+      "name": "St. Anton / Wasserschloss KW Kartell - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/ewa/",
+      "latitude": 47.09494,
+      "longitude": 10.225127,
+      "slug": "ewa",
+      "direction_deg": 2,
+      "display_name": "St. Anton"
+    },
+    {
+      "name": "Gargellen - Blick nach Nordosten",
+      "url": "https://www.foto-webcam.eu/webcam/gargellen/",
+      "latitude": 46.95884,
+      "longitude": 9.90114,
+      "slug": "gargellen",
+      "direction_deg": 52,
+      "display_name": "Gargellen"
+    },
+    {
+      "name": "Gargellen Süd / Kristallbahn Berg - Blick Richtung Schafberg Plateau - Madrisa",
+      "url": "https://www.foto-webcam.eu/webcam/gargellen-sued/",
+      "latitude": 46.96131,
+      "longitude": 9.89152,
+      "slug": "gargellen-sued",
+      "direction_deg": 160,
+      "display_name": "Gargellen Süd"
+    },
+    {
+      "name": "Gargellen West / Kristallbahn Berg - Blick Richtung Täli - St. Antönier Joch",
+      "url": "https://www.foto-webcam.eu/webcam/gargellen-west/",
+      "latitude": 46.96131,
+      "longitude": 9.89152,
+      "slug": "gargellen-west",
+      "direction_deg": 300,
+      "display_name": "Gargellen West"
+    },
+    {
+      "name": "Stuben am Arlberg / Flexengalerie - Blick nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/stuben/",
+      "latitude": 47.149496,
+      "longitude": 10.165952,
+      "slug": "stuben",
+      "direction_deg": 220,
+      "display_name": "Stuben"
+    },
+    {
+      "name": "Schröcken - Blick nach Nordwesten",
+      "url": "https://www.foto-webcam.eu/webcam/schroecken/",
+      "latitude": 47.256754,
+      "longitude": 10.094002,
+      "slug": "schroecken",
+      "direction_deg": 310,
+      "display_name": "Schröcken"
+    },
+    {
+      "name": "Lech am Arlberg / Chalet Anna Maria - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/annamarialech/",
+      "latitude": 47.20921365787,
+      "longitude": 10.140728634,
+      "slug": "annamarialech",
+      "direction_deg": 25,
+      "display_name": "Chalet Anna Maria"
+    },
+    {
+      "name": "Lech am Arlberg / Haldenhof - Blick nach Südwesten zum Omeshorn",
+      "url": "https://www.foto-webcam.eu/webcam/haldenhof/",
+      "latitude": 47.20921365787,
+      "longitude": 10.140728634,
+      "slug": "haldenhof",
+      "direction_deg": 240,
+      "display_name": "Haldenhof"
+    },
+    {
+      "name": "Lech am Arlberg - Blick nach Südwest ins Zugertal",
+      "url": "https://www.foto-webcam.eu/webcam/lech/",
+      "latitude": 47.21977,
+      "longitude": 10.1718,
+      "slug": "lech",
+      "direction_deg": 240,
+      "display_name": "Lech am Arlberg"
+    },
+    {
+      "name": "Lech am Arlberg / Rüfikopf - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/ruefikopf/",
+      "latitude": 47.2015,
+      "longitude": 10.16695,
+      "slug": "ruefikopf",
+      "direction_deg": 180,
+      "display_name": "Lech Rüfikopf"
+    },
+    {
+      "name": "Lech am Arlberg, Schlegelkopf",
+      "url": "https://www.foto-webcam.eu/webcam/schmelzhof/",
+      "latitude": 47.205755,
+      "longitude": 10.137962,
+      "slug": "schmelzhof",
+      "direction_deg": 300,
+      "display_name": "Schmelzhof"
+    },
+    {
+      "name": "Lech / Pension Bergland - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/oberlech/",
+      "latitude": 47.217168,
+      "longitude": 10.144845,
+      "slug": "oberlech",
+      "direction_deg": 180,
+      "display_name": "Pension Bergland"
+    },
+    {
+      "name": "Körbersee / Schröcken  - Schönster Platz Österreichs 2017",
+      "url": "https://www.foto-webcam.eu/webcam/koerbersee/",
+      "latitude": 47.256121,
+      "longitude": 10.115857,
+      "slug": "koerbersee",
+      "direction_deg": 240,
+      "display_name": "Körbersee"
+    },
+    {
+      "name": "Oberstaufen / Haubers Naturresort - Blick nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/oberstaufen/",
+      "latitude": 47.572375,
+      "longitude": 10.043138,
+      "slug": "oberstaufen",
+      "direction_deg": 205,
+      "display_name": "Oberstaufen"
+    },
+    {
+      "name": "Andelsbuch / Niedere",
+      "url": "https://www.foto-webcam.eu/webcam/andelsbuch/",
+      "latitude": 47.4032,
+      "longitude": 9.938801,
+      "slug": "andelsbuch",
+      "direction_deg": 90,
+      "display_name": "Andelsbuch"
+    },
+    {
+      "name": "Tschagguns / Montafon Nordic Schanzenzentrum - Blick nach NO",
+      "url": "https://www.foto-webcam.eu/webcam/tschagguns/",
+      "latitude": 47.065405,
+      "longitude": 9.912421,
+      "slug": "tschagguns",
+      "direction_deg": 15,
+      "display_name": "Tschagguns"
+    },
+    {
+      "name": "Blick über Schruns nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/schruns/",
+      "latitude": 47.0819366,
+      "longitude": 9.9257658,
+      "slug": "schruns",
+      "direction_deg": 250,
+      "display_name": "Schruns"
+    },
+    {
+      "name": "Sibratsgfäll / Bregenzerwald- Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/sibratsgfaell/",
+      "latitude": 47.439096,
+      "longitude": 10.011797,
+      "slug": "sibratsgfaell",
+      "direction_deg": 140,
+      "display_name": "Sibratsgfäll"
+    },
+    {
+      "name": "Damüls / Hotel Alpenblume - Blick nach Süden / Faschina",
+      "url": "https://www.foto-webcam.eu/webcam/damuels/",
+      "latitude": 47.285447,
+      "longitude": 9.890544,
+      "slug": "damuels",
+      "direction_deg": 180,
+      "display_name": "Damüls"
+    },
+    {
+      "name": "Damüls Hasenbühel - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/hasenbuehel/",
+      "latitude": 47.307849,
+      "longitude": 9.879913,
+      "slug": "hasenbuehel",
+      "direction_deg": 180,
+      "display_name": "Hasenbühel"
+    },
+    {
+      "name": "Furkajoch - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/furkajoch/",
+      "latitude": 47.264004,
+      "longitude": 9.827745,
+      "slug": "furkajoch",
+      "direction_deg": 260,
+      "display_name": "Furkajoch"
+    },
+    {
+      "name": "Bludenz - Blick nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/bludenz/",
+      "latitude": 47.156955,
+      "longitude": 9.818069,
+      "slug": "bludenz",
+      "direction_deg": 90,
+      "display_name": "Bludenz"
+    },
+    {
+      "name": "Bludenz Zentrum - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/bludenz-zentrum/",
+      "latitude": 47.15527,
+      "longitude": 9.82063,
+      "slug": "bludenz-zentrum",
+      "direction_deg": 10,
+      "display_name": "Bludenz Zentrum"
+    },
+    {
+      "name": "Vorderälpele / Frastanz - Blick ins Rheintal",
+      "url": "https://www.foto-webcam.eu/webcam/vorderaelpele/",
+      "latitude": 47.2091869,
+      "longitude": 9.59104043,
+      "slug": "vorderaelpele",
+      "direction_deg": 340,
+      "display_name": "Vorderälpele"
+    },
+    {
+      "name": "Feldkirch / Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/feldkirch/",
+      "latitude": 47.232575,
+      "longitude": 9.598371,
+      "slug": "feldkirch",
+      "direction_deg": 1,
+      "display_name": "Feldkirch"
+    },
+    {
+      "name": "Dornbirn / Karren - Blick nach Nordwesten zum Bodensee",
+      "url": "https://www.foto-webcam.eu/webcam/dornbirn/",
+      "latitude": 47.388064,
+      "longitude": 9.75051,
+      "slug": "dornbirn",
+      "direction_deg": 330,
+      "display_name": "Dornbirn"
+    },
+    {
+      "name": "Röthis - METZLER GmbH & Co KG - Blick nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/roethis-ost/",
+      "latitude": 47.306649,
+      "longitude": 9.618008,
+      "slug": "roethis-ost",
+      "direction_deg": 90,
+      "display_name": "Röthis Ost"
+    },
+    {
+      "name": "Röthis - METZLER GmbH & Co KG - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/roethis-west/",
+      "latitude": 47.306648,
+      "longitude": 9.618187,
+      "slug": "roethis-west",
+      "direction_deg": 270,
+      "display_name": "Röthis West"
+    },
+    {
+      "name": "Yachtclub Hard - Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/yc-hard-nord/",
+      "latitude": 47.49905,
+      "longitude": 9.68625,
+      "slug": "yc-hard-nord",
+      "direction_deg": 10,
+      "display_name": "YC Hard Nord"
+    },
+    {
+      "name": "Yachtclub Hard - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/yc-hard-sued/",
+      "latitude": 47.49905,
+      "longitude": 9.68625,
+      "slug": "yc-hard-sued",
+      "direction_deg": 180,
+      "display_name": "YC Hard Süd"
+    },
+    {
+      "name": "Yachtclub Hard - Blick nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/yc-hard-ost/",
+      "latitude": 47.49905,
+      "longitude": 9.68625,
+      "slug": "yc-hard-ost",
+      "direction_deg": 90,
+      "display_name": "YC Hard Ost"
+    },
+    {
+      "name": "Hoher Kasten / Drehrestaurant - Blick nach Südosten ins Rheintal",
+      "url": "https://www.foto-webcam.eu/webcam/hoherkasten/",
+      "latitude": 47.283884,
+      "longitude": 9.485686,
+      "slug": "hoherkasten",
+      "direction_deg": 95,
+      "display_name": "Hoher Kasten"
+    },
+    {
+      "name": "Hochhamm - Blick nach Südosten zum Säntis",
+      "url": "https://www.foto-webcam.eu/webcam/hochhamm/",
+      "latitude": 47.314954,
+      "longitude": 9.239525,
+      "slug": "hochhamm",
+      "direction_deg": 135,
+      "display_name": "Hochhamm"
+    },
+    {
+      "name": "Bergbahnen Wildhaus - Gamserrugg mit Blick zum Säntis und Schafberg",
+      "url": "https://www.foto-webcam.eu/webcam/wildhaus/",
+      "latitude": 47.158949,
+      "longitude": 9.337852,
+      "slug": "wildhaus",
+      "direction_deg": 345,
+      "display_name": "Wildhaus"
+    },
+    {
+      "name": "Pizol - Bad Ragaz - Wangs / Blick nach Norden",
+      "url": "https://www.foto-webcam.eu/webcam/pizol/",
+      "latitude": 46.979739,
+      "longitude": 9.436717,
+      "slug": "pizol",
+      "direction_deg": 5,
+      "display_name": "Pizol"
+    },
+    {
+      "name": "Schwarzenbach / Johann Giefing Aussichtsturm - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/schwarzenbach/",
+      "latitude": 47.636144,
+      "longitude": 16.361593,
+      "slug": "schwarzenbach",
+      "direction_deg": 267,
+      "display_name": "Schwarzenbach"
+    },
+    {
+      "name": "Hochwolkersdorf / Blick nach Südwesten in die Bucklige Welt",
+      "url": "https://www.foto-webcam.eu/webcam/hochwolkersdorf/",
+      "latitude": 47.673894,
+      "longitude": 16.28241,
+      "slug": "hochwolkersdorf",
+      "direction_deg": 220,
+      "display_name": "Hochwolkersdorf"
+    },
+    {
+      "name": "Wien-Donaustadt - Blick von der UBIMET-Zentrale nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/wien/",
+      "latitude": 48.233518,
+      "longitude": 16.411176,
+      "slug": "wien",
+      "direction_deg": 210,
+      "display_name": "Wien Donaustadt"
+    },
+    {
+      "name": "Wien / Bisamberg - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/bisamberg/",
+      "latitude": 48.31067,
+      "longitude": 16.38251,
+      "slug": "bisamberg",
+      "direction_deg": 170,
+      "display_name": "Wien Bisamberg"
+    },
+    {
+      "name": "Bad Endorf – „Simssee Blick“, Golddorf Hirnsberg und Chiemgauer Alpen – Mangfallgebirge",
+      "url": "https://www.foto-webcam.eu/webcam/bad-endorf/",
+      "latitude": 47.89457,
+      "longitude": 12.30044,
+      "slug": "bad-endorf",
+      "direction_deg": 250,
+      "display_name": "Bad Endorf"
+    },
+    {
+      "name": "Rosenheim / RoMed Klinikum - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/rosenheim/",
+      "latitude": 47.860299,
+      "longitude": 12.131823,
+      "slug": "rosenheim",
+      "direction_deg": 185,
+      "display_name": "Rosenheim"
+    },
+    {
+      "name": "LMU-Klinikum München-Großhadern - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/lmu-klinikum/",
+      "latitude": 48.11085199,
+      "longitude": 11.4681506,
+      "slug": "lmu-klinikum",
+      "direction_deg": 195,
+      "display_name": "LMU-Klinikum Süd"
+    },
+    {
+      "name": "LMU-Klinikum München-Großhadern - Blick nach Nordost / München-Innenstadt",
+      "url": "https://www.foto-webcam.eu/webcam/muenchen/",
+      "latitude": 48.1110104669,
+      "longitude": 11.4706694475,
+      "slug": "muenchen",
+      "direction_deg": 57,
+      "display_name": "LMU-Klinikum Nord"
+    },
+    {
+      "name": "Olympiaturm München - Baustelle TUM Campus im Olympiapark",
+      "url": "https://www.foto-webcam.eu/webcam/tum-olympiapark/",
+      "latitude": 48.1743533,
+      "longitude": 11.5529664,
+      "slug": "tum-olympiapark",
+      "direction_deg": 310,
+      "display_name": "TUM Olympiapark"
+    },
+    {
+      "name": "Rathaus Dachau - Blick nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/dachau/",
+      "latitude": 48.259159,
+      "longitude": 11.435332,
+      "slug": "dachau",
+      "direction_deg": 150,
+      "display_name": "Dachau"
+    },
+    {
+      "name": "Veranstaltungsforum Fürstenfeld - Blick zur Klosterkirche",
+      "url": "https://www.foto-webcam.eu/webcam/fuerstenfeld/",
+      "latitude": 48.170295,
+      "longitude": 11.247042,
+      "slug": "fuerstenfeld",
+      "direction_deg": 115,
+      "display_name": "Fürstenfeld"
+    },
+    {
+      "name": "Hohenpeißenberg / Restaurant Bayerischer Rigi - Blick nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/peissenberg/",
+      "latitude": 47.800785,
+      "longitude": 11.014571,
+      "slug": "peissenberg",
+      "direction_deg": 110,
+      "display_name": "Hohenpeißenberg"
+    },
+    {
+      "name": "Hanusel Hof - Golf und Wellness Hotel im Allgäu - Blick nach Osten",
+      "url": "https://www.foto-webcam.eu/webcam/hanuselhof/",
+      "latitude": 47.658929,
+      "longitude": 10.196552,
+      "slug": "hanuselhof",
+      "direction_deg": 120,
+      "display_name": "Hanusel Hof"
+    },
+    {
+      "name": "Hanusel Hof - Golf und Wellness Hotel im Allgäu - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/hanuselhof-west/",
+      "latitude": 47.658791,
+      "longitude": 10.196239,
+      "slug": "hanuselhof-west",
+      "direction_deg": 240,
+      "display_name": "Hanusel Hof West"
+    },
+    {
+      "name": "Schwärzenlifte - Eschach / Oberallgäu - Blick zum Gletschergumpen und zur Gletscheralp",
+      "url": "https://www.foto-webcam.eu/webcam/schwaerzenlifte/",
+      "latitude": 47.7072237,
+      "longitude": 10.1941924,
+      "slug": "schwaerzenlifte",
+      "direction_deg": 35,
+      "display_name": "Schwärzenlifte"
+    },
+    {
+      "name": "Max-Wild-Arena - Felderhalde / Isny im Allgäu - Blick nach Nordosten",
+      "url": "https://www.foto-webcam.eu/webcam/max-wild-arena/",
+      "latitude": 47.683198,
+      "longitude": 10.032582,
+      "slug": "max-wild-arena",
+      "direction_deg": 17,
+      "display_name": "Max-Wild-Arena"
+    },
+    {
+      "name": "Buchkopfturm - Oppenau-Maisach / Schwarzwald - Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/buchkopfturm/",
+      "latitude": 48.477345,
+      "longitude": 8.236567,
+      "slug": "buchkopfturm",
+      "direction_deg": 260,
+      "display_name": "Buchkopfturm"
+    },
+    {
+      "name": "Grandsberg - Schwarzach / Bayerischer Wald - Blick nach Süden zur Donauebene",
+      "url": "https://www.foto-webcam.eu/webcam/grandsberg/",
+      "latitude": 48.948899,
+      "longitude": 12.851912,
+      "slug": "grandsberg",
+      "direction_deg": 200,
+      "display_name": "Grandsberg"
+    },
+    {
+      "name": "Waldwipfelweg.de - Maibrunn / Bayerischer Wald - Blick nach Süden",
+      "url": "https://www.foto-webcam.eu/webcam/waldwipfelweg/",
+      "latitude": 49.011064,
+      "longitude": 12.779928,
+      "slug": "waldwipfelweg",
+      "direction_deg": 220,
+      "display_name": "Waldwipfelweg"
+    },
+    {
+      "name": "Berghaus Sonnenfels / Großer Arber- Blick nach Nordwesten",
+      "url": "https://www.foto-webcam.eu/webcam/berghaus-sonnenfels/",
+      "latitude": 49.1266957,
+      "longitude": 13.134359,
+      "slug": "berghaus-sonnenfels",
+      "direction_deg": 320,
+      "display_name": "Berghaus Sonnenfels"
+    },
+    {
+      "name": "Frauenau - Blick nach Nordosten",
+      "url": "https://www.foto-webcam.eu/webcam/frauenau/",
+      "latitude": 48.985602,
+      "longitude": 13.293626,
+      "slug": "frauenau",
+      "direction_deg": 45,
+      "display_name": "Frauenau"
+    },
+    {
+      "name": "Drachselsried / Berghütte Schareben 1019m ü. NN - Blick nach Südwesten",
+      "url": "https://www.foto-webcam.eu/webcam/schareben/",
+      "latitude": 49.129557,
+      "longitude": 13.052244,
+      "slug": "schareben",
+      "direction_deg": 200,
+      "display_name": "Schareben"
+    },
+    {
+      "name": "Oberpfalzturm / Steinwald - Blick Richtung Marktredwitz",
+      "url": "https://www.foto-webcam.eu/webcam/oberpfalzturm1/",
+      "latitude": 49.91,
+      "longitude": 12.053056,
+      "slug": "oberpfalzturm1",
+      "direction_deg": 10,
+      "display_name": "Oberpfalzturm 1"
+    },
+    {
+      "name": "Darmstadt - Blick nach Osten zum Hochzeitsturm",
+      "url": "https://www.foto-webcam.eu/webcam/darmstadt-ost/",
+      "latitude": 49.875876,
+      "longitude": 8.662653,
+      "slug": "darmstadt-ost",
+      "direction_deg": 68,
+      "display_name": "Darmstadt Ost"
+    },
+    {
+      "name": "Darmstadt / Blick nach Westen",
+      "url": "https://www.foto-webcam.eu/webcam/darmstadt-west/",
+      "latitude": 49.875871,
+      "longitude": 8.662596,
+      "slug": "darmstadt-west",
+      "direction_deg": 252,
+      "display_name": "Darmstadt West"
+    },
+    {
+      "name": "Darmstadt - Blick zum Luisenplatz",
+      "url": "https://www.foto-webcam.eu/webcam/luisenplatz/",
+      "latitude": 49.872609,
+      "longitude": 8.652256,
+      "slug": "luisenplatz",
+      "direction_deg": 310,
+      "display_name": "Luisenplatz"
+    },
+    {
+      "name": "Großer Feldberg im Taunus - Blick über Frankfurt nach Südosten",
+      "url": "https://www.foto-webcam.eu/webcam/feldberg-ts/",
+      "latitude": 50.232203,
+      "longitude": 8.458489,
+      "slug": "feldberg-ts",
+      "direction_deg": 135,
+      "display_name": "Feldberg Taunus"
+    },
+    {
+      "name": "WetterOnline Bonn - Blick auf die Friedrich-Ebert-Brücke",
+      "url": "https://www.foto-webcam.eu/webcam/wetteronline-bonn/",
+      "latitude": 50.760479,
+      "longitude": 7.085414,
+      "slug": "wetteronline-bonn",
+      "direction_deg": 102,
+      "display_name": "Bonn"
+    }
+  ]
+}

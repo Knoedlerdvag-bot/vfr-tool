@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: vfr-tool
+    runtime: python
+    plan: free
+    buildCommand: "true"
+    startCommand: "python3 server.py"
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PYTHON_VERSION
+        value: 3.12.0

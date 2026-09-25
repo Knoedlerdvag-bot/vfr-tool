@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Helikopterkarte EDTM - Norditalien</title>
+  <title>VFR Italia - Flugplätze & Landeplätze</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
     :root {
@@ -18,7 +18,7 @@
       --airport: #1769aa;
       --aviosurface: #16805d;
       --flightfield: #c45f08;
-      --heli: #a72370;
+      --heli: #0879aa;
       --fuel: #11895b;
       --warn: #c87014;
       --danger: #b42318;
@@ -27,6 +27,21 @@
       --shadow: 0 18px 48px rgba(16, 25, 37, .16);
     }
     * { box-sizing: border-box; }
+    .intro-screen { position: fixed; inset: 0; z-index: 5000; display: grid; place-items: center; padding: 24px; overflow: hidden; background: #071b2b; color: #f4f0e7; }
+    .intro-screen[hidden] { display: none; }
+    .intro-screen::before { content: ""; position: absolute; inset: 0; opacity: .14; background: repeating-linear-gradient(0deg, transparent 0 29px, #7ca0b4 30px 31px), repeating-linear-gradient(90deg, transparent 0 29px, #7ca0b4 30px 31px); transform: perspective(400px) rotateX(65deg) scale(1.7); transform-origin: bottom; }
+    .intro-content { position: relative; z-index: 1; width: min(650px, 100%); }
+    .intro-kicker { display: block; color: #edbd67; font: 800 12px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .intro-content h2 { margin: 18px 0 28px; max-width: 650px; color: #fff8e8; font-size: clamp(36px, 5vw, 72px); line-height: 1.02; font-weight: 850; letter-spacing: 0; }
+    .intro-content h2 strong { display: block; color: #f0c66f; font-weight: inherit; }
+    .intro-route { display: flex; align-items: center; gap: 13px; margin: 0 0 30px; color: #d1ccc0; font: 750 13px ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .intro-route::before { content: ""; display: block; width: 70px; height: 2px; background: #bb524a; box-shadow: 0 0 14px #d76255; }
+    .intro-progress { height: 5px; background: #17384d; overflow: hidden; }
+    .intro-progress span { display: block; width: 100%; height: 100%; background: #f1c369; transform: scaleX(0); transform-origin: left; animation: intro-load 5s linear forwards; }
+    .intro-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 12px; color: #c8c7bf; font-size: 12px; }
+    .intro-footer b { color: #edbd67; }
+    @keyframes intro-load { to { transform: scaleX(1); } }
+    @media (prefers-reduced-motion: reduce) { .intro-screen::before { transform: none; } .intro-progress span { animation: none; transform: scaleX(1); } }
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
@@ -165,7 +180,7 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       padding: 4px;
       position: sticky;
       top: 0;
@@ -216,6 +231,80 @@
       font-size: 12px;
       line-height: 1.35;
     }
+    .planner-box { border-bottom: 1px solid var(--line); }
+    .route-points { display: grid; gap: 7px; }
+    .route-point { display: grid; grid-template-columns: 82px minmax(0,1fr) auto; gap: 6px; align-items: center; }
+    .route-point label { font-size: 12px; font-weight: 700; }
+    .route-point input { min-width: 0; width: 100%; min-height: 38px; border: 1px solid var(--line); border-radius: 5px; padding: 0 8px; }
+    .route-point button { min-width: 34px; min-height: 34px; border: 1px solid var(--line); border-radius: 5px; background: white; cursor: pointer; }
+    .route-point small { grid-column: 2 / 4; color: var(--muted); font-size: 11px; }
+    .route-suggestions { grid-column: 2 / 4; display: grid; gap: 3px; }
+    .route-suggestions:empty { display: none; }
+    .route-suggestions button { text-align: left; padding: 7px; min-height: 34px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--ink); font-size: 11px; cursor: pointer; }
+    .route-suggestions button:hover { border-color: var(--focus); background: #eff7ff; }
+    .plan-numbers { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }
+    .plan-numbers label { font-size: 11px; color: var(--muted); display: grid; gap: 3px; }
+    .plan-numbers label span { color: var(--ink); font-weight: 700; }
+    .plan-numbers input, .plan-numbers select, .export-scope select { width: 100%; min-width: 0; min-height: 36px; border: 1px solid var(--line); border-radius: 5px; padding: 0 6px; background: white; }
+    .route-summary { font-size: 13px; line-height: 1.4; font-weight: 700; }
+    .route-leg { display: flex; justify-content: space-between; gap: 8px; padding: 5px 0; border-top: 1px solid var(--line); font-weight: 500; }
+    .route-leg span:last-child { white-space: nowrap; }
+    .layer-toggles, .fuel-options, .export-choice { display: flex; flex-wrap: wrap; gap: 7px 12px; }
+    .layer-toggles label, .fuel-options label, .export-choice label { font-size: 12px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+    .fuel-options { border: 0; padding: 0; margin: 0; gap: 6px; }
+    .fuel-options legend { font-size: 12px; font-weight: 700; }
+    .fuel-options label { position: relative; border: 1px solid var(--line); background: #f8fafc; border-radius: 5px; min-height: 32px; padding: 0 10px; color: var(--ink); font-weight: 700; transition: background .15s, color .15s, transform .15s; }
+    .fuel-options label:hover { transform: translateY(-1px); border-color: #899caf; }
+    .fuel-options input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .fuel-options label:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+    .fuel-options label:has(input:checked) { color: #fff; background: var(--fuel-color, var(--fuel)); border-color: var(--fuel-color, var(--fuel)); }
+    .fuel-options label[data-fuel="100LL"] { --fuel-color: #1567b2; }
+    .fuel-options label[data-fuel="AVGAS"] { --fuel-color: #148154; }
+    .fuel-options label[data-fuel="UL91"] { --fuel-color: #8e3535; }
+    .fuel-options label[data-fuel="MOGAS"] { --fuel-color: #a35c12; }
+    .fuel-options label[data-fuel="SUPER PLUS"] { --fuel-color: #8d5510; }
+    .fuel-options label[data-fuel="BLEIFREI"] { --fuel-color: #3b6770; }
+    .fuel-options label[data-fuel="JET A1"] { --fuel-color: #252d33; }
+    .export-scope { display: grid; gap: 5px; font-size: 12px; font-weight: 700; max-width: 220px; }
+    .wx-marker { width: 36px; height: 36px; border: 2px solid white; border-radius: 50%; color: white; display: grid; place-items: center; font: 800 9px/1 sans-serif; box-shadow: 0 2px 8px #0005; }
+    .wx-VFR { background: #18835b; } .wx-MVFR { background: #2272ba; } .wx-IFR { background: #bc3d39; } .wx-LIFR { background: #a43480; } .wx-unknown { background: #718096; }
+    .camera-leaflet-icon, .camera-icon { pointer-events: none !important; }
+    .camera-icon { display: flex; align-items: center; flex-direction: column; width: 132px; }
+    .camera-marker { position: relative; background: #173f50; border: 1px solid white; border-radius: 5px; width: 28px; height: 28px; display: grid; place-items: center; box-shadow: 0 2px 8px #0005; pointer-events: auto; cursor: pointer; transition: transform .16s, box-shadow .16s; }
+    .camera-marker svg { width: 17px; height: 17px; fill: none; stroke: white; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .camera-marker .bearing { position: absolute; left: 20px; top: -9px; font-size: 12px; color: #0a6b83; text-shadow: 0 0 2px white; }
+    .camera-hover .camera-marker { transform: scale(1.14); box-shadow: 0 0 0 3px #fff, 0 0 13px #20a6bd; }
+    .camera-label { display: block; max-width: 132px; margin-top: 2px; padding: 2px 4px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border-radius: 3px; background: rgba(255,255,255,.94); border: 1px solid rgba(41,76,95,.2); color: #17202c; font: 700 10px/1.2 sans-serif; box-shadow: 0 1px 5px #0002; pointer-events: none; }
+    .camera-preview { width: 100%; height: auto; aspect-ratio: 16/9; object-fit: contain; display: block; background: #eef2f5; }
+    .camera-popup .leaflet-popup-content { width: min(380px, calc(100vw - 72px)); min-width: 0; }
+    .camera-leaflet-icon { z-index: 1; }
+    .traffic-icon { display: flex; align-items: center; gap: 4px; width: max-content; max-width: 150px; color: #17394b; font: 700 10px/1 sans-serif; }
+    .traffic-icon .traffic-glyph { display: grid; place-items: center; width: 28px; height: 28px; flex: 0 0 28px; filter: drop-shadow(0 1px 1px #fff) drop-shadow(0 1px 2px #1238); transform-origin: center; }
+    .traffic-icon svg { width: 28px; height: 28px; fill: #fff; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+    .traffic-icon.helicopter { color: #9d3479; }
+    .traffic-icon.glider { color: #187d81; }
+    .traffic-icon.paraglider, .traffic-icon.parachute { color: #955b13; }
+    .traffic-icon b { background: rgba(255,255,255,.72); padding: 3px 4px; border-radius: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; box-shadow: 0 1px 3px #fff9; }
+    .map-tools { position: absolute; left: 12px; top: 80px; z-index: 600; display: grid; gap: 5px; justify-items: start; }
+    .map-tools button { background: white; border: 1px solid var(--line); border-radius: 5px; min-height: 34px; padding: 0 9px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 8px #0002; }
+    .map-tools button.active { background: var(--deck); color: white; }
+    .map-tools button[hidden] { display: none; }
+    .mobile-route-jump { display: none; }
+    .map-tools small { background: white; border-radius: 3px; padding: 3px 5px; }
+    .measure-label { background: #173447; border: 1px solid #fff; color: #fff; border-radius: 3px; box-shadow: 0 2px 6px #0005; font: 700 11px/1.15 sans-serif; padding: 3px 5px; white-space: nowrap; }
+    .measure-label::before { display: none; }
+    .map-point-actions { display: grid; gap: 4px; }
+    .map-point-actions button { border: 1px solid var(--line); border-radius: 3px; background: white; text-align: left; min-height: 30px; cursor: pointer; }
+    .map-point-actions button:hover { background: #eef7fc; }
+    .route-place-actions { display: grid; gap: 6px; margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--line); }
+    .route-place-actions > b { font-size: 11px; color: #36576a; }
+    .route-place-actions > div { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px; }
+    .route-place-actions button { min-height: 31px; border: 1px solid #9fb6c2; border-radius: 4px; background: #edf5f8; color: #173f55; font-size: 11px; font-weight: 750; cursor: pointer; }
+    .route-place-actions button:hover { border-color: #0c6088; background: #0c6088; color: #fff; }
+    button:active, .aviation-pin:active .aviation-symbol, .camera-marker:active { transform: scale(.96); }
+    button:focus-visible, summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+    .camera-source { display: block; margin-top: 5px; font-size: 11px; }
+    #printSheet { display: none; }
     .control-stack {
       display: grid;
       gap: 10px;
@@ -247,9 +336,10 @@
       grid-template-columns: 1fr;
       gap: 8px;
       padding: 12px;
-      border-top: 1px solid var(--line);
       font-size: 12px;
     }
+    .map-legend { position: absolute; bottom: 24px; right: 12px; z-index: 600; background: rgba(255,255,255,.97); border: 1px solid var(--line); border-radius: 5px; max-width: min(360px, 88vw); max-height: 62%; overflow: auto; box-shadow: 0 3px 12px #0002; }
+    .map-legend summary { cursor: pointer; padding: 8px 11px; font-size: 12px; font-weight: 750; }
     .legend-row {
       display: flex;
       align-items: center;
@@ -281,9 +371,11 @@
       border-radius: 4px;
     }
     .swatch.heli { background: var(--heli); }
+    .legend-map-symbol { display: grid; place-items: center; width: 25px; height: 21px; flex: 0 0 25px; color: #143f75; font: 800 22px/1 sans-serif; text-shadow: 0 1px #fff; }
+    .legend-map-symbol.glider-symbol { color: #a3318e; font-size: 27px; transform: scaleX(1.2); }
     .map-card {
       min-height: 64vh;
-      height: min(70vh, 760px);
+      height: 74vh;
       position: relative;
     }
     #map {
@@ -533,53 +625,23 @@
       gap: 10px;
       padding: 12px;
     }
-    .marker {
-      position: relative;
-      width: 28px;
-      height: 28px;
-      border-radius: 50% 50% 50% 6px;
-      transform: rotate(-45deg);
-      border: 2px solid #fff;
-      box-shadow: 0 2px 8px rgba(0,0,0,.35);
-    }
-    .marker.airport { background: var(--airport); }
-    .marker.aviosurface {
-      background: var(--aviosurface);
-      border-radius: 5px;
-      transform: rotate(45deg) scale(.86);
-    }
-    .marker.flightfield {
-      width: 30px;
-      height: 30px;
-      background: var(--flightfield);
-      border: 2px solid #fff;
-      border-radius: 5px;
-      transform: rotate(0deg);
-    }
-    .marker.helipad {
-      background: var(--heli);
-      border-radius: 50%;
-      transform: rotate(0deg);
-    }
-    .marker.warn { box-shadow: 0 0 0 3px rgba(200,112,20,.35), 0 2px 8px rgba(0,0,0,.35); }
-    .marker::after {
-      content: attr(data-label);
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%) rotate(45deg);
-      color: white;
-      font-size: 10px;
-      font-weight: 800;
-    }
-    .marker.aviosurface::after,
-    .marker.flightfield::after,
-    .marker.helipad::after {
-      transform: translate(-50%, -50%) rotate(0deg);
-    }
-    .marker.aviosurface::after {
-      transform: translate(-50%, -50%) rotate(-45deg);
-    }
+    .aviation-pin { display: flex; flex-direction: column; align-items: center; width: max-content; max-width: 120px; transform: translateX(-50%); color: #15394e; }
+    .aviation-symbol { width: 24px; height: 24px; background: #fff; border: 2px solid currentColor; border-radius: 50%; display: grid; place-items: center; font: 800 13px/1 sans-serif; box-shadow: 0 1px 6px #0005; }
+    .aviation-pin.airport .aviation-symbol::before { content: ""; width: 15px; height: 4px; background: currentColor; border-radius: 1px; }
+    .aviation-pin.aviosurface { color: #167a54; }
+    .aviation-pin.aviosurface .aviation-symbol { border-radius: 4px; transform: rotate(45deg) scale(.84); }
+    .aviation-pin.aviosurface .aviation-symbol::before { content: ""; width: 12px; height: 3px; background: currentColor; transform: rotate(-45deg); }
+    .aviation-pin.flightfield { color: #9b5a13; }
+    .aviation-pin.flightfield .aviation-symbol { border-radius: 3px; }
+    .aviation-pin.flightfield .aviation-symbol::before { content: ""; width: 13px; height: 2px; background: currentColor; }
+    .aviation-pin.helipad { color: var(--heli); }
+    .aviation-pin.helipad .aviation-symbol { width: 27px; height: 27px; border-width: 2px; font-size: 14px; box-shadow: inset 0 0 0 2px #fff, inset 0 0 0 3px currentColor, 0 0 0 2px #fff, 0 0 9px #0879aa66; }
+    .aviation-pin.helipad .aviation-symbol::before { content: "H"; }
+    .aviation-label { display: block; max-width: 120px; margin-top: 2px; padding: 2px 3px; background: rgba(255,255,255,.92); border-radius: 3px; font: 750 10px/1.1 sans-serif; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; box-shadow: 0 1px 4px #0002; }
+    .aviation-pin:hover .aviation-symbol { box-shadow: 0 0 0 2px #fff, 0 0 12px currentColor; transform: scale(1.1); }
+    #map.compact-map .aviation-label { display: none; }
+    #map.compact-map .aviation-symbol { width: 11px; height: 11px; border-width: 1.5px; }
+    #map.compact-map .aviation-symbol::before { display: none; }
     .leaflet-popup-content {
       min-width: 276px;
       max-width: min(390px, 82vw);
@@ -622,11 +684,13 @@
       }
       .mission-grid {
         grid-template-columns: minmax(320px, 410px) 1fr;
-        align-items: stretch;
+        align-items: start;
       }
       .map-card {
-        min-height: calc(100vh - 238px);
-        height: calc(100vh - 238px);
+        position: sticky;
+        top: 54px;
+        min-height: calc(100dvh - 70px);
+        height: calc(100dvh - 70px);
       }
       .list.full {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -658,6 +722,7 @@
       .flight-deck {
         padding: 15px 12px;
       }
+      .flight-deck .sub, .flight-deck .stats { display: none; }
       .main {
         padding: 8px;
       }
@@ -673,28 +738,418 @@
         gap: 2px;
       }
       .map-card {
-        height: 62vh;
+        height: 65dvh;
       }
+      .mission-grid > aside { display: contents; }
+      .mission-grid .planner-box {
+        order: 1;
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .mission-grid .map-card { order: 0; }
+      .mission-grid .filter-panel {
+        order: 2;
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .tabs { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .mobile-route-jump { display: block; }
+      .map-watermark { top: auto; right: auto; bottom: 10px; left: 8px; font-size: 10px; padding: 5px 7px; }
+    }
+    .flight-deck { padding: 10px 16px; background: #172631; }
+    .deck-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .eyebrow { color: #9bd9dc; font-size: 10px; }
+    h1 { margin: 1px 0 0; font-size: 20px; line-height: 1.15; }
+    .flight-deck .sub, .flight-deck .stats { display: none; }
+    .deck-actions { margin: 0; flex-wrap: nowrap; }
+    .deck-actions .btn { min-height: 34px; white-space: nowrap; }
+    .main { padding: 0; gap: 0; }
+    .tabs { border-radius: 0; border-left: 0; border-right: 0; position: static; background: #f8fbfc; }
+    .page.active { gap: 0; }
+    .mission-grid { gap: 0; }
+    .route-rail { border-radius: 0; box-shadow: none; border: 0; border-right: 1px solid var(--line); overflow: auto; }
+    .route-rail { background: #f7fafbbb; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+    .route-board { padding: 11px; border: 1px solid #253847; border-radius: 5px; background: #142431; color: #f3f5f2; box-shadow: inset 0 1px #ffffff1b, 0 7px 16px #172d3c24; }
+    .route-board[hidden] { display: none; }
+    .route-board-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; color: #9bb3bd; font-size: 9px; font-weight: 800; }
+    .route-board-head-tools { display: flex; align-items: center; gap: 6px; }
+    .route-board-head-tools > span { color: #f1bf63; }
+    .flap-sound-toggle { display: grid; place-items: center; width: 26px; height: 24px; padding: 0; border: 1px solid #536b78; border-radius: 4px; background: #203442; color: #b9ccd2; cursor: pointer; }
+    .flap-sound-toggle:hover, .flap-sound-toggle[aria-pressed="true"] { color: #f4c46f; border-color: #d3a851; background: #2d3d46; }
+    .flap-sound-toggle:focus-visible { outline: 2px solid #f4c46f; outline-offset: 2px; }
+    .flap-sound-toggle svg { width: 14px; height: 14px; }
+    .flap-sound-toggle .sound-on, .flap-sound-toggle[aria-pressed="true"] .sound-off { display: none; }
+    .flap-sound-toggle[aria-pressed="true"] .sound-on { display: block; }
+    .route-board-values { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+    .route-board-values > div { min-width: 0; display: grid; align-content: start; gap: 3px; }
+    .route-board-values small { font-size: 9px; color: #aebfc7; font-weight: 800; }
+    .route-board-values small:last-child { color: #edc477; }
+    .split-value { display: flex; gap: 1px; white-space: nowrap; line-height: 1; font-size: 14px; font-variant-numeric: tabular-nums; }
+    .split-tile { position: relative; width: 13px; height: 22px; flex: 0 0 13px; border-radius: 2px; background: #263945; color: #f7c96f; box-shadow: inset 0 1px #ffffff28, 0 1px 1px #0008; text-align: center; perspective: 160px; }
+    .split-tile::after { content: ""; position: absolute; z-index: 4; top: 50%; left: 0; right: 0; border-top: 1px solid #0a1820; }
+    .split-tile span { position: absolute; inset: 0; display: grid; place-items: center; }
+    .split-tile .split-glyph { z-index: 2; backface-visibility: hidden; transform-origin: center 50%; }
+    .split-tile .split-old { z-index: 3; background: #30434d; backface-visibility: hidden; transform-origin: center 50%; }
+    .split-tile.flip .split-old { animation: flap .42s cubic-bezier(.42,0,.22,1) both; }
+    @keyframes flap { 0% { transform: rotateX(0); } 100% { transform: rotateX(-180deg); opacity: 0; } }
+    .split-tile.wheel-step .split-glyph { animation: flap-wheel-step 56ms linear both; }
+    @keyframes flap-wheel-step {
+      0% { transform: rotateX(72deg) translateY(-2px); filter: brightness(1.45); opacity: .45; }
+      48% { transform: rotateX(6deg); opacity: 1; }
+      100% { transform: rotateX(0); filter: brightness(1); opacity: 1; }
+    }
+    .route-board-foot { display: block; margin-top: 8px; color: #bfd0d7; font-size: 10px; }
+    .flight-deck { background: #242322; border-bottom: 2px solid #bd443c; }
+    .flight-deck .eyebrow { color: #f5c96f; }
+    .route-rail { background: #071b2b; color: #f4f0e7; border-right-color: #1e4059; }
+    .route-rail .planner-box, .route-rail .panel-header { background: #071b2b; border-color: #284b63; }
+    .route-rail .route-header b { color: #f5c96f; }
+    .route-rail .control-stack > .helper { color: #b9b7b0; }
+    .route-rail .route-point label, .route-rail .plan-numbers label, .route-rail .plan-numbers label span { color: #efeee8; }
+    .route-rail .route-point small { color: #f4c878; }
+    .route-rail .route-summary { color: #eee8d9; }
+    .route-rail .route-leg { border-color: #284b63; }
+    .route-rail .route-point input, .route-rail .plan-numbers input, .route-rail .plan-numbers select { background: #0e3049; border-color: #456a83; color: #fff; }
+    .route-rail .route-point input::placeholder, .route-rail .plan-numbers input::placeholder { color: #aaa9a3; }
+    .route-rail .route-point button, .route-rail .toolbar > .btn { background: #10344e; border-color: #456a83; color: #fff; }
+    .route-rail .route-point button:hover, .route-rail .toolbar > .btn:hover { border-color: #e9ba67; background: #31516a; }
+    .route-rail .plan-numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+    .flight-time-picker { display: grid; gap: 7px; padding: 9px; border: 1px solid #365d77; border-radius: 6px; background: #091f31; }
+    .flight-time-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #f5c96f; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .flight-time-title span { color: #a9c0d0; font-weight: 550; letter-spacing: 0; text-transform: none; }
+    .flight-time-controls { display: grid; grid-template-columns: 1.25fr .8fr; gap: 6px; }
+    .flight-time-field { position: relative; display: grid; gap: 3px; color: #d9e5ec; font-size: 9px; font-weight: 760; text-transform: uppercase; letter-spacing: .05em; }
+    .flight-time-field svg { position: absolute; z-index: 1; left: 7px; bottom: 9px; width: 15px; height: 15px; color: #f3c66e; pointer-events: none; }
+    .flight-time-field input { width: 100%; min-width: 0; min-height: 36px; padding: 0 5px 0 27px; background: #0e3049; border: 1px solid #456a83; border-radius: 4px; color: #fff; color-scheme: dark; font-size: 11px; font-variant-numeric: tabular-nums; }
+    .flight-time-steps { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 4px; }
+    .flight-time-steps button { min-height: 28px; padding: 0 4px; border: 1px solid #456780; border-radius: 4px; background: #0e3049; color: #dce8ef; font-size: 10px; font-weight: 760; cursor: pointer; }
+    .flight-time-steps button:hover { border-color: #e9ba67; color: #f5c96f; }
+    .route-rail .route-point { grid-template-columns: 52px minmax(0, 1fr) auto; }
+    .route-rail .route-point label { display: grid; justify-items: center; gap: 1px; font-size: 11px; }
+    .route-rail .route-point label svg { width: 20px; height: 20px; }
+    .route-rail .route-point .toolbar { gap: 3px; }
+    .route-rail .route-point button { width: 25px; min-width: 25px; min-height: 31px; padding: 0; }
+    .route-rail .route-point button svg { width: 14px; height: 14px; }
+    .filter-button:disabled { opacity: .46; cursor: not-allowed; }
+    .route-rail .route-board { margin-top: 10px; padding: 12px; background: #071b2b; border: 1px solid #365b70; box-shadow: inset 0 2px #ffffff10, 0 12px 24px #0005; }
+    .route-rail .route-board-head { margin-bottom: 13px; color: #e9bc66; font-size: 10px; }
+    .route-rail .route-board-values { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0; border-top: 1px solid #28495e; border-left: 1px solid #28495e; }
+    .route-rail .route-board-values > div { grid-column: span 2; min-width: 0; display: grid; grid-template-columns: minmax(0,1fr) auto; align-content: center; min-height: 60px; padding: 7px; border-right: 1px solid #28495e; border-bottom: 1px solid #28495e; }
+    .route-rail .route-board-values > .board-location { grid-column: span 3; min-height: 72px; }
+    .route-rail .route-board-values > div > small:first-child { grid-column: 1 / -1; align-self: start; }
+    .route-rail .route-board-values small { font-size: 9px; color: #a9bdc8; }
+    .route-rail .route-board-values small:last-child { color: #e9bc66; }
+    .route-rail .route-board .split-value { font-size: 18px; gap: 2px; }
+    .route-rail .route-board .split-tile { width: 17px; flex-basis: 17px; height: 28px; background: #1b303d; color: #f5c870; box-shadow: inset 0 1px #ffffff25, 0 2px 3px #000a; }
+    .route-rail .route-board .board-location .split-value { font-size: 22px; }
+    .route-rail .route-board .board-location .split-tile { width: 19px; flex-basis: 19px; height: 31px; }
+    .route-rail .route-board .split-tile .split-old { background: #29404d; }
+    .route-rail .route-board-foot { color: #e6c78b; font-size: 10px; line-height: 1.4; margin-top: 9px; padding-top: 8px; border-top: 1px solid #28495e; }
+    .board-schedule { display: grid; gap: 0; margin-top: 9px; border-top: 1px solid #28495e; border-left: 1px solid #28495e; }
+    .board-schedule-row { display: grid; grid-template-columns: 66px minmax(0,1fr); align-items: center; gap: 7px; min-height: 48px; padding: 6px 7px; border-right: 1px solid #28495e; border-bottom: 1px solid #28495e; }
+    .board-schedule-row > small { color: #d2b879; font-size: 9px; font-weight: 850; letter-spacing: .04em; }
+    .board-schedule-values { display: grid; grid-template-columns: auto auto auto; justify-content: space-between; align-items: start; gap: 5px; min-width: 0; }
+    .board-time-part { display: grid; justify-items: start; gap: 2px; min-width: 0; }
+    .route-rail .route-board .board-schedule-values .split-value { font-size: 12px; gap: 1px; }
+    .route-rail .route-board .board-schedule-values .split-tile { width: 12px; height: 21px; flex-basis: 12px; }
+    .board-schedule-unit { color: #95aeba; font: 750 7px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .sun-board { display: grid; gap: 0; margin-top: 9px; border-top: 1px solid #28495e; border-left: 1px solid #28495e; }
+    .sun-event { display: grid; grid-template-columns: 76px minmax(0,1fr); align-items: center; gap: 7px; min-height: 48px; padding: 6px 7px; border-right: 1px solid #28495e; border-bottom: 1px solid #28495e; color: #dce7ea; font: 700 10px/1.25 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .sun-event-label { display: flex; align-items: center; gap: 5px; }
+    .sun-event svg { width: 16px; height: 16px; color: #f4c66c; }
+    .sun-event small { color: #aebfc7; font-size: 8px; }
+    .sun-event-values { display: grid; grid-template-columns: auto auto minmax(0,1fr); justify-content: space-between; gap: 5px; min-width: 0; }
+    .route-rail .route-board .sun-event-values .split-value { font-size: 12px; gap: 1px; }
+    .route-rail .route-board .sun-event-values .split-tile { width: 12px; height: 21px; flex-basis: 12px; }
+    .daylight-warning { display: grid; gap: 3px; margin-top: 8px; padding: 7px 8px; border-left: 3px solid #d3a851; background: #3f341f; color: #ffe0a1; font-size: 10px; line-height: 1.35; }
+    .daylight-warning.danger { border-left-color: #e1594b; background: #462423; color: #ffd0ca; }
+    .daylight-warning[hidden] { display: none; }
+    .airport-board-columns { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); border-top: 1px solid #315166; border-left: 1px solid #315166; }
+    .airport-board-column { min-width: 0; padding: 8px; border-right: 1px solid #315166; border-bottom: 1px solid #315166; }
+    .flap-board-row { display: grid; gap: 4px; min-width: 0; padding: 6px 0; border-top: 1px solid #223f52; }
+    .flap-board-row:first-child { padding-top: 0; border-top: 0; }
+    .route-rail .route-board .board-primary { gap: 1px; font-size: 16px; }
+    .route-rail .route-board .board-primary .split-tile { width: 13px; height: 25px; flex-basis: 13px; }
+    .route-rail .route-board .board-line { max-width: 100%; gap: 1px; font-size: 10px; }
+    .route-rail .route-board .board-line .split-tile { width: 8px; height: 19px; flex-basis: 8px; }
+    .route-rail .route-board .board-line-prominent { font-size: 12px; }
+    .route-rail .route-board .board-line-prominent .split-tile { width: 10px; height: 22px; flex-basis: 10px; }
+    .route-rail .route-board-values.board-metrics { margin-top: 0; border-top: 0; }
+    .route-rail .route-board-values.board-metrics > div { min-height: 72px; padding: 8px 6px; grid-template-columns: 1fr; justify-items: start; gap: 5px; }
+    .route-rail .route-board-values.board-metrics .metric-label { font-size: 11px; }
+    .route-rail .route-board-values.board-metrics .metric-label .split-tile { width: 9px; height: 20px; flex-basis: 9px; }
+    .route-rail .route-board-values.board-metrics .metric-value { font-size: 17px; }
+    .route-rail .route-board-values.board-metrics .metric-value .split-tile { width: 15px; height: 27px; flex-basis: 15px; }
+    .route-export-actions { display: grid; gap: 5px; }
+    .route-export-actions > .btn { width: 100%; min-height: 40px; }
+    .route-export-actions > div { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px; }
+    .route-export-actions > div .btn { width: 100%; min-height: 38px; }
+    .route-export-actions .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .route-export-actions svg { width: 15px; height: 15px; }
+    body.night .route-rail { background: #292a29; border-right-color: #43413e; }
+    body.night .route-rail .planner-box, body.night .route-rail .panel-header { background: #292a29; border-color: #454442; }
+    body.night .route-rail .route-leg { border-color: #4d4a45; }
+    body.night .route-rail .route-point input, body.night .route-rail .plan-numbers input, body.night .route-rail .plan-numbers select, body.night .flight-time-field input { background: #363737; border-color: #67635b; }
+    body.night .route-rail .route-point button, body.night .route-rail .toolbar > .btn, body.night .flight-time-steps button { background: #3c3d3a; border-color: #67635b; }
+    body.night .flight-time-picker { background: #202120; border-color: #55534f; }
+    body.night .map-card .leaflet-tile-pane { filter: brightness(.58) contrast(1.12) saturate(.64) hue-rotate(12deg); }
+    body.night .tabs { background: #232b2f; border-color: #48565e; }
+    body.night .tabs .tab-button { color: #d0d8d9; }
+    body.night .tabs .tab-button.active { color: #f7c86e; background: #161d20; }
+    body.night .map-card .filter-panel, body.night .map-dock, body.night .dock-popover, body.night .selected-card { background: #1d2a2be8; color: #f0efe9; border-color: #64787a; }
+    body.night .map-card .helper, body.night .dock-popover small { color: #c5d2d1; }
+    body.night .map-search-wrap .search-input { background: #303e3e; color: #fff; border-color: #748486; }
+    body.night .dock-group > summary, body.night .dock-action { color: #e5eae6; }
+    body.night .dock-options button, body.night .layer-toggles label { background: #2b3b3c; color: #f0eee9; border-color: #718082; }
+    body.night .dock-options button[aria-pressed="true"], body.night .layer-toggles label:has(input:checked) { background: #8c4442; border-color: #b96659; }
+    body.night .map-only-toggle, body.night .map-tools button, body.night .map-watermark { background: #223133e8; color: #f0eee9; border-color: #708284; }
+    body.night .leaflet-popup-content-wrapper { background: #213034; color: #f0eee9; }
+    body.night .leaflet-popup-tip { background: #213034; }
+    .map-card .filter-panel { left: 50%; transform: translateX(-50%); width: min(430px, calc(100% - 260px)); }
+    .map-dock { border-color: #98adb4; background: #fafcfbe0; box-shadow: 0 6px 22px #173b4b31; }
+    .dock-popover { width: 276px; border-color: #98adb4; background: #fcfdfbe9; }
+    .dock-popover .layer-toggles label { min-height: 34px; }
+    .popup-actions a, .popup-actions button { transition: transform .14s, box-shadow .14s, border-color .14s; }
+    .popup-actions a:hover, .popup-actions button:hover { transform: translateY(-2px); box-shadow: 0 4px 10px #14374c29; }
+    .route-header { grid-template-columns: 1fr auto; align-items: center; }
+    .rail-toggle { display: none; border: 0; background: #e9f2f7; color: #123b50; width: 34px; height: 34px; border-radius: 5px; cursor: pointer; font-size: 20px; }
+    .map-card { border-radius: 0; border: 0; box-shadow: none; overflow: hidden; }
+    .map-card .filter-panel { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 620; width: min(430px, calc(100% - 260px)); max-height: min(60dvh, 480px); overflow: visible; background: rgba(7,27,43,.94); color: #e7eff2; border: 1px solid #365b70; border-radius: 7px; box-shadow: 0 10px 30px #071b2b52; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    .filter-panel .panel-header { display: none; }
+    .filter-panel .control-stack { gap: 7px; padding: 9px; }
+    .map-search-wrap { position: relative; }
+    .map-search-wrap .search-input { min-height: 38px; padding-right: 42px; background: #0e3049; border-color: #456a83; color: #fff; }
+    .map-search-wrap .search-input::placeholder { color: #b7c9d3; }
+    .search-panel-close { position: absolute; top: 4px; right: 4px; z-index: 3; display: grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 0; border-left: 1px solid #456a83; background: transparent; color: #dbe8ed; cursor: pointer; }
+    .search-panel-close svg, .search-panel-open svg { width: 17px; height: 17px; }
+    .search-panel-open { display: none; position: absolute; z-index: 621; top: 12px; left: 50%; transform: translateX(-50%); width: 40px; height: 40px; place-items: center; border: 1px solid #365b70; border-radius: 7px; background: #071b2bee; color: #f5c870; box-shadow: 0 7px 20px #071b2b52; cursor: pointer; }
+    .map-card.search-panel-hidden .filter-panel { display: none; }
+    .map-card.search-panel-hidden .search-panel-open { display: grid; }
+    .map-search-results { display: none; position: absolute; top: calc(100% + 3px); left: 0; right: 0; z-index: 900; max-height: 260px; overflow: auto; padding: 4px; background: #fff; border: 1px solid var(--line); border-radius: 5px; box-shadow: 0 10px 28px #152c4033; }
+    .map-search-results:not(:empty) { display: grid; gap: 2px; }
+    .map-search-results button { display: grid; grid-template-columns: 50px minmax(0,1fr); gap: 8px; align-items: center; min-height: 36px; width: 100%; padding: 5px 8px; border: 0; background: transparent; text-align: left; cursor: pointer; font-size: 12px; }
+    .map-search-results button:hover, .map-search-results button:focus-visible { background: #eaf4f7; }
+    .map-search-results b { color: #075f8e; }
+    .map-search-results span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .layer-toggles { gap: 5px; }
+    .layer-toggles label { position: relative; min-height: 30px; padding: 0 9px; border: 1px solid #b8cbd6; border-radius: 5px; background: rgba(255,255,255,.86); color: #285165; font-size: 11px; font-weight: 750; transition: transform .14s, background .14s, border-color .14s, box-shadow .14s; }
+    .layer-toggles label:hover { transform: translateY(-1px); box-shadow: 0 3px 9px #16374720; }
+    .layer-toggles label:has(input:checked) { background: #123f59; color: white; border-color: #123f59; }
+    .layer-toggles label:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+    .layer-toggles input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .filter-disclosure { font-size: 12px; }
+    .filter-disclosure summary { cursor: pointer; font-weight: 750; color: #d7e5eb; min-height: 28px; }
+    .filter-disclosure .filter-row { margin: 4px 0 10px; }
+    .filter-disclosure .fuel-options { border-top: 1px solid var(--line); padding-top: 8px; }
+    .filter-panel #layerStatus:empty { display: none; }
+    .filter-panel #layerStatus { max-height: 48px; overflow: auto; color: #b9cbd4; }
+    .map-dock { position: absolute; z-index: 700; top: 60px; right: 12px; display: grid; gap: 5px; padding: 5px; border: 1px solid #365b70; border-radius: 7px; background: #071b2bee; box-shadow: 0 8px 22px #071b2b52; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    .map-dock svg { width: 18px; height: 18px; stroke-width: 1.8; }
+    .dock-group { position: relative; }
+    .dock-group > summary, .dock-icon-toggle, .dock-action { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 5px; color: #d9e7ed; cursor: pointer; list-style: none; transition: background .15s, transform .15s, color .15s; }
+    .dock-group > summary::-webkit-details-marker { display: none; }
+    .dock-group > summary:hover, .dock-group[open] > summary, .dock-icon-toggle:hover, .dock-icon-toggle:has(input:checked), .dock-action:hover, .dock-action[aria-pressed="true"] { background: #0c6088; color: #fff; transform: translateY(-1px); }
+    .dock-group.active > summary { background: #0c6088; color: #fff; }
+    .dock-group > summary:focus-visible, .dock-icon-toggle:focus-within, .dock-action:focus-visible { outline: 3px solid #0a66c277; }
+    .dock-action { border: 0; background: transparent; }
+    .dock-icon-toggle { position: relative; }
+    .dock-icon-toggle input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .dock-popover { position: absolute; top: 0; right: 43px; width: 258px; max-height: min(65dvh, 430px); overflow: auto; padding: 12px; border: 1px solid #365b70; border-radius: 6px; background: #071b2bf5; color: #e7eff2; box-shadow: 0 9px 25px #071b2b5c; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+    .dock-popover strong { display: block; font-size: 13px; margin-bottom: 9px; }
+    .dock-popover small { display: block; margin-top: 8px; color: #b8cbd4; font-size: 10px; line-height: 1.4; }
+    .dock-options { display: flex; flex-wrap: wrap; gap: 5px; }
+    .dock-options button { min-height: 31px; padding: 0 8px; border: 1px solid #456a83; border-radius: 4px; background: #10344e; color: #e7eff2; font-size: 11px; font-weight: 750; cursor: pointer; }
+    .dock-options button[aria-pressed="true"] { background: #0e5f86; color: white; border-color: #0e5f86; }
+    .dock-options .layer-toggles { display: flex; }
+    .taf-timeline { border-top: 1px solid #cbdae0; margin-top: 9px; padding-top: 9px; }
+    .taf-timeline label { display: block; font-size: 10px; font-weight: 700; }
+    .taf-timeline input { width: 100%; margin: 8px 0; accent-color: #0e7199; }
+    .taf-timeline-output { color: #284d62; font-size: 11px; line-height: 1.5; }
+    .wx-observation { min-width: 35px; max-width: 76px; padding: 4px 5px; border: 1.5px solid #fff; border-radius: 5px; background: #0e668b; box-shadow: 0 2px 7px #17354477; color: #fff; text-align: center; font: 800 11px/1.1 sans-serif; white-space: nowrap; }
+    .wx-observation.wind { background: #145873; }
+    .wx-observation.metar.vfr { background: #167853; }
+    .wx-observation.metar.mvfr { background: #1765a7; }
+    .wx-observation.metar.ifr { background: #b92f43; }
+    .wx-observation.metar.lifr { background: #773d8a; }
+    .wx-observation.cloud { background: #536b86; }
+    .wx-observation.ceiling { background: #5e4f83; }
+    .wx-observation.visibility { background: #48655d; }
+    .wx-observation.taf { background: #a24771; }
+    .wx-observation .wind-arrow { display: inline-block; margin-right: 2px; transform: rotate(var(--direction)); }
+    .wx-observation.stale { background: #78818b; }
+    .mission-grid.map-only .map-dock { display: none; }
+    .map-tools { top: 12px; left: 12px; }
+    .map-tools button, .map-only-toggle { background: #071b2bee; color: #e7eff2; border: 1px solid #365b70; box-shadow: 0 5px 15px #071b2b42; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+    .map-only-toggle { position: absolute; top: 12px; right: 12px; z-index: 650; min-height: 36px; padding: 0 10px; border-radius: 5px; font-size: 12px; font-weight: 760; cursor: pointer; }
+    .route-rail-handle { position: absolute; z-index: 720; left: 0; top: 50%; display: grid; place-items: center; width: 23px; height: 64px; padding: 0; transform: translateY(-50%); border: 1px solid #365b70; border-left: 0; border-radius: 0 7px 7px 0; background: #071b2bf2; color: #f5c870; box-shadow: 4px 6px 16px #071b2b4d; cursor: pointer; }
+    .route-rail-handle svg { width: 16px; height: 16px; transition: transform .22s ease; }
+    .mission-grid.route-collapsed { grid-template-columns: 0 minmax(0,1fr); }
+    .mission-grid.route-collapsed .route-rail { min-width: 0; opacity: 0; transform: translateX(-100%); pointer-events: none; }
+    .mission-grid.route-collapsed .route-rail-handle svg { transform: rotate(180deg); }
+    .map-watermark { top: auto; bottom: 22px; left: 12px; right: auto; padding: 4px 7px; border-radius: 3px; font-size: 10px; background: rgba(255,255,255,.88); box-shadow: none; }
+    .selected-card { position: absolute; z-index: 640; left: 12px; bottom: 62px; width: min(350px, calc(100% - 24px)); max-height: min(50dvh, 430px); overflow: auto; border: 1px solid #aebfca; border-radius: 7px; background: rgba(255,255,255,.96); box-shadow: 0 12px 34px #1b364633; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+    .selected-card[hidden] { display: none; }
+    .selected-close { border: 0; background: #e8f0f4; border-radius: 4px; color: #21485c; width: 26px; height: 26px; cursor: pointer; font-size: 17px; }
+    .map-legend { bottom: 22px; left: 12px; right: auto; background: #071b2bf2; color: #e7eff2; border-color: #365b70; box-shadow: 0 6px 18px #071b2b4a; }
+    .map-legend a { color: #f5c870; }
+    .leaflet-control-zoom { border: 1px solid #365b70 !important; box-shadow: 0 6px 18px #071b2b4a !important; }
+    .leaflet-control-zoom a { background: #071b2bf2 !important; color: #f5c870 !important; border-bottom-color: #365b70 !important; }
+    .leaflet-control-zoom a:hover { background: #103d59 !important; color: #fff !important; }
+    .mission-grid.map-only .route-rail, .mission-grid.map-only .filter-panel, .mission-grid.map-only .search-panel-open, .mission-grid.map-only .selected-card, .mission-grid.map-only .map-tools, .mission-grid.map-only .map-legend { display: none; }
+    .mission-grid.map-only { grid-template-columns: minmax(0,1fr); }
+    .aviation-pin.airport { color: #143f75; }
+    .aviation-pin.airport .aviation-symbol { box-shadow: inset 0 0 0 2px #fff, 0 0 0 1px #143f75, 0 2px 8px #0b30405c; }
+    .aviation-pin.major .aviation-symbol { width: 28px; height: 28px; border-width: 2.5px; }
+    .aviation-pin.large_airport .aviation-symbol { width: 33px; height: 33px; border: 4px double currentColor; box-shadow: inset 0 0 0 2px #fff, 0 0 0 2px #143f75, 0 3px 12px #0b304083; }
+    .aviation-pin.large_airport .aviation-symbol::before { width: 21px; height: 5px; }
+    .aviation-pin.medium_airport .aviation-symbol { width: 27px; height: 27px; border-width: 2.5px; }
+    .aviation-pin.small_airport .aviation-symbol { width: 21px; height: 21px; }
+    .aviation-pin.major .aviation-label { font-size: 11px; padding: 3px 5px; border: 1px solid #afc8dc; }
+    .aviation-pin.helipad .aviation-symbol { box-shadow: inset 0 0 0 2px #fff, inset 0 0 0 3px currentColor, 0 0 0 2px #fff, 0 0 8px #0879aa88; }
+    .aviation-pin .aviation-symbol { width: 31px; height: 31px; border: 0; border-radius: 0; background: transparent; box-shadow: none; overflow: visible; }
+    .aviation-pin .aviation-symbol::before { display: none !important; }
+    .aviation-pin .aviation-symbol svg { width: 31px; height: 31px; overflow: visible; filter: drop-shadow(0 1px 0 #fff) drop-shadow(0 1px 2px #17394b77); }
+    .aviation-pin.airport .aviation-symbol,
+    .aviation-pin.major .aviation-symbol,
+    .aviation-pin.large_airport .aviation-symbol,
+    .aviation-pin.medium_airport .aviation-symbol,
+    .aviation-pin.small_airport .aviation-symbol,
+    .aviation-pin.helipad .aviation-symbol { width: 31px; height: 31px; border: 0; box-shadow: none; }
+    .aviation-pin .place-symbol-airport path { fill: #fff; stroke: #143f75; stroke-width: 2.2; stroke-linejoin: round; }
+    .aviation-pin .place-symbol-glider path { fill: #fff; stroke: #a3318e; stroke-width: 2.2; stroke-linejoin: round; }
+    .aviation-pin .place-symbol-field rect { fill: #fff; stroke: currentColor; stroke-width: 2; }
+    .aviation-pin .place-symbol-field path { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+    .aviation-pin .place-symbol-heli circle { fill: #fff; stroke: #0879aa; stroke-width: 1.7; }
+    .aviation-pin .place-symbol-heli path { fill: none; stroke: #0879aa; stroke-width: 2.4; stroke-linecap: round; }
+    .aviation-pin.aviosurface .aviation-symbol { transform: none; }
+    #map.compact-map .aviation-label { display: none; }
+    #map.compact-map .aviation-pin.major .aviation-label { display: block; }
+    #map.compact-map .aviation-symbol { width: 17px; height: 17px; border-width: 1.5px; }
+    #map.compact-map .aviation-pin.major .aviation-symbol { width: 22px; height: 22px; }
+    #map.compact-map .aviation-pin.large_airport .aviation-symbol { width: 28px; height: 28px; border-width: 4px; }
+    #map.compact-map .aviation-pin.small_airport .aviation-symbol { width: 18px; height: 18px; }
+    #map.compact-map .aviation-pin.helipad .aviation-symbol { font-size: 9px; }
+    #map.compact-map .aviation-pin.helipad .aviation-symbol::before { display: block; }
+    #map.compact-map .aviation-pin.airport .aviation-symbol::before { display: block; width: 10px; height: 3px; }
+    #map.compact-map .aviation-pin.aviosurface .aviation-symbol::before, #map.compact-map .aviation-pin.flightfield .aviation-symbol::before { display: block; width: 8px; }
+    #map.compact-map .aviation-pin .aviation-symbol svg { width: 22px; height: 22px; }
+    #map.compact-map .aviation-pin.major .aviation-symbol svg,
+    #map.compact-map .aviation-pin.large_airport .aviation-symbol svg { width: 27px; height: 27px; }
+    .nav-marker { display: grid; justify-items: center; width: 74px; transform: translateX(-50%); color: #164778; pointer-events: none; }
+    .nav-marker .nav-symbol { position: relative; display: grid; place-items: center; width: 25px; height: 25px; border: 2px solid currentColor; background: #fff; box-shadow: 0 1px 5px #16394d66; pointer-events: auto; }
+    .nav-marker.vor .nav-symbol { border-radius: 50%; }
+    .nav-marker.vor .nav-symbol::before { content: ""; width: 17px; height: 17px; border: 2px solid currentColor; border-radius: 50%; }
+    .nav-marker.vor-dme .nav-symbol::after { content: ""; position: absolute; width: 30px; height: 30px; border: 1.5px solid currentColor; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: transparent; }
+    .nav-marker.ndb { color: #705026; }
+    .nav-marker.ndb .nav-symbol { border-radius: 50%; border-style: dotted; }
+    .nav-marker.ndb .nav-symbol::before { content: "•"; font-size: 19px; line-height: 1; }
+    .nav-marker.fix { color: #42607c; }
+    .nav-marker.fix .nav-symbol { width: 0; height: 0; border-left: 11px solid transparent; border-right: 11px solid transparent; border-bottom: 19px solid currentColor; border-top: 0; background: none; box-shadow: none; position: relative; }
+    .nav-marker.fix .nav-symbol::after { content: ""; position: absolute; left: -7px; top: 5px; border-left: 7px solid transparent; border-right: 7px solid transparent; border-bottom: 12px solid #fff; }
+    .nav-marker .nav-label { max-width: 74px; padding: 2px 4px; margin-top: 2px; border-radius: 3px; background: rgba(255,255,255,.95); font: 800 10px/1.1 sans-serif; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; pointer-events: none; }
+    #map.compact-map .nav-marker .nav-label { display: none; }
+    .camera-marker .bearing { display: none; }
+    .camera-marker .view-sector { position: absolute; left: 50%; top: 50%; width: 51px; height: 51px; transform: translate(-50%,-50%) rotate(var(--bearing)); pointer-events: none; overflow: visible; filter: drop-shadow(0 1px 1px #ffffff); }
+    .camera-marker .view-sector path { fill: #0b759d66; stroke: #075377; stroke-width: 2; }
+    .camera-marker .view-sector circle { fill: #0b759d; stroke: white; stroke-width: 1.5; }
+    .camera-marker > svg:not(.view-sector) { position: relative; z-index: 1; }
+    .traffic-icon.helicopter .helicopter-top .rotor { fill: none; stroke: currentColor; stroke-width: 1.15; opacity: .78; }
+    .traffic-icon.helicopter .helicopter-top .airframe { fill: #fff; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+    #printSheet { display: block; position: fixed; left: -10000px; top: 0; width: 760px; visibility: hidden; }
+    .print-map { height: 250px; border: 1px solid #aac2cd; margin: 10px 0 14px; }
+    .print-head { display: flex; justify-content: space-between; gap: 16px; border-bottom: 2px solid #176d91; padding-bottom: 8px; }
+    .print-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 9px 0; }
+    .print-kpis div { border: 1px solid #c8d8df; border-top: 3px solid #17749a; padding: 7px; }
+    .print-kpis b { display: block; font-size: 15pt; color: #17445b; }
+    .print-kpis span { font-size: 8pt; color: #4f6470; }
+    @media (min-width: 780px) {
+      .mission-grid { grid-template-columns: minmax(430px, 460px) minmax(0,1fr); transition: grid-template-columns .24s ease; }
+      .map-card { top: 0; height: calc(100dvh - 112px); min-height: 580px; }
+      .route-rail { max-height: calc(100dvh - 112px); transition: transform .24s ease, opacity .18s ease; }
+    }
+    @media (max-width: 779px) {
+      .deck-actions { display: none; }
+      .tabs { grid-template-columns: repeat(4,minmax(0,1fr)); }
+      .tab-button { font-size: 11px; padding: 0 3px; }
+      .mission-grid { display: block; }
+      .mission-grid > .route-rail { display: block; position: fixed; z-index: 850; left: 0; right: 0; bottom: 0; max-height: 78dvh; border: 1px solid #315774; border-bottom: 0; border-radius: 8px 8px 0 0; box-shadow: 0 -9px 28px #16324430; transform: translateY(calc(100% - 54px)); transition: transform .22s ease; background: #071b2b; }
+      body.night .mission-grid > .route-rail { background: #292a29; border-color: #55524d; }
+      body.planner-open .mission-grid > .route-rail { transform: translateY(0); overflow-y: auto; }
+      .rail-toggle { display: grid; place-items: center; }
+      body.planner-open .rail-toggle { transform: rotate(180deg); }
+      .route-header { min-height: 54px; padding: 8px 14px; }
+      .map-card { height: calc(100dvh - 120px); min-height: 470px; position: relative; }
+      .map-card .filter-panel { top: 104px; left: 50%; width: calc(100% - 16px); max-height: 42dvh; overflow: auto; }
+      .map-card:has(.map-dock .dock-group[open]) .filter-panel { display: none; }
+      .map-dock { top: 54px; right: 8px; display: flex; }
+      .dock-popover { top: 43px; right: 0; width: min(258px, calc(100vw - 24px)); }
+      #weatherTools .dock-popover { left: -6px; right: auto; }
+      #navigationTools .dock-popover { left: -46px; right: auto; }
+      .layer-toggles { flex-wrap: nowrap; overflow-x: auto; }
+      .layer-toggles label { white-space: nowrap; flex: 0 0 auto; }
+      .map-only-toggle { top: 9px; right: 8px; }
+      .map-tools { top: 9px; left: 8px; display: flex; max-width: calc(100% - 120px); }
+      .map-tools button { white-space: nowrap; }
+      .map-tools #measureStatus { position: absolute; top: 40px; left: 0; }
+      .selected-card { bottom: 76px; max-height: 40dvh; }
+      .map-watermark { bottom: 64px; }
+      .map-legend { bottom: 65px; }
+      .mission-grid.map-only > .route-rail { display: none; }
+      .route-rail-handle { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { .mission-grid > .route-rail, .layer-toggles label, .camera-marker, .dock-group > summary, .dock-icon-toggle { transition: none; } .split-tile.flip .split-old { animation: none; display: none; } }
+    @media print {
+      body { background: white; color: #15202b; }
+      .app-shell { display: none; }
+      #printSheet { display: block; position: static; left: auto; visibility: visible; width: auto; min-height: 297mm; box-sizing: border-box; padding: 16mm 16mm 19mm; font-size: 11pt; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .print-map { height: 78mm; break-inside: avoid; }
+      .print-map .leaflet-control-zoom { display: none; }
+      .print-kpis { break-inside: avoid; }
+      #printSheet h1 { font-size: 23pt; line-height: 1.1; }
+      #printSheet h2 { font-size: 13pt; margin: 16px 0 5px; }
+      #printSheet table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+      #printSheet th, #printSheet td { border-bottom: 1px solid #ccd4dc; text-align: left; padding: 5px; }
+      #printSheet .print-small { font-size: 8pt; color: #4f6070; }
+      #printSheet a { color: #15202b; }
+      #printSheet .print-footer { position: fixed; left: 16mm; bottom: 7mm; color: #4f6070; font-size: 8pt; }
+      @page { size: A4; margin: 0; }
     }
   </style>
 </head>
 <body>
+  <div class="intro-screen" id="introScreen" role="status" aria-label="Willkommen bei FLUGSCHÜLER.DE">
+    <div class="intro-content">
+      <span class="intro-kicker">VFR / PLANUNG</span>
+      <h2>Willkommen bei <strong>FLUGSCHÜLER.DE</strong></h2>
+      <div class="intro-route">DIE KARTE WIRD BEREITGESTELLT</div>
+      <div class="intro-progress" aria-hidden="true"><span></span></div>
+      <div class="intro-footer"><span>Ein unabhängiges Projekt für die Flugplanung.</span><b>Projekt unterstützen</b></div>
+    </div>
+  </div>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const app = document.querySelector(".app-shell");
+      const intro = document.getElementById("introScreen");
+      app.inert = true;
+      setTimeout(() => { intro.hidden = true; app.inert = false; }, 5000);
+    }, { once: true });
+  </script>
   <div class="app-shell">
     <header class="flight-deck">
       <div class="deck-top">
         <div>
-          <div class="eyebrow">R44 VFR Arbeitsbriefing</div>
-          <h1>Mengen-Hohentengen nach Norditalien</h1>
-          <div class="sub">Interaktive Arbeitskarte für Bozen, Trento, Verona und Gardasee. Alle Angaben vor Flugtag mit AIP, NOTAM, Betreiber, PPR, Fuel und Rechtslage abgleichen.</div>
-          <div class="deck-actions">
-            <button class="btn primary" type="button" onclick="downloadWaypointsGpx()">SkyDemon GPX</button>
-            <button class="btn dark" type="button" onclick="downloadWaypointsCsv()">CSV</button>
-          </div>
+          <div class="eyebrow">VFR Italia</div>
+          <h1>VFR-Flugplanung</h1>
+          <div class="sub">Route und Etappen für VFR-Flüge in Italien planen. Platzdaten aus ENAC/WebAAI und kuratierten Quellen; vor dem Flug AIP, NOTAM, Wetter, Betreiber und Kraftstoff prüfen.</div>
         </div>
         <div class="stats" aria-label="Kurzübersicht">
-          <div class="stat"><strong id="statPlaces">0</strong><span>zivile Plätze in der Arbeitskarte</span></div>
+          <div class="stat"><strong id="statPlaces">0</strong><span>Plätze mit Kartenposition</span></div>
           <div class="stat"><strong id="statFuel">8</strong><span>AVGAS / 100LL relevant</span></div>
-          <div class="stat"><strong id="statCorridor">0</strong><span>im 15-NM-Korridor</span></div>
+          <div class="stat"><strong id="statCorridor">0</strong><span>im gewählten Korridor</span></div>
           <div class="stat"><strong id="statPpr">0</strong><span>PPR / Klärung offen</span></div>
         </div>
       </div>
@@ -705,36 +1160,155 @@
         <button class="tab-button active" type="button" data-tab="mapPage">Karte</button>
         <button class="tab-button" type="button" data-tab="listPage">Plätze & Export</button>
         <button class="tab-button" type="button" data-tab="sourcePage">Quellen</button>
+        <button class="tab-button" type="button" data-tab="referencePage">Nachschlagen</button>
       </nav>
 
       <section class="page active" id="mapPage">
         <div class="mission-grid">
-          <aside class="panel" aria-label="Filter und aktive Auswahl">
+          <aside class="panel route-rail" aria-label="Routenplanung">
+            <div class="planner-box">
+              <div class="panel-header route-header"><b>Route planen</b><button id="plannerToggle" class="rail-toggle" type="button" aria-expanded="false" aria-controls="plannerControls" title="Routenplaner öffnen oder schließen">⌃</button></div>
+              <div class="control-stack" id="plannerControls">
+                <div id="routePoints" class="route-points"></div>
+                <div class="toolbar">
+                  <button class="btn" id="addVia" type="button">+ Überflugpunkt</button>
+                  <button class="btn" id="addStop" type="button">+ Landestopp</button>
+                </div>
+                <div class="plan-numbers">
+                  <label>Reisegeschwindigkeit <span>kt</span><input id="cruiseSpeed" type="number" min="1" max="600" step="1" value="100"></label>
+                  <label>Verbrauch <span id="fuelRateUnit">L/h</span><input id="fuelBurn" type="number" min="0" max="999" step="0.1" placeholder="eingeben"></label>
+                  <label>Einheit <span>pro Stunde</span><select id="fuelUnit"><option value="L">Liter</option><option value="gal">US-Gallonen</option></select></label>
+                  <label>Korridor <span>optional</span><select id="corridorWidth"><option value="" selected>Aus · alle Plätze</option><option value="1">1 NM je Seite</option><option value="2">2 NM je Seite</option><option value="2.5">2,5 NM je Seite</option><option value="5">5 NM je Seite</option><option value="10">10 NM je Seite</option><option value="15">15 NM je Seite</option><option value="20">20 NM je Seite</option></select></label>
+                </div>
+                <div class="flight-time-picker" aria-labelledby="departurePickerTitle">
+                  <div class="flight-time-title" id="departurePickerTitle">Departure <span>Ortszeit der Route</span></div>
+                  <div class="flight-time-controls">
+                    <label class="flight-time-field">Datum <i data-lucide="calendar-days" aria-hidden="true"></i><input id="departureDate" type="date"></label>
+                    <label class="flight-time-field">Local time <i data-lucide="clock-3" aria-hidden="true"></i><input id="departureClock" type="time" step="300"></label>
+                  </div>
+                  <div class="flight-time-steps" aria-label="Abflugzeit verschieben">
+                    <button type="button" data-time-shift="-15">−15 min</button><button type="button" data-time-shift="15">+15 min</button><button type="button" data-time-shift="30">+30 min</button><button type="button" id="departureNow">Jetzt</button>
+                  </div>
+                  <input id="departureTime" type="hidden">
+                </div>
+                <div id="routeBoard" class="route-board" aria-label="Routenübersicht" hidden>
+                  <div class="route-board-head"><span>ROUTE / LIVE</span><span id="routeBoardState">BERECHNET</span></div>
+                  <div class="airport-board-columns">
+                    <section class="airport-board-column" aria-label="Departure">
+                      <div class="flap-board-row"><strong id="boardDepartureTitle" class="split-value board-primary"></strong></div>
+                      <div class="flap-board-row"><strong id="boardDepartureDate" class="split-value board-line board-line-prominent"></strong><strong id="boardDepartureTime" class="split-value board-line"></strong></div>
+                      <div class="flap-board-row"><strong id="boardStart" class="split-value board-line board-line-prominent"></strong></div>
+                      <div class="flap-board-row"><strong id="boardSunriseLabel" class="split-value board-line board-line-prominent"></strong><strong id="boardSunriseTime" class="split-value board-line"></strong><strong id="boardSunriseCode" class="split-value board-line"></strong></div>
+                    </section>
+                    <section class="airport-board-column" aria-label="Arrival">
+                      <div class="flap-board-row"><strong id="boardArrivalTitle" class="split-value board-primary"></strong></div>
+                      <div class="flap-board-row"><strong id="boardArrivalDate" class="split-value board-line board-line-prominent"></strong><strong id="boardArrivalTime" class="split-value board-line"></strong></div>
+                      <div class="flap-board-row"><strong id="boardDestination" class="split-value board-line board-line-prominent"></strong></div>
+                      <div class="flap-board-row"><strong id="boardSunsetLabel" class="split-value board-line board-line-prominent"></strong><strong id="boardSunsetTime" class="split-value board-line"></strong><strong id="boardSunsetCode" class="split-value board-line"></strong></div>
+                    </section>
+                  </div>
+                  <div class="route-board-values board-metrics">
+                    <div><strong id="boardDistanceLabel" class="split-value metric-label"></strong><strong id="boardDistance" class="split-value metric-value"></strong></div>
+                    <div><strong id="boardTimeLabel" class="split-value metric-label"></strong><strong id="boardTime" class="split-value metric-value"></strong></div>
+                    <div><strong id="boardFuelLabel" class="split-value metric-label"></strong><strong id="boardFuel" class="split-value metric-value"></strong></div>
+                  </div>
+                  <div id="daylightWarning" class="daylight-warning" role="status" hidden></div>
+                  <small id="boardKm" class="route-board-foot"></small>
+                </div>
+                <div id="routeSummary" class="route-summary"></div>
+                <div class="route-export-actions" aria-label="Planung exportieren">
+                  <button class="btn primary" id="printBriefing" type="button"><i data-lucide="file-text" aria-hidden="true"></i> Briefing drucken / PDF</button>
+                  <div><button class="btn" type="button" onclick="downloadWaypointsGpx()"><i data-lucide="route" aria-hidden="true"></i> SkyDemon GPX</button><button class="btn" type="button" onclick="downloadWaypointsCsv()"><i data-lucide="table-2" aria-hidden="true"></i> CSV</button></div>
+                </div>
+                <small class="helper">Ortsdaten: OpenStreetMap/Nominatim · Flugplatzcodes: OurAirports. Ergebnisse vor Flug prüfen.</small>
+              </div>
+            </div>
+          </aside>
+
+          <section class="panel map-card" aria-label="Karte">
+            <div id="map"></div>
+            <button class="route-rail-handle" id="routeRailHandle" type="button" aria-pressed="false" title="Routenleiste einklappen" aria-label="Routenleiste einklappen"><i data-lucide="chevron-left"></i></button>
+            <div class="filter-panel" aria-label="Kartenebenen und Suche">
             <div class="panel-header">
-              <b>Plätze filtern</b>
-              <span>Nach Code, Ort, Fuel oder PPR suchen und Marker direkt anfliegen.</span>
+              <b>Karte erkunden</b>
             </div>
             <div class="control-stack">
-              <input class="search-input" id="searchInput" type="search" placeholder="Suchen: LIDT, Trento, AVGAS, Gardasee">
-              <select class="select-input" id="airportSelect" aria-label="Platz direkt auswählen">
-                <option value="">Platz direkt auswählen</option>
-              </select>
+              <div class="map-search-wrap">
+                <input class="search-input" id="searchInput" type="search" autocomplete="off" aria-label="Platz suchen" placeholder="Platz, ICAO-Code oder Ort suchen">
+                <button class="search-panel-close" id="searchPanelClose" type="button" title="Suche minimieren" aria-label="Suche minimieren"><i data-lucide="x"></i></button>
+                <div id="mapSearchResults" class="map-search-results" aria-live="polite"></div>
+              </div>
+              <div id="layerStatus" class="helper"></div>
+              <details class="filter-disclosure"><summary>Plätze & Kraftstoff</summary>
               <div class="filter-row" aria-label="Filter">
                 <button class="filter-button active" type="button" data-filter="all">Alle</button>
-                <button class="filter-button" type="button" data-filter="corridor">15 NM</button>
-                <button class="filter-button" type="button" data-filter="fuel">AVGAS</button>
+                <button class="filter-button" type="button" data-filter="corridor" disabled title="Zuerst eine Korridorbreite in der Routenplanung wählen">Korridor</button>
                 <button class="filter-button" type="button" data-filter="airport">Flugplätze</button>
                 <button class="filter-button" type="button" data-filter="field">Felder</button>
                 <button class="filter-button" type="button" data-filter="helipad">Heli</button>
                 <button class="filter-button" type="button" data-filter="ppr">PPR</button>
               </div>
+              <fieldset class="fuel-options"><legend>Kraftstoff</legend><label data-fuel="100LL"><input type="checkbox" value="100LL">100LL</label><label data-fuel="AVGAS"><input type="checkbox" value="AVGAS">AVGAS</label><label data-fuel="UL91"><input type="checkbox" value="UL91">UL91</label><label data-fuel="MOGAS"><input type="checkbox" value="MOGAS">MOGAS</label><label data-fuel="SUPER PLUS"><input type="checkbox" value="SUPER PLUS">Super Plus</label><label data-fuel="BLEIFREI"><input type="checkbox" value="BLEIFREI">Bleifrei</label><label data-fuel="JET A1"><input type="checkbox" value="JET A1">Jet A-1</label></fieldset>
+              </details>
             </div>
-            <div class="selected-card" id="selectedCard"></div>
+            </div>
+            <div class="map-dock" aria-label="Kartenwerkzeuge">
+              <details class="dock-group" id="weatherTools">
+                <summary title="Wetterebenen" aria-label="Wetterebenen"><i data-lucide="cloud-sun"></i></summary>
+                <div class="dock-popover" role="group" aria-label="Wetterebene">
+                  <strong>Wetter</strong>
+                  <div class="dock-options" id="weatherModes">
+                    <button type="button" data-weather-mode="metar" aria-pressed="false">METAR</button>
+                    <button type="button" data-weather-mode="wind" aria-pressed="false">Wind</button>
+                    <button type="button" data-weather-mode="cloud" aria-pressed="false">Wolken</button>
+                    <button type="button" data-weather-mode="ceiling" aria-pressed="false">Untergrenze</button>
+                    <button type="button" data-weather-mode="visibility" aria-pressed="false">Sicht</button>
+                  </div>
+                  <small id="weatherMeta">Eine Stationsanzeige gleichzeitig. Marker öffnen, um METAR und TAF gemeinsam zu sehen.</small>
+                  <div id="tafTimeline" class="taf-timeline" hidden></div>
+                </div>
+              </details>
+              <details class="dock-group" id="navigationTools">
+                <summary title="Navigationshilfen" aria-label="Navigationshilfen"><i data-lucide="satellite"></i></summary>
+                <div class="dock-popover" role="group" aria-label="Navigationshilfen">
+                  <strong>Navigationshilfen</strong>
+                  <div class="dock-options layer-toggles">
+                    <label><input type="checkbox" id="vorLayer"> VOR / DME</label>
+                    <label><input type="checkbox" id="ndbLayer"> NDB</label>
+                    <label><input type="checkbox" id="fixLayer"> GPS / RNAV</label>
+                  </div>
+                  <small id="navigationMeta">Datenstand und Quellen im Punktdetail</small>
+                </div>
+              </details>
+              <button class="dock-action" type="button" id="topographyToggle" title="Topografische Karte ausschalten" aria-label="Topografische Karte" aria-pressed="true"><i data-lucide="mountain"></i></button>
+              <button class="dock-action" type="button" id="themeToggle" title="Nachtmodus einschalten" aria-label="Nachtmodus einschalten" aria-pressed="false"><i data-lucide="moon"></i></button>
+              <label class="dock-icon-toggle" title="Webcams anzeigen" aria-label="Webcams anzeigen"><input type="checkbox" id="webcamLayer"><i data-lucide="camera"></i></label>
+              <details class="dock-group" id="trafficTools">
+                <summary title="Flugverkehr" aria-label="Flugverkehr"><i data-lucide="plane"></i></summary>
+                <div class="dock-popover" role="group" aria-label="Flugverkehr">
+                  <strong>Flugverkehr</strong>
+                  <div class="dock-options layer-toggles">
+                    <label><input type="checkbox" id="flarmTraffic"> Segelflug & FLARM</label>
+                    <label><input type="checkbox" id="adsbTraffic"> ADS-B</label>
+                  </div>
+                  <small id="trafficStatus">Unvollständige Abdeckung. Nicht zur Kollisionsvermeidung verwenden.</small>
+                </div>
+              </details>
+              <button class="dock-action" type="button" id="measureToggle" aria-pressed="false" title="Distanz und rechtweisenden Kurs messen" aria-label="Distanz messen"><i data-lucide="ruler"></i></button>
+              <input type="checkbox" id="weatherLayer" hidden>
+            </div>
+            <button class="search-panel-open" id="searchPanelOpen" type="button" title="Suche öffnen" aria-label="Suche öffnen"><i data-lucide="search"></i></button>
+            <div class="selected-card" id="selectedCard" hidden></div>
             <div class="legend">
-              <div class="legend-row"><span class="swatch airport"></span><span><b>Aeroporto</b> – regulärer Flughafen/Flugplatz, meist mit ICAO-Code</span></div>
+              <div class="legend-row"><span class="legend-map-symbol airport-symbol">✈</span><span><b>Aeroporto</b> – motorbetriebener Flughafen/Flugplatz in der V500-/ICAO-Kartenanalogie</span></div>
               <div class="legend-row"><span class="swatch aviosurface"></span><span><b>Aviosuperficie</b> – grüner Rhombus; italienische zivile Sonderlandefläche</span></div>
               <div class="legend-row"><span class="swatch flightfield"></span><span><b>Campo di volo</b> – oranges Quadrat; VDS-/UL-Fluggelände, R44 ausdrücklich bestätigen</span></div>
-              <div class="legend-row"><span class="swatch heli"></span><span><b>Elisuperficie</b> – Helikopter-Landefläche, kein Heliport; Marker H</span></div>
+              <div class="legend-row"><span class="swatch heli"></span><span><b>Helikopterfläche</b> – rundes H; Heliport oder Elisuperficie laut Platzdetail</span></div>
+              <div class="legend-row"><span class="legend-map-symbol glider-symbol">⋈</span><span><b>Segelflugbetrieb</b> – magentafarbenes Doppelkegel-Symbol nur bei entsprechend belegter Platzklassifikation</span></div>
+              <div class="legend-row"><span class="nav-symbol-legend">◎</span><span><b>VOR / DME</b> – runder Sender, DME mit äußerem Ring</span></div>
+              <div class="legend-row"><span class="nav-symbol-legend">◉</span><span><b>NDB</b> – punktförmiges Funkfeuer im Kreis</span></div>
+              <div class="legend-row"><span class="nav-symbol-legend">△</span><span><b>GPS / RNAV</b> – offenes Dreieck; NOAA-Ausschnitt erst bei näherem Zoom</span></div>
+              <div class="legend-row"><span></span><span>Darstellung in enger V500-/ICAO-Kartenanalogie; keine amtliche DFS-/ENAV-Karte. Pistenoberfläche und Segelflugbetrieb werden nur bei belegten Quelldaten dargestellt. <a href="https://www.swisstopo.admin.ch/dam/de/sd-web/oAbJkfKRzznX/LegendeICAO_A4_2026.pdf" target="_blank" rel="noopener">Amtliche ICAO-Zeichenerklärung 2026</a></span></div>
               <div class="legend-row"><span class="tag avgas100">100LL</span><span>AVGAS 100LL ausdrücklich belegt; Blau folgt der Kraftstofffärbung</span></div>
               <div class="legend-row"><span class="tag fuel">AVGAS</span><span>AVGAS belegt, Sorte nicht eindeutig genannt</span></div>
               <div class="legend-row"><span class="tag jet">JET A-1</span><span>Turbinenkraftstoff belegt; Schwarz folgt der Kennzeichnung an Betankungsanlagen</span></div>
@@ -744,17 +1318,15 @@
               <div class="legend-row"><span class="tag warn">PPR</span><span>Freigabe, Schutzgebiet oder Betreiberkontakt offen</span></div>
               <div class="legend-row"><span class="tag access-guest">GAST OK</span><span>Gast-/Privatanflug durch Betreiberquelle belegt; PPR bleibt maßgeblich</span></div>
               <div class="legend-row"><span class="tag access-open">OFFEN</span><span>Zivil veröffentlicht, Fremdnutzung für R44 aber nicht belegt</span></div>
-              <div class="legend-row"><span class="tag corridor">≤15 NM</span><span>maximal 15 NM von Route oder Gardasee-Achse entfernt</span></div>
-              <p class="legend-note">Formen sind die primäre Unterscheidung. Die magentafarbene H-Markierung ist eine Kartenkonvention; die physische ICAO-Heliportmarkierung ist grundsätzlich ein weißes H. Die Dashboard-Farben sind kein ENAV-/AIP-Symbolstandard.</p>
+              <div class="legend-row"><span class="tag corridor">KORRIDOR</span><span>innerhalb der gewählten Entfernung zur eigenen Route</span></div>
+              <p class="legend-note">Eigene Planungsdarstellung, keine amtliche DFS-/ENAV-Luftfahrtkarte. WebAAI-IDs sind keine ICAO-Kennungen. Verkehr: <a href="https://www.adsb.lol/docs/open-data/api/" target="_blank" rel="noopener">ADSB.lol (ODbL)</a> und <a href="https://www.glidernet.org/ogn-data-usage/" target="_blank" rel="noopener">OGN (ODbL)</a>; nur freigegebene Signale, unvollständige Abdeckung.</p>
             </div>
-          </aside>
-
-          <section class="panel map-card" aria-label="Karte">
-            <div id="map"></div>
+            <div class="map-tools"><button class="mobile-route-jump" id="jumpPlanner" type="button">Route</button><button id="measureUndo" type="button" title="Letzten Messpunkt entfernen" hidden><i data-lucide="undo-2"></i> Letzten Messpunkt</button><small id="measureStatus" aria-live="polite"></small></div>
+            <button class="map-only-toggle" id="mapOnlyToggle" type="button" aria-pressed="false" title="Bedienelemente ausblenden">Vollansicht</button>
             <div class="map-watermark">
-              Arbeitsstand 02.09.2026<br>
-              Keine Navigationsdaten
+              Planungshilfe · keine Navigationskarte
             </div>
+            <details class="map-legend"><summary>Legende</summary></details>
           </section>
         </div>
       </section>
@@ -769,8 +1341,7 @@
             <input class="search-input" id="listSearchInput" type="search" placeholder="Liste durchsuchen">
             <div class="filter-row" aria-label="Listenfilter">
               <button class="filter-button active" type="button" data-filter="all">Alle</button>
-              <button class="filter-button" type="button" data-filter="corridor">15 NM</button>
-              <button class="filter-button" type="button" data-filter="fuel">AVGAS</button>
+              <button class="filter-button" type="button" data-filter="corridor" disabled title="Zuerst eine Korridorbreite in der Routenplanung wählen">Korridor</button>
               <button class="filter-button" type="button" data-filter="airport">Flugplätze</button>
               <button class="filter-button" type="button" data-filter="field">Felder</button>
               <button class="filter-button" type="button" data-filter="helipad">Heli</button>
@@ -831,14 +1402,16 @@
         <section class="panel">
           <div class="panel-header">
             <b>Übergabe an den Piloten</b>
-            <span>Für SkyDemon die GPX-Datei importieren; die Karte dient als visuelles Briefing mit Quellen und Kontakten.</span>
+            <span>Route und passende Plätze als GPX oder CSV übernehmen.</span>
           </div>
           <div class="export-panel">
+            <div class="export-choice"><label><input type="radio" name="exportMode" value="route" checked> Nur Route</label><label><input type="radio" name="exportMode" value="places"> Nur Plätze</label><label><input type="radio" name="exportMode" value="both"> Route + Plätze</label></div>
+            <label class="export-scope">Plätze auswählen <select id="exportScope"><option value="corridor">Im Korridor</option><option value="visible">Aktuell sichtbar</option></select></label>
             <div class="export-actions">
               <button type="button" onclick="downloadWaypointsGpx()">SkyDemon GPX herunterladen</button>
               <button type="button" onclick="downloadWaypointsCsv()">CSV herunterladen</button>
             </div>
-            <p class="export-note">Die GPX-Datei enthält <span id="exportPlaceCount">alle</span> Karten-Wegpunkte mit Koordinaten, Status, Fuel, Telefon, PPR, Korridorabstand und Quellenlinks. Sie ersetzt keine geprüfte Luftfahrtdatenbank.</p>
+            <p class="export-note">GPX enthält die gewählten Routenpunkte als Route und optionale Plätze als Wegpunkte. <span id="exportPlaceCount">0</span> Plätze sind insgesamt kartiert. Nach Import in SkyDemon Route und Punkte dort prüfen.</p>
           </div>
         </section>
       </section>
@@ -847,7 +1420,7 @@
         <section class="panel">
           <div class="panel-header">
             <b>Korridor-Audit</b>
-            <span>Prüfbereich: 15 NM beidseits der Arbeitsroute EDTM - Bozen - Trento - Verona - Gardasee sowie 15 NM um die Gardasee-Achse.</span>
+            <span>Italienweiter ENAC/WebAAI-Scan. Der Korridor folgt der vom Besucher geplanten Route.</span>
           </div>
           <div class="briefing-panel">
             <div class="briefing-grid">
@@ -954,8 +1527,20 @@
           <div class="source-list" id="sourceList"></div>
         </section>
       </section>
+      <section class="page" id="referencePage">
+        <section class="panel"><div class="panel-header"><b>Nachschlagen</b><span>Offizielle Quellen und ergänzende Verzeichnisse für die Routenplanung.</span></div>
+          <div class="source-grid">
+            <article class="source-card"><b>Italienische Karten und AIP</b><p>ENAV eAIP und Self Briefing für Italien. Zugang kann Anmeldung erfordern.</p><a href="https://www.enav.it/login-required" target="_blank" rel="noopener">ENAV öffnen</a></article>
+            <article class="source-card"><b>Deutsche AIP</b><p>DFS AIP/NfL für den deutschen Streckenanteil.</p><a href="https://ais.dfs.de/pilotservice/briefing/aip_online/aip_online.jsp" target="_blank" rel="noopener">DFS öffnen</a></article>
+            <article class="source-card"><b>Kartenzeichen</b><p>Die amtliche ICAO-Legende 2026 von swisstopo erläutert unter anderem Flugplatz-, Heliport- und Pistenzeichen. Die Zeichen dieser Planungskarte sind eigenständig gestaltet und kein Ersatz für die amtliche Karte.</p><a href="https://www.swisstopo.admin.ch/dam/de/sd-web/oAbJkfKRzznX/LegendeICAO_A4_2026.pdf" target="_blank" rel="noopener">Legende ansehen</a></article>
+            <article class="source-card"><b>ICAO-Luftfahrzeugtypen</b><p>Doc 8643: Typbezeichnungen und ICAO-Codes von Luftfahrzeugen.</p><a href="https://www.icao.int/operational-safety/doc-8643-aircraft-type-designators/search" target="_blank" rel="noopener">Typ suchen</a></article>
+            <article class="source-card"><b>Pilotenberichte</b><p>Aktuelle Berichte sollen hier später innerhalb von 90 Tagen zusammengefasst erscheinen. Für die Übernahme aus externen Archiven wird eine Datenfreigabe benötigt.</p></article>
+          </div>
+        </section>
+      </section>
     </main>
   </div>
+  <div id="printSheet"></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const places = [
@@ -972,7 +1557,7 @@
       { name: "H LOJW Wucher Zürs-Lech", type: "helipad", category: "heliport", label: "H", coords: [47.184167, 10.157222], fuel: "nicht belegt", status: "ziviler Heliport laut Austro Control AIP AD 3; MTOM 5.700 kg", hours: "nur PPR; Beleuchtung laut AIP nur für Rettungs-/Ambulanzflüge, Gastplanung daher Tagbetrieb", ppr: "Betreiberfreigabe Wucher Helicopter zwingend", contact: "+43 5446 2732; +43 5550 3880; helicopter@wucher.at", source: "https://eaip.austrocontrol.at/lo/260806/PART_3/AD_3/LO_AD_3_en.pdf", sources: [{ label: "Wucher Helicopter", url: "https://www.wucher-helicopter.at/" }], fuelClass: "unknown", warn: true, access: "ppr" },
       { name: "H LOJP Karres", type: "helipad", category: "heliport", label: "H", coords: [47.218889, 10.768889], fuel: "nicht belegt", status: "ziviler Heliport laut Austro Control AIP AD 3; VFR Tag/Nacht, MTOM 6.000 kg", hours: "nur PPR; aktuelle AIP/NOTAM-Bedingungen prüfen", ppr: "Betreiberfreigabe Heli Mount zwingend", contact: "+43 5412 61421", source: "https://eaip.austrocontrol.at/lo/260806/PART_3/AD_3/LO_AD_3_en.pdf", sources: [{ label: "Heli Mount", url: "https://www.heli-tirol.at/" }], fuelClass: "unknown", warn: true, access: "ppr" },
 
-      { name: "LIPB Bolzano / Bozen", type: "airport", label: "LIPB", coords: [46.4603, 11.3264], fuel: "Jet A1 06:00-23:00; AVGAS/MOGAS nur Aero Club, PPR/nach Verfügbarkeit", status: "zivil nutzbar bestätigt; kommerziell zivil/militärisch gemischt, GA vorhanden", hours: "Operator 06:30-23:00 CET; Info 06:00-22:00", ppr: "AVGAS zwingend vorab Aero Club", contact: "GA +39 0471 255207; Aero Club +39 0471 250165; info@aeroclub.bz", source: "https://www.bolzanoairport.it/en/fuel", fuelClass: "fuel", warn: true },
+      { name: "LIPB Bolzano / Bozen", type: "airport", label: "LIPB", coords: [46.4603, 11.3264], fuel: "Jet A1 06:00-23:00; AVGAS/MOGAS nur Aero Club, PPR/nach Verfügbarkeit", status: "zivil nutzbar bestätigt; kommerziell zivil/militärisch gemischt, GA vorhanden", hours: "Operator 06:30-23:00 CET; Info 06:00-22:00", ppr: "Für VFR keine Betreiberfreigabe nötig; Parken/Handling vorab bestätigen, AVGAS beim Aero Club anfragen", contact: "GA +39 0471 255207; generalaviation@bolzanoairport.it; Aero Club +39 0471 250165; info@aeroclub.bz", source: "https://www.bolzanoairport.it/en/pilots-corner", sources: [{ label: "Kraftstoff", url: "https://www.bolzanoairport.it/en/fuel" }], fuelClass: "fuel", warn: true },
       { name: "LIDT Trento / Mattarello", type: "airport", label: "LIDT", coords: [46.0214, 11.1250], fuel: "AVIO 100LL H24, Jet A1, unleaded laut Betreiber", status: "zivil nutzbar bestätigt, starker Fuel-Anker", hours: "H24; AFIS H24 119.655 MHz", ppr: "Abstellung/Hangar vorab anfragen", contact: "Trentino Trasporti +39 0461 031000; airport@trentinotrasporti.it laut ENAC", source: "https://www.trentinotrasporti.it/en/airport/aeroporto-caproni", fuelClass: "fuel" },
       { name: "LIPN Verona Boscomantico", type: "airport", label: "LIPN", coords: [45.47305, 10.92693], fuel: "AV-GAS laut Betreiber", status: "ziviler Flugplatz bestätigt, saisonal/Montag geschlossen", hours: "Di-So; saisonale Zeiten siehe Betreiber-Briefing", ppr: "Koordination mit Betreiber", contact: "+39 045 8103661; operations@boscomanticoservizi.it; Aeroclub +39 045 563200", source: "https://www.boscomanticoairport.com/en/contact-us/", fuelClass: "fuel", warn: true },
       { name: "LIPX Verona Villafranca", type: "airport", label: "LIPX", coords: [45.3964, 10.8878], fuel: "Jet A1; AVGAS nicht verfügbar", status: "zivil/kommerziell mit GA-Handling bestätigt, aber kein R44-Fuel-Stop", hours: "H24; PPR subject to stand availability", ppr: "PPR mandatory für private/GA laut Betreiberseite", contact: "+39 045 8095666; Handler AGS/GH/Sky Services/Argos/Delta", source: "https://www.aeroportoverona.it/en_gb/flights/private-jets", fuelClass: "no" },
@@ -1028,25 +1613,48 @@
       { name: "H Rifugio Salei / Canazei", type: "helipad", label: "H", coords: [46.504252, 11.749840], fuel: "nicht belegt", status: "zivile Elisuperficie ENAC/webAAI-gelistet, Trentino-Genehmigungslage klären", hours: "Nachtbetrieb nein; weitere Nutzungszeiten per Betreiber/PPR", ppr: "Betreiber + Provinz Trento prüfen", contact: "Detailkontakte nach kostenloser webAAI-Anmeldung; zusätzlich Provinz Trento", officialData: "webAAI/ENAC: Elisuperficie am Boden, 1 FATO, Nachtbetrieb nein, Direktion Nord-Est, Stand 12.06.2025", source: "https://webaai.it/it/elisuperfici-enac/trentino_alto_adige/rifugio-salei_EC38", fuelClass: "unknown", warn: true }
     ];
 
-    const map = L.map("map", { scrollWheelZoom: true }).setView([46.50, 10.55], 7);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    const map = L.map("map", { scrollWheelZoom: true, zoomControl: false }).setView([46.50, 10.55], 7);
+    L.control.zoom({ position: "bottomright" }).addTo(map);
+    const streetTiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 18,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
+    });
+    const topoTiles = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+      subdomains: "abc",
+      maxNativeZoom: 17,
+      maxZoom: 18,
+      attribution: 'Kartendaten: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap-Mitwirkende</a>, SRTM | Kartendarstellung: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
+    });
+    const topographyToggle = document.getElementById("topographyToggle");
+    let topographyEnabled = true;
+    try { topographyEnabled = localStorage.getItem("vfr-topography") !== "off"; } catch (_) {}
+    function setTopography(enabled) {
+      map.removeLayer(enabled ? streetTiles : topoTiles);
+      (enabled ? topoTiles : streetTiles).addTo(map);
+      topographyToggle.setAttribute("aria-pressed", String(enabled));
+      topographyToggle.title = enabled ? "Topografische Karte ausschalten" : "Topografische Karte einschalten";
+      topographyEnabled = enabled;
+      try { localStorage.setItem("vfr-topography", enabled ? "on" : "off"); } catch (_) {}
+    }
+    topographyToggle.addEventListener("click", () => setTopography(!topographyEnabled));
+    setTopography(topographyEnabled);
+    const themeToggle = document.getElementById("themeToggle");
+    function setNightMode(enabled) {
+      document.body.classList.toggle("night", enabled);
+      themeToggle.setAttribute("aria-pressed", String(enabled));
+      themeToggle.setAttribute("aria-label", enabled ? "Tagmodus einschalten" : "Nachtmodus einschalten");
+      themeToggle.title = themeToggle.getAttribute("aria-label");
+      themeToggle.innerHTML = `<i data-lucide="${enabled ? "sun" : "moon"}" aria-hidden="true"></i>`;
+      window.lucide?.createIcons({ nodes: [themeToggle] });
+      try { localStorage.setItem("vfr-theme", enabled ? "night" : "day"); } catch (_) {}
+    }
+    themeToggle.addEventListener("click", () => setNightMode(!document.body.classList.contains("night")));
+    let initialNight = false;
+    try { initialNight = localStorage.getItem("vfr-theme") === "night"; } catch (_) {}
+    setNightMode(initialNight);
 
-    const route = [
-      [48.053, 9.373],
-      [46.4603, 11.3264],
-      [46.0214, 11.1250],
-      [45.47305, 10.92693],
-      [45.4183, 10.5592]
-    ];
-    const gardaAxis = [
-      [45.40, 10.66],
-      [45.55, 10.67],
-      [45.72, 10.72],
-      [45.88, 10.84]
-    ];
+    let route = [];
+    let corridorWidthNm = null;
 
     function distanceToLineNm(point, line) {
       const referenceLat = point[0] * Math.PI / 180;
@@ -1068,25 +1676,51 @@
       return minimum;
     }
 
-    places.forEach((place) => {
-      place.corridorNm = Math.min(distanceToLineNm(place.coords, route), distanceToLineNm(place.coords, gardaAxis));
-      place.inCorridor = place.corridorNm <= 15;
+    function enrichPlace(place) {
+      place.corridorNm = route.length >= 2 ? distanceToLineNm(place.coords, route) : Infinity;
+      place.inCorridor = route.length >= 2 && Number.isFinite(corridorWidthNm) && place.corridorNm <= corridorWidthNm;
       if (!place.access) {
         place.access = place.type === "airport" ? (place.warn ? "ppr" : "guest") : "unknown";
       }
-    });
-    L.polyline(route, { color: "#1f6f9f", weight: 3, opacity: 0.75, dashArray: "8 8" }).addTo(map);
-    L.polyline(gardaAxis, { color: "#315875", weight: 2, opacity: 0.55, dashArray: "3 7" }).addTo(map);
+      return place;
+    }
+
+    places.forEach(enrichPlace);
+
+    document.querySelector(".map-legend").append(document.querySelector(".legend"));
+
+    function isIcaoPlace(place) {
+      return place.type === "airport" && /^(ED|LI|LO|LS|LF|LJ|LD)[A-Z0-9]{2}$/.test(place.label);
+    }
+
+    function identifierLabel(place) {
+      if (isIcaoPlace(place)) return place.label;
+      if (/^[A-Z]{4}$/.test(place.label)) return place.label;
+      if (["H", "AV"].includes(place.label)) return typeLabel(place);
+      return place.source?.includes("webaai.it/")
+        ? `WebAAI ${place.label}` : `Platz-ID ${place.label}`;
+    }
+
+    function markerSymbol(place) {
+      const description = `${place.name} ${place.status || ""} ${place.officialData || ""}`;
+      if (place.type === "helipad") return '<svg class="place-symbol-heli" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13"/><circle cx="16" cy="16" r="10"/><path d="M11 9v14M21 9v14M11 16h10"/></svg>';
+      if (/SEGLER|SEGELFLUG|GLIDER/i.test(description)) return '<svg class="place-symbol-glider" viewBox="0 0 36 28" aria-hidden="true"><path d="M2 14h9l4-6h6l4 6h9l-9 3-4 6h-6l-4-6z"/></svg>';
+      if (place.type === "airport") return '<svg class="place-symbol-airport" viewBox="0 0 36 36" aria-hidden="true"><path d="M18 2l3 12 12 5v4l-12-3v9l4 3v2H11v-2l4-3v-9L3 23v-4l12-5z"/></svg>';
+      if (place.type === "field") return '<svg class="place-symbol-field" viewBox="0 0 32 32" aria-hidden="true"><rect x="6" y="6" width="20" height="20" rx="2" transform="rotate(45 16 16)"/><path d="M8 16h16"/></svg>';
+      return '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11"/><path d="M7 16h18"/></svg>';
+    }
 
     function markerIcon(place) {
       const typeClass = typeClassForPlace(place);
-      const cls = `${typeClass}${place.warn ? " warn" : ""}`;
+      const markerName = isIcaoPlace(place) ? place.label : place.name.replace(/^H\s+/, "");
+      const safeName = String(markerName).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
+      const major = ["large_airport", "medium_airport"].includes(place.referenceType);
       return L.divIcon({
         className: "",
-        html: `<div class="marker ${cls}" data-label="${place.label}"></div>`,
-        iconSize: [28, 28],
-        iconAnchor: [14, 28],
-        popupAnchor: [0, -26]
+        html: `<div class="aviation-pin ${typeClass}${major ? " major" : ""} ${place.referenceType || ""}"><span class="aviation-symbol">${markerSymbol(place)}</span><span class="aviation-label" title="${safeName}">${safeName}</span></div>`,
+        iconSize: [1, 42],
+        iconAnchor: [0, 12],
+        popupAnchor: [0, -20]
       });
     }
 
@@ -1192,6 +1826,7 @@
     }
 
     function waypointName(place) {
+      if (!isIcaoPlace(place)) return place.name;
       return place.name.startsWith(place.label) ? place.name : `${place.label} ${place.name}`;
     }
 
@@ -1214,6 +1849,31 @@
       const first = phone.split(";")[0] || "";
       const normalized = first.replace(/[^\d+]/g, "");
       return normalized && normalized !== "noch" ? `tel:${normalized}` : "";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
+    }
+
+    function phoneLinksHtml(place) {
+      const phones = String(place.contact || "").match(/(?:\+?\d[\d\s()./-]{5,}\d)/g) || [];
+      const unique = [...new Set(phones.map((value) => value.trim()))].filter((value) => {
+        const digits = value.replace(/\D/g, "");
+        return digits.length >= 7 && digits.length <= 15;
+      });
+      return unique.length ? unique.map((phone) => `<a href="${phoneHref(phone)}">${escapeHtml(phone)}</a>`).join(" · ") : "nicht belegt";
+    }
+
+    function emailLinksHtml(place) {
+      const emails = [...new Set((String(place.contact || "").match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || []).map((email) => email.toLowerCase()))];
+      if (!emails.length) return "nicht belegt";
+      const german = /^ED/.test(place.label) || (place.coords[0] >= 47.2 && place.coords[0] <= 55.1 && place.coords[1] >= 5.8 && place.coords[1] <= 15.1 && place.source?.includes(".de/"));
+      const name = place.name.replace(/^(H|AV)\s+/, "");
+      const subject = place.label === "LIPB" ? "Parking and handling request LIPB" : german ? `Anfrage PPR und Abstellung ${place.label}` : `PPR and parking request ${place.label}`;
+      const body = german
+        ? `Sehr geehrtes Flugplatzteam,\n\nich plane einen VFR-Flug nach ${name} und bitte um Auskunft, ob eine Landung und Abstellung möglich sind.\n\nKennzeichen: [eintragen]\nLuftfahrzeugmuster: [eintragen]\nPersonen an Bord: [eintragen]\nAnkunft am: [Datum, Ortszeit und UTC eintragen]\nAbflug am: [falls relevant]\nKraftstoffbedarf: [falls relevant]\n\nBitte teilen Sie mir mit, ob PPR erforderlich ist und welche Bedingungen und Gebühren gelten.\n\nMit freundlichen Grüßen\n[Name und Telefonnummer]`
+        : `Dear ${name} team,\n\nI am planning a VFR flight to your airfield and would like to ask whether arrival and parking are possible.\n\nRegistration: [enter]\nAircraft type: [enter]\nPersons on board: [enter]\nExpected arrival: [date, local time and UTC]\nDeparture: [if applicable]\nFuel required: [if applicable]\n\n${place.label === "LIPB" ? "Could you please confirm parking availability, handling arrangements and applicable fees?" : "Could you please confirm whether PPR is required and advise on applicable conditions and fees?"}\n\nKind regards,\n[Name and phone number]`;
+      return emails.map((email) => `<a href="mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}">${escapeHtml(email)}</a>`).join(" · ");
     }
 
     function copyText(text) {
@@ -1245,8 +1905,8 @@
         `Fuel: ${deText(place.fuel)}`,
         `Telefon: ${operatorPhone(place)}`,
         `PPR: ${deText(place.ppr)}`,
-        ...(place.officialData ? [`Offizielle Platzdaten: ${place.officialData}`] : []),
-        `Quellen: ${allSourceUrls(place)}`
+        `Zeiten: ${deText(place.hours)}`,
+        `E-Mail: ${(String(place.contact || "").match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || []).join("; ") || "nicht belegt"}`
       ].join("\n"));
     };
 
@@ -1315,10 +1975,10 @@ ${waypoints}
     const markers = new Map();
     const markerBounds = [];
     let currentFilter = "all";
-    let activeIndex = 0;
+    let activeIndex = -1;
 
     function typeLabel(place) {
-      if (place.type === "airport") return "Flugplatz";
+      if (place.type === "airport") return place.referenceType === "large_airport" ? "Flughafen" : place.referenceType === "medium_airport" ? "Regionalflughafen" : "Flugplatz";
       if (place.type === "field") {
         return /AVIOSUPERFICIE/i.test(`${place.status} ${place.officialData || ""}`)
           ? "Aviosuperficie"
@@ -1355,9 +2015,8 @@ ${waypoints}
     }
 
     function corridorTag(place) {
-      return place.inCorridor
-        ? '<span class="tag corridor">≤15 NM</span>'
-        : '<span class="tag regional">REGIONAL</span>';
+      if (route.length < 2 || !Number.isFinite(corridorWidthNm)) return "";
+      return place.inCorridor ? `<span class="tag corridor">≤${corridorWidthNm} NM</span>` : "";
     }
 
     function filterMatch(place, query, filter) {
@@ -1374,6 +2033,7 @@ ${waypoints}
       const normalizedQuery = query.trim().toLowerCase();
       const textMatch = !normalizedQuery || haystack.includes(normalizedQuery);
       if (!textMatch) return false;
+      if (window.vfrFuelMatch && !window.vfrFuelMatch(place)) return false;
       if (filter === "all") return true;
       if (filter === "fuel") return place.fuelClass === "fuel";
       if (filter === "ppr") return Boolean(place.warn);
@@ -1387,44 +2047,94 @@ ${waypoints}
       return (mapSearch?.value || listSearch?.value || "").trim();
     }
 
+    function searchMatches(query) {
+      const value = query.trim().toLocaleLowerCase("de");
+      if (value.length < 2) return [];
+      return places.map((place, index) => ({ place, index }))
+        .filter(({ place }) => `${place.label} ${place.name}`.toLocaleLowerCase("de").includes(value))
+        .sort((a, b) => {
+          const rank = ({ place }) => place.label.toLowerCase() === value ? 0
+            : place.label.toLowerCase().startsWith(value) ? 1
+              : place.name.toLocaleLowerCase("de").startsWith(value) ? 2 : 3;
+          return rank(a) - rank(b) || a.place.name.localeCompare(b.place.name);
+        }).slice(0, 8);
+    }
+
+    function renderMapSearchResults() {
+      const results = document.getElementById("mapSearchResults");
+      const query = document.getElementById("searchInput").value;
+      results.replaceChildren();
+      if (query.trim().length < 2) return;
+      const matches = searchMatches(query);
+      if (!matches.length) { results.textContent = "Kein Platz gefunden"; return; }
+      matches.forEach(({ place, index }) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        const code = document.createElement("b");
+        code.textContent = isIcaoPlace(place) ? place.label : place.type === "helipad" ? "H" : "Platz";
+        const name = document.createElement("span");
+        name.textContent = place.name;
+        button.append(code, name);
+        button.addEventListener("click", () => openSearchResult(index));
+        results.append(button);
+      });
+    }
+
+    function openSearchResult(index) {
+      document.getElementById("searchInput").value = "";
+      document.getElementById("listSearchInput").value = "";
+      document.getElementById("mapSearchResults").replaceChildren();
+      renderMarkers();
+      selectPlace(index, true);
+    }
+
     function popupHtml(place, index) {
-      const phone = operatorPhone(place);
-      const phoneUrl = phoneHref(phone);
-      const phoneDisplay = phoneUrl ? `<a href="${phoneUrl}">${phone}</a>` : phone;
       const googleMaps = `https://www.google.com/maps/search/?api=1&query=${place.coords[0]},${place.coords[1]}`;
-      const osm = `https://www.openstreetmap.org/?mlat=${place.coords[0]}&mlon=${place.coords[1]}#map=14/${place.coords[0]}/${place.coords[1]}`;
       return `
-          <div class="popup-title">${place.name}</div>
+          <div class="popup-title">${escapeHtml(place.name)}</div>
           ${fuelTag(place)} ${accessTag(place)} ${corridorTag(place)}
           <div class="popup-grid">
-            <div>Status</div><div>${deText(place.status)}</div>
-            <div>Routenkorridor</div><div>${place.corridorNm.toFixed(1)} NM ${place.inCorridor ? "(innerhalb 15 NM)" : "(regionaler Zusatz)"}</div>
+            ${route.length >= 2 ? `<div>Routenkorridor</div><div>${place.corridorNm.toFixed(1)} NM</div>` : ""}
             <div>Koordinaten</div><div>${decimalCoords(place)}<br>${dmsCoords(place)}</div>
             <div>Fuel</div><div>${deText(place.fuel)}</div>
             <div>Zeiten</div><div>${deText(place.hours)}</div>
             <div>PPR</div><div>${deText(place.ppr)}</div>
-            <div>Betreiber-Tel.</div><div>${phoneDisplay}</div>
-            <div>Kontakt</div><div>${deText(place.contact)}</div>
-            ${place.officialData ? `<div>Offizielle Platzdaten</div><div>${deText(place.officialData)}</div>` : ""}
+            <div>Telefon</div><div>${phoneLinksHtml(place)}</div>
+            <div>E-Mail</div><div>${emailLinksHtml(place)}</div>
+          </div>
+          <div class="route-place-actions">
+            <b>Zur Route hinzufügen</b>
+            <div><button type="button" onclick="addPlaceToRoute(${index},'start')">Start</button><button type="button" onclick="addPlaceToRoute(${index},'via')">Überflug</button><button type="button" onclick="addPlaceToRoute(${index},'stop')">Landestopp</button><button type="button" onclick="addPlaceToRoute(${index},'destination')">Ziel</button></div>
           </div>
           <div class="popup-actions">
             <button type="button" onclick="copyCoords(${index})">Koordinaten kopieren</button>
             <a href="${googleMaps}" target="_blank" rel="noopener">Google Maps</a>
-            <a href="${osm}" target="_blank" rel="noopener">OSM</a>
-            ${sourceLinksHtml(place)}
+            <a href="${place.source}" target="_blank" rel="noopener">Platzquelle</a>
           </div>
         `;
     }
 
-    places.forEach((place, index) => {
+    function addPlaceMarker(place, index) {
       markerBounds.push(place.coords);
-      const marker = L.marker(place.coords, { icon: markerIcon(place) })
-        .bindPopup(popupHtml(place, index));
-      marker.on("click", () => selectPlace(index, false));
+      const marker = L.marker(place.coords, { icon: markerIcon(place), zIndexOffset: place.referenceType === "large_airport" ? 500 : place.referenceType === "medium_airport" ? 400 : 100 })
+        .bindPopup(popupHtml(place, index), { maxWidth: 360, autoPanPaddingTopLeft: [24, 150], autoPanPaddingBottomRight: [24, 76] });
+      marker.on("click", () => { activeIndex = index; renderList(); });
+      marker.on("contextmenu", (event) => {
+        if (event.originalEvent) L.DomEvent.stopPropagation(event.originalEvent);
+        activeIndex = index;
+        marker.openPopup();
+        renderList();
+      });
+      marker.on("popupopen", () => {
+        marker.setPopupContent(popupHtml(place, index));
+        document.getElementById("selectedCard").hidden = true;
+      });
       markers.set(index, marker);
-      marker.addTo(map);
-    });
-    map.fitBounds(markerBounds, { padding: [40, 40] });
+      if (!place.sourceTier) marker.addTo(map);
+    }
+
+    places.forEach((place, index) => addPlaceMarker(place, index));
+    map.setView([46.7, 10.8], 8, { animate: false });
 
     function tagLine(place) {
       return `${fuelTag(place)} ${accessTag(place)} ${corridorTag(place)} <span class="tag ${typeClass(place)}">${typeLabel(place)}</span>`;
@@ -1432,31 +2142,19 @@ ${waypoints}
 
     function renderSelected(index) {
       activeIndex = index;
-      const place = places[index];
       const card = document.getElementById("selectedCard");
-      const phone = operatorPhone(place);
-      const phoneUrl = phoneHref(phone);
-      const phoneDisplay = phoneUrl ? `<a href="${phoneUrl}">${phone}</a>` : phone;
-      card.innerHTML = `
-        <div class="selected-title">
-          <b>${place.name}</b>
-          <span class="code-pill ${typeClass(place)}">${place.label}</span>
-        </div>
-        <div class="item-tags">${tagLine(place)}</div>
-        <div class="detail-grid">
-          <div class="detail-row"><span>Koordinaten</span><div>${decimalCoords(place)}<br>${dmsCoords(place)}</div></div>
-          <div class="detail-row"><span>Korridor</span><div>${place.corridorNm.toFixed(1)} NM ${place.inCorridor ? "zur Route/Gardasee-Achse" : "· regionaler Zusatz"}</div></div>
-          <div class="detail-row"><span>Fuel</span><div>${deText(place.fuel)}</div></div>
-          <div class="detail-row"><span>PPR</span><div>${deText(place.ppr)}</div></div>
-          <div class="detail-row"><span>Telefon</span><div>${phoneDisplay}</div></div>
-          ${place.officialData ? `<div class="detail-row"><span>Offizielle Platzdaten</span><div>${deText(place.officialData)}</div></div>` : ""}
-        </div>
-        <div class="popup-actions">
-          <button type="button" onclick="copyActiveSummary(${index})">Briefingdaten kopieren</button>
-          ${sourceLinksHtml(place, true)}
-        </div>
-      `;
+      card.hidden = true;
+      card.replaceChildren();
     }
+
+    window.addPlaceToRoute = function(index, kind) {
+      const place = places[index];
+      if (!place) return;
+      window.dispatchEvent(new CustomEvent("vfr-add-route-place", { detail: { place, kind } }));
+      map.closePopup();
+      activeIndex = index;
+      renderList();
+    };
 
     function renderList() {
       const list = document.getElementById("placeList");
@@ -1470,7 +2168,7 @@ ${waypoints}
         row.innerHTML = `
           <div class="item-head">
             <b>${place.name}</b>
-            <span class="code-pill ${typeClass(place)}">${place.label}</span>
+            ${["H", "AV"].includes(place.label) ? "" : `<span class="code-pill ${typeClass(place)}">${identifierLabel(place)}</span>`}
           </div>
           <div class="item-tags">${tagLine(place)}</div>
           <span class="item-meta">${deText(place.status)}</span>
@@ -1488,6 +2186,7 @@ ${waypoints}
     }
 
     function sourceMatch(place, query) {
+      if (place.sourceTier === "index" && !query) return false;
       const haystack = [
         place.name,
         place.label,
@@ -1513,7 +2212,7 @@ ${waypoints}
         card.className = "source-card";
         card.innerHTML = `
           <div class="item-tags">
-            <span class="code-pill ${typeClass(place)}">${place.label}</span>
+            <span class="code-pill ${typeClass(place)}">${identifierLabel(place)}</span>
             ${fuelTag(place)}
             ${accessTag(place)}
             ${corridorTag(place)}
@@ -1536,18 +2235,22 @@ ${waypoints}
 
     function renderMarkers() {
       const query = activeQuery();
+      const zoom = map.getZoom();
       places.forEach((place, index) => {
         const marker = markers.get(index);
-        const visible = filterMatch(place, query, currentFilter);
+        const densityVisible = index === activeIndex || (place.sourceTier === "index"
+          ? zoom >= 9 || (zoom >= 6 && place.referenceType === "large_airport") || (zoom >= 8 && place.referenceType === "medium_airport")
+          : place.sourceTier === "registry" ? zoom >= 8 : zoom >= 7 || place.type === "airport" || place.type === "helipad");
+        const visible = densityVisible && filterMatch(place, query, currentFilter);
         if (visible && !map.hasLayer(marker)) marker.addTo(map);
         if (!visible && map.hasLayer(marker)) marker.remove();
       });
     }
 
     function selectPlace(index, openMap) {
-      renderSelected(index);
+      activeIndex = index;
+      document.getElementById("selectedCard").hidden = true;
       renderList();
-      document.getElementById("airportSelect").value = String(index);
       if (openMap) {
         showTab("mapPage");
         setTimeout(() => {
@@ -1579,22 +2282,101 @@ ${waypoints}
       }
     }
 
-    function populateSelect() {
-      const select = document.getElementById("airportSelect");
-      places.forEach((place, index) => {
-        const option = document.createElement("option");
-        option.value = String(index);
-        option.textContent = `${place.label} · ${place.name}`;
-        select.appendChild(option);
-      });
-    }
-
     function hydrateStats() {
       document.getElementById("statPlaces").textContent = places.length;
       document.getElementById("statFuel").textContent = places.filter((place) => place.fuelClass === "fuel").length;
-      document.getElementById("statCorridor").textContent = places.filter((place) => place.inCorridor).length;
+      document.getElementById("statCorridor").textContent = Number.isFinite(corridorWidthNm) ? places.filter((place) => place.inCorridor).length : "—";
       document.getElementById("statPpr").textContent = places.filter((place) => place.warn).length;
       document.getElementById("exportPlaceCount").textContent = places.length;
+    }
+
+    function webAaiRecordToPlace(record) {
+      const placeKind = record.source_kind === "eli" ? "Elisuperficie" : "Avio/Idrosuperficie";
+      const location = [record.municipality, record.province, record.region].filter(Boolean).join(", ");
+      return {
+        name: record.name,
+        type: record.type,
+        label: record.code || (record.source_kind === "eli" ? "H" : "AV"),
+        coords: [record.latitude, record.longitude],
+        fuel: "nicht belegt",
+        status: `${record.status || `${placeKind} im ENAC/WebAAI-Register`}; Fremdnutzung nicht automatisch freigegeben`,
+        hours: "nicht im frei sichtbaren WebAAI-Basisbereich belegt; Betreiber/PPR prüfen",
+        ppr: "Betreiberfreigabe/PPR erforderlich; Registeraufnahme ist keine Landefreigabe",
+        contact: "Kontakte/Services ggf. nach kostenloser WebAAI-Registrierung bzw. über Betreiber",
+        officialData: `WebAAI/ENAC: ${placeKind}${location ? `, ${location}` : ""}${record.enac_office ? `, ENAC ${record.enac_office}` : ""}${record.last_updated ? `, Stand ${record.last_updated}` : ""}`,
+        source: record.url,
+        fuelClass: "unknown",
+        warn: true,
+        access: "unknown",
+        sourceTier: "registry"
+      };
+    }
+
+    async function loadRegionalAirports() {
+      try {
+        const response = await fetch("data/route-airports.json", { cache: "no-store" });
+        if (!response.ok) throw new Error("Flugplatzindex nicht verfügbar");
+        const payload = await response.json();
+        const known = new Set(places.filter(isIcaoPlace).map((place) => place.label));
+        (payload.airports || []).forEach((record) => {
+          if (!["AT", "CH", "DE", "FR", "IT"].includes(record.country)
+              || !["large_airport", "medium_airport", "small_airport", "heliport"].includes(record.type)
+              ) return;
+          if (known.has(record.code)) {
+            const index = places.findIndex((place) => place.label === record.code);
+            if (index >= 0 && !places[index].referenceType) {
+              places[index].referenceType = record.type;
+              markers.get(index)?.setIcon(markerIcon(places[index]));
+            }
+            return;
+          }
+          const place = enrichPlace({
+            name: record.name, type: record.type === "heliport" ? "helipad" : "airport", label: record.code, coords: [record.lat, record.lon],
+            referenceType: record.type, sourceTier: "index", fuel: "unbekannt", fuelClass: "unknown",
+            status: "OurAirports-Grundindex; zivile Nutzbarkeit nicht verifiziert",
+            hours: "nicht geprüft", ppr: "Betreiber und aktuelle AIP prüfen", contact: "nicht geprüft",
+            source: "https://ourairports.com/data/", access: "unknown", warn: false
+          });
+          known.add(record.code);
+          const index = places.length;
+          places.push(place);
+          addPlaceMarker(place, index);
+        });
+        hydrateStats();
+        renderMarkers();
+        renderList();
+        window.dispatchEvent(new Event("vfr-places-loaded"));
+      } catch (error) { console.warn("Regional airport index could not be loaded", error); }
+    }
+
+    async function loadNationalWebAaiPlaces() {
+      try {
+        const response = await fetch("data/webaai-public-scan.json", { cache: "no-store" });
+        if (!response.ok) return;
+        const payload = await response.json();
+        const knownSources = new Set(places.flatMap((place) => placeSources(place).map((source) => source.url)));
+        const records = (payload.places || [])
+          .filter((record) => record.latitude !== null && record.longitude !== null)
+          .filter((record) => !knownSources.has(record.url));
+
+        records.forEach((record) => {
+          const place = enrichPlace(webAaiRecordToPlace(record));
+          const index = places.length;
+          places.push(place);
+          knownSources.add(place.source);
+          addPlaceMarker(place, index);
+        });
+
+        if (records.length) {
+          hydrateStats();
+          renderMarkers();
+          renderList();
+          renderSources();
+        }
+        window.dispatchEvent(new Event("vfr-places-loaded"));
+      } catch (error) {
+        console.warn("WebAAI national data could not be loaded", error);
+      }
     }
 
     document.querySelectorAll(".tab-button").forEach((button) => {
@@ -1607,22 +2389,58 @@ ${waypoints}
       document.getElementById("listSearchInput").value = event.target.value;
       renderMarkers();
       renderList();
+      renderMapSearchResults();
+    });
+    document.getElementById("searchInput").addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        const first = searchMatches(event.currentTarget.value)[0];
+        if (first) openSearchResult(first.index);
+      } else if (event.key === "Escape") document.getElementById("mapSearchResults").replaceChildren();
     });
     document.getElementById("listSearchInput").addEventListener("input", (event) => {
       document.getElementById("searchInput").value = event.target.value;
       renderMarkers();
       renderList();
     });
-    document.getElementById("airportSelect").addEventListener("change", (event) => {
-      if (event.target.value !== "") selectPlace(Number(event.target.value), true);
-    });
     document.getElementById("sourceSearchInput").addEventListener("input", renderSources);
+    document.getElementById("plannerToggle").addEventListener("click", (event) => {
+      const open = document.body.classList.toggle("planner-open");
+      event.currentTarget.setAttribute("aria-expanded", String(open));
+    });
+    document.getElementById("mapOnlyToggle").addEventListener("click", (event) => {
+      const solo = document.querySelector(".mission-grid").classList.toggle("map-only");
+      event.currentTarget.setAttribute("aria-pressed", String(solo));
+      event.currentTarget.textContent = solo ? "Bedienelemente anzeigen" : "Vollansicht";
+      event.currentTarget.title = solo ? "Bedienelemente einblenden" : "Bedienelemente ausblenden";
+      setTimeout(() => map.invalidateSize(), 220);
+    });
+    document.getElementById("routeRailHandle").addEventListener("click", (event) => {
+      const grid = document.querySelector(".mission-grid");
+      const collapsed = grid.classList.toggle("route-collapsed");
+      event.currentTarget.setAttribute("aria-pressed", String(collapsed));
+      event.currentTarget.setAttribute("aria-label", collapsed ? "Routenleiste einblenden" : "Routenleiste einklappen");
+      event.currentTarget.title = collapsed ? "Routenleiste einblenden" : "Routenleiste einklappen";
+      setTimeout(() => map.invalidateSize(), 260);
+    });
+    const mapCard = document.querySelector(".map-card");
+    document.getElementById("searchPanelClose").addEventListener("click", () => mapCard.classList.add("search-panel-hidden"));
+    document.getElementById("searchPanelOpen").addEventListener("click", () => {
+      mapCard.classList.remove("search-panel-hidden");
+      document.getElementById("searchInput").focus();
+    });
+    map.on("zoomend", renderMarkers);
 
-    populateSelect();
     hydrateStats();
-    renderSelected(0);
+    renderSelected(-1);
     renderList();
     renderSources();
+    loadNationalWebAaiPlaces();
+    loadRegionalAirports();
   </script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script>window.lucide?.createIcons();</script>
+  <script src="navaids.js"></script>
+  <script src="planner.js"></script>
 </body>
 </html>

@@ -1,0 +1,13 @@
+{
+  "source": "Austro Control AIP Austria, LOWI AD 2 MAP 13-2-1A, RNP VISUAL V RWY 08",
+  "source_url": "https://eaip.austrocontrol.at/lo/260611/Charts/LOWI/LO_AD_2_LOWI_13-2-1_en.pdf",
+  "scope": "Selected published LOWI procedure fixes only; not a complete GPS waypoint database",
+  "fixes": [
+    {"ident":"ELMEM","name":"ELMEM","lat":47.285633,"lon":10.570739},
+    {"ident":"WI810","name":"WI810","lat":47.289919,"lon":10.676758},
+    {"ident":"WI811","name":"WI811","lat":47.294775,"lon":10.798317},
+    {"ident":"WI812","name":"WI812","lat":47.296758,"lon":10.848972},
+    {"ident":"WI813","name":"WI813","lat":47.301150,"lon":10.963747},
+    {"ident":"WI814","name":"WI814","lat":47.303864,"lon":11.037131}
+  ]
+}
