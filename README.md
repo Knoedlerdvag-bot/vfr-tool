@@ -12,7 +12,7 @@ Interaktive Europa-Beta für VFR-Piloten mit Schwerpunkt Italien, Deutschland un
 - Gerade Etappen in NM/km, wahre Anfangskurse, Dauer bei konstanter Reisegeschwindigkeit und optionaler Verbrauch in l/h. Kein Wind, Steigflug, Reserven oder Tankstoppzeit.
 - Druckansicht als PDF mit Etappen und Platzinformationen zu Start, Landestopps und Ziel.
 - GPX-Route (`rtept`) für SkyDemon und separate Platz-Wegpunkte (`wpt`); CSV mit Entfernungen und Zeiten. Export jeweils Route, Plätze oder beides; Plätze aus dem gewählten Korridor oder dem aktuellen Kartenausschnitt.
-- Zuschaltbar: NOAA-METAR/TAF, OGN-Verkehr mit Geräte-Opt-in-Prüfung und foto-webcam.eu-Kameras. Die Wetterkategorien sind US-METAR-Kategorien, keine Entscheidung über italienische VFR-Minima.
+- Zuschaltbar: NOAA-METAR/TAF, OGN-Verkehr mit Geräte-Opt-in-Prüfung, foto-webcam.eu-Kameras und eine transparente OpenFlightMaps-VFR-Ebene. Die Wetterkategorien sind US-METAR-Kategorien, keine Entscheidung über italienische VFR-Minima.
 - Kartenlineal mit beliebig vielen Messpunkten, Distanz und rechtweisendem Anfangskurs je Abschnitt sowie Gesamtstrecke.
 
 ## Dateien
@@ -37,5 +37,7 @@ Interaktive Europa-Beta für VFR-Piloten mit Schwerpunkt Italien, Deutschland un
 Arbeitsunterlage, keine Navigationsdaten und kein operatives Flight Briefing. ENAC/WebAAI-Daten werden mit Quellenlink und Abrufstand geführt, Kontakte/Services/Obstacles können registrierungspflichtig sein. Alle Angaben vor dem Flug mit aktueller AIP, NOTAM/PIB, Wetter, Betreiber/PPR, Fuel-Verfügbarkeit und den einschlägigen Genehmigungen abgleichen. Die Flugvorbereitung und Entscheidung verbleiben beim verantwortlichen Piloten.
 
 Die freie Lesbarkeit einer Website ist keine Wiederverwendungslizenz. RadarVirtuel-API, openAIP-Datenübernahme und EDDH-PIREP-Zusammenfassungen bleiben bis zur Klärung der Nutzungsrechte aus. Auch der Ausbau um Pflichtmeldepunkte, Funk-/Luftraumgrenzen und Navigationseinrichtungen braucht eine verlässliche, aktualisierbare Datenquelle.
+
+Die optionale OpenFlightMaps-Ebene nutzt die von OpenFlightMaps veröffentlichten EPSG:3857-Kacheln und nennt die Quelle sichtbar in der Kartenattribution. OpenFlightMaps beschreibt die Daten selbst als nicht zertifiziert und nur als ergänzende Information; die Ebene bleibt deshalb standardmäßig ausgeschaltet und ersetzt weder AIP/NOTAM noch ein zugelassenes Navigations- oder Flugplanungssystem.
 
 Die Kartensymbole sind eigenständig gestaltet und lediglich an der Semantik von ICAO-Karten orientiert. Die [amtliche ICAO-Zeichenerklärung 2026](https://www.swisstopo.admin.ch/dam/de/sd-web/oAbJkfKRzznX/LegendeICAO_A4_2026.pdf) trennt unter anderem Heliports, Segelfluggelände sowie befestigte und unbefestigte Pisten. Solche Unterarten werden hier nur dargestellt, wenn sie für den konkreten Platz verifiziert sind; derzeit fehlen insbesondere flächendeckende Daten zur Pistenoberfläche. Die [V500 Italy für Flight Planner](https://www.eisenschmidt.aero/planung-navigation-planungsprogramme-hilfen-flight-planner) ist ein kostenpflichtiges Kartenprodukt und keine freie Quelldatei für diese Anwendung.

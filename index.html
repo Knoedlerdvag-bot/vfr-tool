@@ -963,7 +963,7 @@
     .dock-group > summary, .dock-icon-toggle, .dock-action { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 5px; color: #d9e7ed; cursor: pointer; list-style: none; transition: background .15s, transform .15s, color .15s; }
     .dock-group > summary::-webkit-details-marker { display: none; }
     .dock-group > summary:hover, .dock-group[open] > summary, .dock-icon-toggle:hover, .dock-icon-toggle:has(input:checked), .dock-action:hover, .dock-action[aria-pressed="true"] { background: #0c6088; color: #fff; transform: translateY(-1px); }
-    .dock-group.active > summary { background: #0c6088; color: #fff; }
+    .dock-group.active > summary, .dock-group:has(input:checked) > summary { background: #0c6088; color: #fff; }
     .dock-group > summary:focus-visible, .dock-icon-toggle:focus-within, .dock-action:focus-visible { outline: 3px solid #0a66c277; }
     .dock-action { border: 0; background: transparent; }
     .dock-icon-toggle { position: relative; }
@@ -971,6 +971,7 @@
     .dock-popover { position: absolute; top: 0; right: 43px; width: 258px; max-height: min(65dvh, 430px); overflow: auto; padding: 12px; border: 1px solid #365b70; border-radius: 6px; background: #071b2bf5; color: #e7eff2; box-shadow: 0 9px 25px #071b2b5c; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
     .dock-popover strong { display: block; font-size: 13px; margin-bottom: 9px; }
     .dock-popover small { display: block; margin-top: 8px; color: #b8cbd4; font-size: 10px; line-height: 1.4; }
+    .dock-popover small a { color: #f5c870; }
     .dock-options { display: flex; flex-wrap: wrap; gap: 5px; }
     .dock-options button { min-height: 31px; padding: 0 8px; border: 1px solid #456a83; border-radius: 4px; background: #10344e; color: #e7eff2; font-size: 11px; font-weight: 750; cursor: pointer; }
     .dock-options button[aria-pressed="true"] { background: #0e5f86; color: white; border-color: #0e5f86; }
@@ -1289,8 +1290,10 @@
                     <label><input type="checkbox" id="vorLayer"> VOR / DME</label>
                     <label><input type="checkbox" id="ndbLayer"> NDB</label>
                     <label><input type="checkbox" id="fixLayer"> GPS / RNAV</label>
+                    <label><input type="checkbox" id="ofmLayer"> OpenFlightMaps VFR</label>
                   </div>
                   <small id="navigationMeta">Datenstand und Quellen im Punktdetail</small>
+                  <small id="ofmMeta">Optionale aeronautische Orientierungsebene. Ergänzend, nicht als primäre Navigationsquelle. <a href="https://openflightmaps.org/faq/" target="_blank" rel="noopener">Quelle & Hinweis</a></small>
                 </div>
               </details>
               <button class="dock-action" type="button" id="topographyToggle" title="Topografische Karte ausschalten" aria-label="Topografische Karte" aria-pressed="true"><i data-lucide="mountain"></i></button>
@@ -1546,6 +1549,7 @@
             <article class="source-card"><b>Italienische Karten und AIP</b><p>ENAV eAIP und Self Briefing für Italien. Zugang kann Anmeldung erfordern.</p><a href="https://www.enav.it/login-required" target="_blank" rel="noopener">ENAV öffnen</a></article>
             <article class="source-card"><b>Deutsche AIP</b><p>DFS AIP/NfL für den deutschen Streckenanteil.</p><a href="https://ais.dfs.de/pilotservice/briefing/aip_online/aip_online.jsp" target="_blank" rel="noopener">DFS öffnen</a></article>
             <article class="source-card"><b>Kartenzeichen</b><p>Die amtliche ICAO-Legende 2026 von swisstopo erläutert unter anderem Flugplatz-, Heliport- und Pistenzeichen. Die Zeichen dieser Planungskarte sind eigenständig gestaltet und kein Ersatz für die amtliche Karte.</p><a href="https://www.swisstopo.admin.ch/dam/de/sd-web/oAbJkfKRzznX/LegendeICAO_A4_2026.pdf" target="_blank" rel="noopener">Legende ansehen</a></article>
+            <article class="source-card"><b>OpenFlightMaps</b><p>Optionale VFR-Orientierungsebene mit Lufträumen und weiteren aeronautischen Inhalten. Nicht zertifiziert und niemals als primäre Quelle für Navigation oder Flugvorbereitung verwenden.</p><a href="https://openflightmaps.org/faq/" target="_blank" rel="noopener">OpenFlightMaps öffnen</a></article>
             <article class="source-card"><b>ICAO-Luftfahrzeugtypen</b><p>Doc 8643: Typbezeichnungen und ICAO-Codes von Luftfahrzeugen.</p><a href="https://www.icao.int/operational-safety/doc-8643-aircraft-type-designators/search" target="_blank" rel="noopener">Typ suchen</a></article>
             <article class="source-card"><b>Pilotenberichte</b><p>Aktuelle Berichte sollen hier später innerhalb von 90 Tagen zusammengefasst erscheinen. Für die Übernahme aus externen Archiven wird eine Datenfreigabe benötigt.</p></article>
           </div>
@@ -1628,6 +1632,9 @@
 
     const map = L.map("map", { scrollWheelZoom: true, zoomControl: false }).setView([46.50, 10.55], 7);
     L.control.zoom({ position: "bottomright" }).addTo(map);
+    map.createPane("openFlightMapsPane");
+    map.getPane("openFlightMapsPane").style.zIndex = "250";
+    map.getPane("openFlightMapsPane").style.pointerEvents = "none";
     const streetTiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 18,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -1651,6 +1658,59 @@
     }
     topographyToggle.addEventListener("click", () => setTopography(!topographyEnabled));
     setTopography(topographyEnabled);
+
+    function currentOpenFlightMapsAirac(date = new Date()) {
+      const cycleDate = new Date(2003, 0, 23);
+      let cyclesThisYear = 0;
+      let cyclesLastYear = 0;
+      let year = date.getFullYear();
+      while (cycleDate.getTime() < date.getTime()) {
+        if (cycleDate.getFullYear() === year - 1) cyclesLastYear += 1;
+        if (cycleDate.getFullYear() === year) cyclesThisYear += 1;
+        cycleDate.setDate(cycleDate.getDate() + 28);
+      }
+      if (cyclesThisYear === 0) {
+        year -= 1;
+        cyclesThisYear = cyclesLastYear;
+      }
+      return Number(String(year).slice(-2)) * 100 + cyclesThisYear;
+    }
+    const openFlightMapsAirac = currentOpenFlightMapsAirac();
+    const openFlightMapsTiles = L.tileLayer(
+      `https://nwy-tiles-api.prod.newaydata.com/tiles/{z}/{x}/{y}.png?path=${openFlightMapsAirac}/aero/latest`,
+      {
+        pane: "openFlightMapsPane",
+        minZoom: 7,
+        maxNativeZoom: 13,
+        maxZoom: 18,
+        opacity: 0.92,
+        attribution: '&copy; <a href="https://openflightmaps.org/" target="_blank" rel="noopener">open flightmaps contributors</a>'
+      }
+    );
+    const openFlightMapsToggle = document.getElementById("ofmLayer");
+    const openFlightMapsMeta = document.getElementById("ofmMeta");
+    let openFlightMapsLoaded = false;
+    openFlightMapsTiles.on("tileload", () => {
+      if (openFlightMapsLoaded) return;
+      openFlightMapsLoaded = true;
+      openFlightMapsMeta.innerHTML = `OpenFlightMaps AIRAC ${openFlightMapsAirac} · ergänzende, nicht zertifizierte Orientierungsebene. <a href="https://openflightmaps.org/faq/" target="_blank" rel="noopener">Quelle & Hinweis</a>`;
+    });
+    openFlightMapsTiles.on("tileerror", () => {
+      if (openFlightMapsLoaded || !openFlightMapsToggle.checked) return;
+      openFlightMapsMeta.textContent = `OpenFlightMaps AIRAC ${openFlightMapsAirac}: Für diesen Ausschnitt ist derzeit keine Kachel verfügbar.`;
+    });
+    function setOpenFlightMaps(enabled, persist = true) {
+      if (enabled) openFlightMapsTiles.addTo(map);
+      else openFlightMapsTiles.remove();
+      openFlightMapsToggle.checked = enabled;
+      openFlightMapsToggle.closest("label").title = enabled ? "OpenFlightMaps ausblenden" : "OpenFlightMaps einblenden";
+      if (!enabled) openFlightMapsMeta.innerHTML = `OpenFlightMaps AIRAC ${openFlightMapsAirac} · optional und nicht als primäre Navigationsquelle. <a href="https://openflightmaps.org/faq/" target="_blank" rel="noopener">Quelle & Hinweis</a>`;
+      if (persist) try { localStorage.setItem("vfr-openflightmaps", enabled ? "on" : "off"); } catch (_) {}
+    }
+    openFlightMapsToggle.addEventListener("change", (event) => setOpenFlightMaps(event.target.checked));
+    let initialOpenFlightMaps = false;
+    try { initialOpenFlightMaps = localStorage.getItem("vfr-openflightmaps") === "on"; } catch (_) {}
+    setOpenFlightMaps(initialOpenFlightMaps, false);
     const themeToggle = document.getElementById("themeToggle");
     function setNightMode(enabled) {
       document.body.classList.toggle("night", enabled);
