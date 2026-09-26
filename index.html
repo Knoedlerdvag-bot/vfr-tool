@@ -771,9 +771,12 @@
     .deck-actions { margin: 0; flex-wrap: nowrap; }
     .deck-actions .btn { min-height: 34px; white-space: nowrap; }
     .main { padding: 0; gap: 0; }
-    .tabs { border-radius: 0; border-left: 0; border-right: 0; position: static; background: #f8fbfc; }
+    .tabs { border-radius: 0; border: 0; border-bottom: 1px solid #365b70; position: static; background: #071b2b; padding: 4px 8px; }
+    .tabs .tab-button { color: #c6d5dc; border-radius: 4px; font-weight: 740; }
+    .tabs .tab-button:hover { background: #10344e; color: #fff; }
+    .tabs .tab-button.active { background: #123f59; color: #f5c870; box-shadow: inset 0 -2px #f5c870, 0 4px 12px #020b1240; }
     .page.active { gap: 0; }
-    .mission-grid { gap: 0; }
+    .mission-grid { gap: 0; background: #071b2b; }
     .route-rail { border-radius: 0; box-shadow: none; border: 0; border-right: 1px solid var(--line); overflow: auto; }
     .route-rail { background: #f7fafbbb; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
     .route-board { padding: 11px; border: 1px solid #253847; border-radius: 5px; background: #142431; color: #f3f5f2; box-shadow: inset 0 1px #ffffff1b, 0 7px 16px #172d3c24; }
@@ -874,8 +877,9 @@
     .daylight-warning[hidden] { display: none; }
     .airport-board-columns { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); border-top: 1px solid #315166; border-left: 1px solid #315166; }
     .airport-board-column { min-width: 0; padding: 8px; border-right: 1px solid #315166; border-bottom: 1px solid #315166; }
-    .airport-board-columns { gap: clamp(10px, 1vw, 18px); padding: 2px 0 7px; border: 0; }
-    .airport-board-column { padding: 0; border: 0; }
+    .airport-board-columns { gap: 0; padding: 0; border: 1px solid #28495e; border-bottom: 0; }
+    .airport-board-column { padding: 7px; border: 0; border-right: 1px solid #28495e; overflow: hidden; }
+    .airport-board-column:last-child { border-right: 0; }
     .flap-board-row { display: grid; gap: 3px; min-width: 0; padding: 3px 0; border: 0; }
     .route-rail .route-board .split-value,
     .route-rail .route-board .board-primary,
@@ -891,9 +895,9 @@
     .route-rail .route-board-values.board-metrics .metric-label .split-tile,
     .route-rail .route-board-values.board-metrics .metric-value .split-tile,
     .route-rail .route-board-foot .split-tile { width: clamp(7px, .56vw, 13px); height: clamp(18px, 1.25vw, 29px); flex-basis: clamp(7px, .56vw, 13px); }
-    .route-rail .route-board-values.board-metrics { margin-top: 5px; padding-top: 5px; border: 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: clamp(7px, .7vw, 13px); }
-    .route-rail .route-board-values.board-metrics > div { grid-column: auto; min-height: 0; padding: 0; border: 0; display: grid; grid-template-columns: 1fr; justify-items: start; gap: 3px; }
-    .route-rail .route-board-foot { display: flex; margin-top: 7px; padding-top: 0; border-top: 0; color: #f5c870; }
+    .route-rail .route-board-values.board-metrics { margin-top: 0; padding: 7px; border: 1px solid #28495e; border-bottom: 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 5px; }
+    .route-rail .route-board-values.board-metrics > div { grid-column: auto; min-height: 0; padding: 0; border: 0; display: grid; grid-template-columns: 1fr; justify-items: start; gap: 3px; overflow: hidden; }
+    .route-rail .route-board-foot { display: flex; margin-top: 0; padding: 7px; border: 1px solid #28495e; color: #f5c870; overflow: hidden; }
     .route-export-actions { display: grid; gap: 5px; }
     .route-export-actions > .btn { width: 100%; min-height: 40px; }
     .route-export-actions > div { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px; }
@@ -907,7 +911,7 @@
     body.night .route-rail .route-point button, body.night .route-rail .toolbar > .btn, body.night .flight-time-steps button { background: #3c3d3a; border-color: #67635b; }
     body.night .flight-time-picker { background: #202120; border-color: #55534f; }
     body.night .map-card .leaflet-tile-pane { filter: brightness(.58) contrast(1.12) saturate(.64) hue-rotate(12deg); }
-    body.night .tabs { background: #232b2f; border-color: #48565e; }
+    body.night .tabs { background: #292a29; border-color: #55524d; }
     body.night .tabs .tab-button { color: #d0d8d9; }
     body.night .tabs .tab-button.active { color: #f7c86e; background: #161d20; }
     body.night .map-card .filter-panel, body.night .map-dock, body.night .dock-popover, body.night .selected-card { background: #1d2a2be8; color: #f0efe9; border-color: #64787a; }
@@ -1081,7 +1085,8 @@
     @media (min-width: 780px) {
       .mission-grid { grid-template-columns: clamp(460px, 34vw, 680px) minmax(0,1fr); transition: grid-template-columns .24s ease; }
       .map-card { top: 0; height: calc(100dvh - 112px); min-height: 580px; }
-      .route-rail { max-height: calc(100dvh - 112px); transition: transform .24s ease, opacity .18s ease; }
+      .route-rail { height: calc(100dvh - 112px); min-height: 580px; max-height: calc(100dvh - 112px); transition: transform .24s ease, opacity .18s ease; }
+      .route-rail .planner-box { min-height: 100%; }
     }
     @media (max-width: 779px) {
       .deck-actions { display: none; }
@@ -1204,8 +1209,8 @@
                   </div>
                   <input id="departureTime" type="hidden">
                 </div>
-                <div id="routeBoard" class="route-board" aria-label="Routenübersicht" hidden>
-                  <div class="route-board-head"><span>ROUTE / LIVE</span><span id="routeBoardState">BERECHNET</span></div>
+                <div id="routeBoard" class="route-board" aria-label="Routenübersicht">
+                  <div class="route-board-head"><span>ROUTE / LIVE</span><span id="routeBoardState">ROUTE EINGEBEN</span></div>
                   <div class="airport-board-columns">
                     <section class="airport-board-column" aria-label="Departure">
                       <div class="flap-board-row"><strong id="boardDepartureTitle" class="split-value board-primary"></strong></div>
@@ -2513,6 +2518,6 @@ ${waypoints}
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script>window.lucide?.createIcons();</script>
   <script src="navaids.js?v=20260925b"></script>
-  <script src="planner.js"></script>
+  <script src="planner.js?v=20260926a"></script>
 </body>
 </html>

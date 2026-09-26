@@ -30,6 +30,29 @@
   let boardKey = "";
   let boardAnimationGeneration = 0;
   const flapWheel = [..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ.:/—- "];
+  const boardCellWidths = {
+    boardDepartureTitle: 23,
+    boardArrivalTitle: 23,
+    boardDepartureDate: 23,
+    boardArrivalDate: 23,
+    boardDepartureTime: 23,
+    boardArrivalTime: 23,
+    boardStart: 23,
+    boardDestination: 23,
+    boardSunriseLabel: 23,
+    boardSunsetLabel: 23,
+    boardSunriseTime: 23,
+    boardSunsetTime: 23,
+    boardSunriseCode: 23,
+    boardSunsetCode: 23,
+    boardDistanceLabel: 13,
+    boardDistance: 13,
+    boardTimeLabel: 13,
+    boardTime: 13,
+    boardFuelLabel: 13,
+    boardFuel: 13,
+    boardKm: 43
+  };
   const unlockFlapAudio = () => {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (!AudioContextClass) return;
@@ -77,9 +100,11 @@
 
   function setBoardValue(id, value, sequence, generation = boardAnimationGeneration) {
     const node = document.getElementById(id);
-    const finalValue = String(value);
-    node.dataset.value = finalValue;
-    node.setAttribute("aria-label", finalValue);
+    const semanticValue = String(value);
+    const width = boardCellWidths[id];
+    const finalValue = width ? semanticValue.slice(0, width).padEnd(width, " ") : semanticValue;
+    node.dataset.value = semanticValue;
+    node.setAttribute("aria-label", semanticValue);
     node.replaceChildren(...[...finalValue].map((character, index) => {
       const tile = document.createElement("span");
       tile.className = "split-tile";
@@ -234,9 +259,39 @@
     const ready = legs.length > 0 && speed > 0;
     clearTimeout(boardTimer);
     if (!ready) {
-      boardAnimationGeneration += 1;
-      board.hidden = true;
-      boardKey = "";
+      const departure = centralEuropeanDate(document.getElementById("departureTime").value);
+      const placeholderValues = {
+        boardDepartureTitle: "DEPARTURE",
+        boardArrivalTitle: "ARRIVAL",
+        boardDepartureDate: departure ? `DATE ${boardDate(departure)}` : "DATE -- --- --",
+        boardDepartureTime: departure ? `${boardTime(departure, "Europe/Berlin")} LCL / ${boardTime(departure, "UTC")} UTC` : "--:-- LCL / --:-- UTC",
+        boardArrivalDate: "DATE -- --- --",
+        boardArrivalTime: "--:-- LCL / --:-- UTC",
+        boardStart: "----",
+        boardDestination: "----",
+        boardSunriseLabel: "SR",
+        boardSunriseTime: "--:-- LCL / --:-- UTC",
+        boardSunriseCode: "AT ----",
+        boardSunsetLabel: "SS",
+        boardSunsetTime: "--:-- LCL / --:-- UTC",
+        boardSunsetCode: "AT ----",
+        boardDistanceLabel: "STRECKE",
+        boardDistance: "--.- NM",
+        boardTimeLabel: "FLUGZEIT",
+        boardTime: "--- MIN",
+        boardFuelLabel: "VERBRAUCH",
+        boardFuel: "OPTIONAL",
+        boardKm: "---.- KM · ETAPPEN-LUFTLINIE · OHNE WIND"
+      };
+      const placeholderKey = `EMPTY:${document.getElementById("departureTime").value}`;
+      if (placeholderKey === boardKey) return;
+      const generation = ++boardAnimationGeneration;
+      board.hidden = false;
+      document.getElementById("routeBoardState").textContent = "ROUTE EINGEBEN";
+      document.getElementById("daylightWarning").hidden = true;
+      Object.entries(placeholderValues).forEach(([id, value]) => setBoardValue(id, value, false, generation));
+      boardKey = placeholderKey;
+      window.vfrRouteSchedule = { destinationCode: "", arrivalLocal: "" };
       return;
     }
     const code = (point) => (point.code || point.name || "").replace(/[^A-Za-z0-9 -]/g, "").trim().slice(0, 8).toUpperCase() || "PUNKT";
@@ -259,6 +314,7 @@
     if (key === boardKey) return;
     boardTimer = setTimeout(() => {
       board.hidden = false;
+      document.getElementById("routeBoardState").textContent = "BERECHNET";
       boardKey = key;
       const animate = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const generation = ++boardAnimationGeneration;
