@@ -8,7 +8,7 @@ Grundlage: Nutzeranforderungen aus dem fortlaufenden Arbeitschat, aktueller Quel
 | Anforderung | Stand | Umsetzung |
 |---|---|---|
 | Split-Flap-Tafel darf ohne Route nicht verschwinden | Erledigt | Die vollständige Tafel bleibt immer sichtbar. Ohne Route zeigt sie Datum und neutrale Platzhalter; nach Routenberechnung werden dieselben Zellen animiert befüllt. |
-| Eine zusammenhängende Tafel statt einzelner Karten | Erledigt | Departure, Arrival, Datum, LCL/UTC, ICAO, SR/SS, Strecke, Flugzeit, Verbrauch und km-Zeile liegen in einem gemeinsamen Rahmen und festen Zellraster. Unbenutzte Stellen bleiben als leere Flap-Zellen sichtbar. |
+| Eine zusammenhängende Tafel statt einzelner Karten | Erledigt | Departure, Arrival, Datum, LCL/UTC, ICAO, SR/SS, Strecke, Flugzeit, Verbrauch und km-Zeile liegen in einer einzigen ungeteilten Split-Flap-Fläche. Jede Zeile besitzt 18 große, feste Zellen: Die Buchstaben klappen nacheinander zur nächsten Information, bleiben zum Lesen stehen und wechseln danach weiter. Die Zeile selbst wandert nicht. |
 | Kein heller Leerraum unter GPX/CSV/Ortsdaten | Erledigt | Die linke Routenspalte füllt auf Desktop die gesamte Kartenhöhe mit Aviation Navy. |
 | Hauptnavigation nicht weiß | Erledigt | Karte, Plätze & Export, Quellen und Nachschlagen liegen auf der Navy-CI-Fläche; der aktive Bereich ist blau/gold markiert. |
 

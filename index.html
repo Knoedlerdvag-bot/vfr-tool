@@ -898,6 +898,13 @@
     .route-rail .route-board-values.board-metrics { margin-top: 0; padding: 7px; border: 1px solid #28495e; border-bottom: 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 5px; }
     .route-rail .route-board-values.board-metrics > div { grid-column: auto; min-height: 0; padding: 0; border: 0; display: grid; grid-template-columns: 1fr; justify-items: start; gap: 3px; overflow: hidden; }
     .route-rail .route-board-foot { display: flex; margin-top: 0; padding: 7px; border: 1px solid #28495e; color: #f5c870; overflow: hidden; }
+    .route-board-stream { display: grid; gap: 4px; padding: 7px; overflow: hidden; border: 1px solid #28495e; background: #071b2b; }
+    .board-cycle-row, .board-gap-row { min-width: 0; overflow: hidden; }
+    .route-rail .route-board .board-cycle-track,
+    .route-rail .route-board .board-gap-track { display: grid; grid-template-columns: repeat(18, minmax(0, 1fr)); width: 100%; max-width: none; gap: 3px; font-size: clamp(23px, 1.65vw, 32px); }
+    .route-rail .route-board .board-cycle-track .split-tile,
+    .route-rail .route-board .board-gap-track .split-tile { width: 100%; height: clamp(44px, 3.15vw, 58px); min-width: 0; flex-basis: auto; border-radius: 3px; }
+    .board-gap-row { height: clamp(44px, 3.15vw, 58px); }
     .route-export-actions { display: grid; gap: 5px; }
     .route-export-actions > .btn { width: 100%; min-height: 40px; }
     .route-export-actions > div { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px; }
@@ -1083,7 +1090,7 @@
     .print-kpis b { display: block; font-size: 15pt; color: #17445b; }
     .print-kpis span { font-size: 8pt; color: #4f6470; }
     @media (min-width: 780px) {
-      .mission-grid { grid-template-columns: clamp(460px, 34vw, 680px) minmax(0,1fr); transition: grid-template-columns .24s ease; }
+      .mission-grid { grid-template-columns: clamp(520px, 38vw, 720px) minmax(0,1fr); transition: grid-template-columns .24s ease; }
       .map-card { top: 0; height: calc(100dvh - 112px); min-height: 580px; }
       .route-rail { height: calc(100dvh - 112px); min-height: 580px; max-height: calc(100dvh - 112px); transition: transform .24s ease, opacity .18s ease; }
       .route-rail .planner-box { min-height: 100%; }
@@ -1211,27 +1218,16 @@
                 </div>
                 <div id="routeBoard" class="route-board" aria-label="Routenübersicht">
                   <div class="route-board-head"><span>ROUTE / LIVE</span><span id="routeBoardState">ROUTE EINGEBEN</span></div>
-                  <div class="airport-board-columns">
-                    <section class="airport-board-column" aria-label="Departure">
-                      <div class="flap-board-row"><strong id="boardDepartureTitle" class="split-value board-primary"></strong></div>
-                      <div class="flap-board-row"><strong id="boardDepartureDate" class="split-value board-line board-line-prominent"></strong><strong id="boardDepartureTime" class="split-value board-line"></strong></div>
-                      <div class="flap-board-row"><strong id="boardStart" class="split-value board-line board-line-prominent"></strong></div>
-                      <div class="flap-board-row"><strong id="boardSunriseLabel" class="split-value board-line board-line-prominent"></strong><strong id="boardSunriseTime" class="split-value board-line"></strong><strong id="boardSunriseCode" class="split-value board-line"></strong></div>
-                    </section>
-                    <section class="airport-board-column" aria-label="Arrival">
-                      <div class="flap-board-row"><strong id="boardArrivalTitle" class="split-value board-primary"></strong></div>
-                      <div class="flap-board-row"><strong id="boardArrivalDate" class="split-value board-line board-line-prominent"></strong><strong id="boardArrivalTime" class="split-value board-line"></strong></div>
-                      <div class="flap-board-row"><strong id="boardDestination" class="split-value board-line board-line-prominent"></strong></div>
-                      <div class="flap-board-row"><strong id="boardSunsetLabel" class="split-value board-line board-line-prominent"></strong><strong id="boardSunsetTime" class="split-value board-line"></strong><strong id="boardSunsetCode" class="split-value board-line"></strong></div>
-                    </section>
-                  </div>
-                  <div class="route-board-values board-metrics">
-                    <div><strong id="boardDistanceLabel" class="split-value metric-label"></strong><strong id="boardDistance" class="split-value metric-value"></strong></div>
-                    <div><strong id="boardTimeLabel" class="split-value metric-label"></strong><strong id="boardTime" class="split-value metric-value"></strong></div>
-                    <div><strong id="boardFuelLabel" class="split-value metric-label"></strong><strong id="boardFuel" class="split-value metric-value"></strong></div>
+                  <div class="route-board-stream">
+                    <div class="board-cycle-row"><strong id="boardDepartureRow" class="split-value board-cycle-track"></strong></div>
+                    <div class="board-cycle-row"><strong id="boardSunriseRow" class="split-value board-cycle-track"></strong></div>
+                    <div class="board-cycle-row"><strong id="boardArrivalRow" class="split-value board-cycle-track"></strong></div>
+                    <div class="board-cycle-row"><strong id="boardSunsetRow" class="split-value board-cycle-track"></strong></div>
+                    <div class="board-cycle-row"><strong id="boardMetricsRow" class="split-value board-cycle-track"></strong></div>
+                    <div class="board-gap-row" aria-hidden="true"><span id="boardGapTwo" class="split-value board-gap-track"></span></div>
+                    <div class="board-cycle-row"><strong id="boardKm" class="split-value board-cycle-track"></strong></div>
                   </div>
                   <div id="daylightWarning" class="daylight-warning" role="status" hidden></div>
-                  <strong id="boardKm" class="split-value route-board-foot"></strong>
                 </div>
                 <div id="routeSummary" class="route-summary"></div>
                 <div class="route-export-actions" aria-label="Planung exportieren">
@@ -2494,6 +2490,18 @@ ${waypoints}
     });
     window.toggleRouteRail = (button) => {
       const grid = document.querySelector(".mission-grid");
+      if (grid.classList.contains("map-only")) {
+        grid.classList.remove("map-only", "route-collapsed");
+        const mapOnlyToggle = document.getElementById("mapOnlyToggle");
+        mapOnlyToggle.setAttribute("aria-pressed", "false");
+        mapOnlyToggle.textContent = "Vollansicht";
+        mapOnlyToggle.title = "Bedienelemente ausblenden";
+        button.setAttribute("aria-pressed", "false");
+        button.setAttribute("aria-label", "Routenleiste einklappen");
+        button.title = "Routenleiste einklappen";
+        setTimeout(() => map.invalidateSize(), 260);
+        return;
+      }
       const collapsed = grid.classList.toggle("route-collapsed");
       button.setAttribute("aria-pressed", String(collapsed));
       button.setAttribute("aria-label", collapsed ? "Routenleiste einblenden" : "Routenleiste einklappen");
@@ -2518,6 +2526,6 @@ ${waypoints}
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script>window.lucide?.createIcons();</script>
   <script src="navaids.js?v=20260925b"></script>
-  <script src="planner.js?v=20260926a"></script>
+  <script src="planner.js?v=20260926d"></script>
 </body>
 </html>
