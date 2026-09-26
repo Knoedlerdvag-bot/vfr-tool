@@ -45,6 +45,10 @@ class RouteBoardUiContractTests(unittest.TestCase):
         self.assertIn('grid.classList.remove("map-only", "route-collapsed")', self.html)
         self.assertIn('mapOnlyToggle.textContent = "Vollansicht"', self.html)
 
+    def test_switzerland_is_listed_as_implemented_beta_country(self):
+        self.assertIn("ITALIEN · DEUTSCHLAND · ÖSTERREICH · SCHWEIZ", self.html)
+        self.assertIn("Europa Beta · IT / DE / AT / CH", self.html)
+
     def test_primary_navigation_and_full_route_column_use_aviation_navy(self):
         self.assertIn(".tabs { border-radius: 0; border: 0; border-bottom: 1px solid #365b70; position: static; background: #071b2b;", self.html)
         self.assertIn(".mission-grid { gap: 0; background: #071b2b; }", self.html)
