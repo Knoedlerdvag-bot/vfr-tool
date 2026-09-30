@@ -249,7 +249,16 @@
     .plan-numbers label { font-size: 11px; color: var(--muted); display: grid; gap: 3px; }
     .plan-numbers label span { color: var(--ink); font-weight: 700; }
     .plan-numbers input, .plan-numbers select, .export-scope select { width: 100%; min-width: 0; min-height: 36px; border: 1px solid var(--line); border-radius: 5px; padding: 0 6px; background: white; }
-    .route-summary { font-size: 13px; line-height: 1.4; font-weight: 700; }
+    .route-summary { display: grid; gap: 8px; margin-top: 8px; padding: 10px; border: 1px solid #365b70; border-radius: 5px; background: #0b2639; color: #eef3f1; font-size: 12px; line-height: 1.4; }
+    .route-summary:empty { display: none; }
+    .route-summary-head { display: grid; gap: 2px; padding-bottom: 7px; border-bottom: 1px solid #365b70; }
+    .route-summary-head b { color: #f5c870; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    .route-summary-head span { color: #dce7eb; font-weight: 650; }
+    .route-summary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+    .route-summary-grid > div { display: grid; gap: 2px; min-width: 0; padding: 7px; border: 1px solid #294a5e; border-radius: 4px; background: #102f44; }
+    .route-summary-grid small { color: #a9c0ca; font-size: 9px; font-weight: 800; text-transform: uppercase; }
+    .route-summary-grid b { color: #f6f2e8; font-size: 11px; font-variant-numeric: tabular-nums; }
+    .route-leg-list { display: grid; }
     .route-leg { display: flex; justify-content: space-between; gap: 8px; padding: 5px 0; border-top: 1px solid var(--line); font-weight: 500; }
     .route-leg span:last-child { white-space: nowrap; }
     .layer-toggles, .fuel-options, .export-choice { display: flex; flex-wrap: wrap; gap: 7px 12px; }
@@ -770,12 +779,14 @@
     .flight-deck .sub, .flight-deck .stats { display: none; }
     .deck-actions { margin: 0; flex-wrap: nowrap; }
     .deck-actions .btn { min-height: 34px; white-space: nowrap; }
-    .main { padding: 0; gap: 0; }
-    .tabs { border-radius: 0; border: 0; border-bottom: 1px solid #365b70; position: static; background: #071b2b; padding: 4px 8px; }
-    .tabs .tab-button { color: #c6d5dc; border-radius: 4px; font-weight: 740; }
+    .main { padding: 0; gap: 0; min-height: 0; grid-template-rows: 51px minmax(0, 1fr); align-content: start; background: #071b2b; }
+    .tabs { height: 51px; min-height: 51px; grid-template-rows: 42px; align-self: start; border-radius: 0; border: 0; border-bottom: 1px solid #365b70; position: static; background: #071b2b; padding: 4px 8px; }
+    .tabs .tab-button { height: 42px; min-height: 42px; color: #c6d5dc; border-radius: 4px; font-weight: 740; }
     .tabs .tab-button:hover { background: #10344e; color: #fff; }
     .tabs .tab-button.active { background: #123f59; color: #f5c870; box-shadow: inset 0 -2px #f5c870, 0 4px 12px #020b1240; }
-    .page.active { gap: 0; }
+    .page.active { min-height: 0; gap: 0; }
+    .content-page { align-content: start; gap: 12px !important; padding: 12px; background: #071b2b; }
+    .content-page > .panel { min-width: 0; }
     .mission-grid { gap: 0; background: #071b2b; }
     .route-rail { border-radius: 0; box-shadow: none; border: 0; border-right: 1px solid var(--line); overflow: auto; }
     .route-rail { background: #f7fafbbb; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
@@ -901,10 +912,15 @@
     .route-board-stream { display: grid; gap: 4px; padding: 7px; overflow: hidden; border: 1px solid #28495e; background: #071b2b; }
     .board-cycle-row, .board-gap-row { min-width: 0; overflow: hidden; }
     .route-rail .route-board .board-cycle-track,
-    .route-rail .route-board .board-gap-track { display: grid; grid-template-columns: repeat(18, minmax(0, 1fr)); width: 100%; max-width: none; gap: 3px; font-size: clamp(23px, 1.65vw, 32px); }
+    .route-rail .route-board .board-gap-track { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); width: 100%; max-width: none; gap: 2px; font-size: clamp(15px, 1.22vw, 24px); }
     .route-rail .route-board .board-cycle-track .split-tile,
     .route-rail .route-board .board-gap-track .split-tile { width: 100%; height: clamp(44px, 3.15vw, 58px); min-width: 0; flex-basis: auto; border-radius: 3px; }
     .board-gap-row { height: clamp(44px, 3.15vw, 58px); }
+    @media (max-width: 520px) {
+      .route-summary-grid { grid-template-columns: 1fr; }
+      .route-rail .route-board .board-cycle-track,
+      .route-rail .route-board .board-gap-track { gap: 1px; font-size: clamp(13px, 3.8vw, 18px); }
+    }
     .route-export-actions { display: grid; gap: 5px; }
     .route-export-actions > .btn { width: 100%; min-height: 40px; }
     .route-export-actions > div { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px; }
@@ -1347,7 +1363,7 @@
         </div>
       </section>
 
-      <section class="page" id="listPage">
+      <section class="page content-page" id="listPage">
         <section class="panel">
           <div class="panel-header">
             <b>Platzliste</b>
@@ -1432,7 +1448,7 @@
         </section>
       </section>
 
-      <section class="page" id="sourcePage">
+      <section class="page content-page" id="sourcePage">
         <section class="panel">
           <div class="panel-header">
             <b>Korridor-Audit</b>
@@ -1543,7 +1559,7 @@
           <div class="source-list" id="sourceList"></div>
         </section>
       </section>
-      <section class="page" id="referencePage">
+      <section class="page content-page" id="referencePage">
         <section class="panel"><div class="panel-header"><b>Nachschlagen</b><span>Offizielle Quellen und ergänzende Verzeichnisse für die Routenplanung.</span></div>
           <div class="source-grid">
             <article class="source-card"><b>Italienische Karten und AIP</b><p>ENAV eAIP und Self Briefing für Italien. Zugang kann Anmeldung erfordern.</p><a href="https://www.enav.it/login-required" target="_blank" rel="noopener">ENAV öffnen</a></article>

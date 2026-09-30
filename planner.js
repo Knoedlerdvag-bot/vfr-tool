@@ -30,15 +30,16 @@
   let boardKey = "";
   let boardAnimationGeneration = 0;
   let boardCycleTimers = new Map();
+  const boardMessageDwellMs = 9000;
   const flapWheel = [..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ.:/—- "];
   const boardCellWidths = {
-    boardDepartureRow: 18,
-    boardSunriseRow: 18,
-    boardArrivalRow: 18,
-    boardSunsetRow: 18,
-    boardMetricsRow: 18,
-    boardGapTwo: 18,
-    boardKm: 18
+    boardDepartureRow: 24,
+    boardSunriseRow: 24,
+    boardArrivalRow: 24,
+    boardSunsetRow: 24,
+    boardMetricsRow: 24,
+    boardGapTwo: 24,
+    boardKm: 24
   };
   const unlockFlapAudio = () => {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -136,7 +137,7 @@
     boardCycleTimers.clear();
   }
 
-  function startBoardCycles(rows, generation, { animateInitial = true, initialDelay = 4300 } = {}) {
+  function startBoardCycles(rows, generation, { animateInitial = true, initialDelay = 8200 } = {}) {
     clearBoardCycles();
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     Object.entries(rows).forEach(([id, messages], rowIndex) => {
@@ -146,7 +147,7 @@
       const advance = (messageIndex) => {
         if (generation !== boardAnimationGeneration) return;
         setBoardValue(id, sequence[messageIndex], true, generation);
-        const timer = setTimeout(() => advance((messageIndex + 1) % sequence.length), 4300);
+        const timer = setTimeout(() => advance((messageIndex + 1) % sequence.length), boardMessageDwellMs);
         boardCycleTimers.set(id, timer);
       };
       const timer = setTimeout(() => advance(1), initialDelay + rowIndex * 260);
@@ -258,6 +259,33 @@
     return { departureSun, arrivalSun, startCode, destinationCode };
   }
 
+  function renderReadableRouteSummary({ totalNm, speed, burn, fuelUnit, departure, arrival, daylight, startCode, destinationCode }) {
+    const routeLabel = resolvedPoints.map((point) => {
+      const identifier = (point.code || "").toUpperCase();
+      return identifier ? `${identifier} · ${point.name}` : point.name;
+    }).join(" → ");
+    const dateTime = (date) => date
+      ? `${boardDate(date)} · ${boardTime(date, "Europe/Berlin")} LCL / ${boardTime(date, "UTC")} UTC`
+      : "Zeit noch offen";
+    const sunTime = (date) => date
+      ? `${boardTime(date, "Europe/Berlin")} LCL / ${boardTime(date, "UTC")} UTC`
+      : "nicht berechenbar";
+    const flightMinutes = Math.round(totalNm / speed * 60);
+    const fuelText = burn > 0 ? `${(totalNm / speed * burn).toFixed(1)} ${fuelUnit}` : "optional";
+    const legRows = legs.map((leg) => `<div class="route-leg"><span>${escapeHtml(leg.from.name)} → ${escapeHtml(leg.to.name)}</span><span>${leg.nm.toFixed(1)} NM · ${leg.hours === null ? "–" : formatMinutes(leg.hours)}</span></div>`).join("");
+    routeSummary.innerHTML = `
+      <div class="route-summary-head"><b>Route im Klartext</b><span>${escapeHtml(routeLabel)}</span></div>
+      <div class="route-summary-grid">
+        <div><small>Departure · ${escapeHtml(startCode)}</small><b>${escapeHtml(dateTime(departure))}</b></div>
+        <div><small>Sunrise · ${escapeHtml(startCode)}</small><b>${escapeHtml(sunTime(daylight?.departureSun.sunrise))}</b></div>
+        <div><small>Arrival · ${escapeHtml(destinationCode)}</small><b>${escapeHtml(dateTime(arrival))}</b></div>
+        <div><small>Sunset · ${escapeHtml(destinationCode)}</small><b>${escapeHtml(sunTime(daylight?.arrivalSun.sunset))}</b></div>
+        <div><small>Strecke · Luftlinie ohne Wind</small><b>${totalNm.toFixed(1)} NM / ${(totalNm * 1.852).toFixed(1)} km</b></div>
+        <div><small>Flugzeit · Verbrauch</small><b>${flightMinutes} min / ${escapeHtml(fuelText)}</b></div>
+      </div>
+      <div class="route-leg-list">${legRows}</div>`;
+  }
+
   function updateRouteBoard(totalNm, speed, burn) {
     const board = document.getElementById("routeBoard");
     const ready = legs.length > 0 && speed > 0;
@@ -279,7 +307,8 @@
       board.hidden = false;
       document.getElementById("routeBoardState").textContent = "ROUTE EINGEBEN";
       document.getElementById("daylightWarning").hidden = true;
-      startBoardCycles(placeholderValues, generation, { animateInitial: false, initialDelay: 7600 });
+      routeSummary.textContent = "";
+      startBoardCycles(placeholderValues, generation, { animateInitial: false, initialDelay: 10500 });
       boardKey = placeholderKey;
       window.vfrRouteSchedule = { destinationCode: "", arrivalLocal: "" };
       return;
@@ -295,15 +324,18 @@
     const sunriseUtc = daylight?.departureSun.sunrise ? boardTime(daylight.departureSun.sunrise, "UTC") : "--:--";
     const sunsetLocal = daylight?.arrivalSun.sunset ? boardTime(daylight.arrivalSun.sunset, "Europe/Berlin") : "--:--";
     const sunsetUtc = daylight?.arrivalSun.sunset ? boardTime(daylight.arrivalSun.sunset, "UTC") : "--:--";
+    const flightMinutes = Math.round(totalNm / speed * 60);
+    const fuelText = burn > 0 ? `${(totalNm / speed * burn).toFixed(1)} ${fuelUnit}` : "OPTIONAL";
     const values = {
-      boardDepartureRow: ["DEPARTURE", departure ? `DATE ${boardDate(departure)}` : "DATE -- --- --", departure ? `${boardTime(departure, "Europe/Berlin")} LCL` : "--:-- LCL", departure ? `${boardTime(departure, "UTC")} UTC` : "--:-- UTC", `ICAO ${startCode}`],
-      boardSunriseRow: ["SUNRISE / SR", `SR AT ${startCode}`, `${sunriseLocal} LCL`, `${sunriseUtc} UTC`],
-      boardArrivalRow: ["ARRIVAL", arrival ? `DATE ${boardDate(arrival)}` : "DATE -- --- --", arrival ? `${boardTime(arrival, "Europe/Berlin")} LCL` : "--:-- LCL", arrival ? `${boardTime(arrival, "UTC")} UTC` : "--:-- UTC", `ICAO ${destinationCode}`],
-      boardSunsetRow: ["SUNSET / SS", `SS AT ${destinationCode}`, `${sunsetLocal} LCL`, `${sunsetUtc} UTC`],
-      boardMetricsRow: [`STRECKE ${totalNm.toFixed(1)} NM`, `FLUGZEIT ${Math.round(totalNm / speed * 60)} MIN`, `VERBRAUCH ${burn > 0 ? `${(totalNm / speed * burn).toFixed(1)} ${fuelUnit}` : "OPTIONAL"}`],
+      boardDepartureRow: [`DEP ${startCode} ${departure ? boardDate(departure) : "DATE OFFEN"}`, departure ? `DEP ${boardTime(departure, "Europe/Berlin")} LCL/${boardTime(departure, "UTC")} UTC` : "DEP ZEIT NOCH OFFEN"],
+      boardSunriseRow: [`SR ${startCode} ${sunriseLocal} LCL/${sunriseUtc} UTC`],
+      boardArrivalRow: [`ARR ${destinationCode} ${arrival ? boardDate(arrival) : "DATE OFFEN"}`, arrival ? `ARR ${boardTime(arrival, "Europe/Berlin")} LCL/${boardTime(arrival, "UTC")} UTC` : "ARR ZEIT NOCH OFFEN"],
+      boardSunsetRow: [`SS ${destinationCode} ${sunsetLocal} LCL/${sunsetUtc} UTC`],
+      boardMetricsRow: [`DIST ${totalNm.toFixed(1)} NM/${(totalNm * 1.852).toFixed(1)} KM`, `TIME ${flightMinutes} MIN/FUEL ${fuelText}`],
       boardGapTwo: [""],
-      boardKm: [`${(totalNm * 1.852).toFixed(1)} KM`, "ETAPPEN-LUFTLINIE", "OHNE WIND"]
+      boardKm: ["ETAPPEN · OHNE WIND"]
     };
+    renderReadableRouteSummary({ totalNm, speed, burn, fuelUnit, departure, arrival, daylight, startCode, destinationCode });
     const key = JSON.stringify(values) + document.getElementById("fuelUnit").value + document.getElementById("departureTime").value;
     if (key === boardKey) return;
     boardTimer = setTimeout(() => {
@@ -512,11 +544,6 @@
     places.forEach(enrichPlace);
     const totalNm = legs.reduce((sum, leg) => sum + leg.nm, 0);
     updateRouteBoard(totalNm, speed, burn);
-    if (legs.length) {
-      routeSummary.innerHTML = legs.map((leg) => `<div class="route-leg"><span>${escapeHtml(leg.from.name)} → ${escapeHtml(leg.to.name)}</span><span>${leg.nm.toFixed(1)} NM · ${leg.hours === null ? "–" : formatMinutes(leg.hours)}</span></div>`).join("");
-    } else {
-      routeSummary.textContent = "";
-    }
     hydrateStats();
     renderMarkers();
     renderList();

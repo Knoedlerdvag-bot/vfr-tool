@@ -35,10 +35,19 @@ class RouteBoardUiContractTests(unittest.TestCase):
         self.assertIn('id="boardSunriseRow" class="split-value board-cycle-track"', self.html)
         self.assertIn('id="boardSunsetRow" class="split-value board-cycle-track"', self.html)
         self.assertIn('id="boardGapTwo" class="split-value board-gap-track"', self.html)
-        self.assertIn("grid-template-columns: repeat(18, minmax(0, 1fr))", self.html)
+        self.assertIn("grid-template-columns: repeat(24, minmax(0, 1fr))", self.html)
         self.assertIn("startBoardCycles", self.planner)
-        self.assertIn('["DEPARTURE", departure ? `DATE', self.planner)
-        self.assertIn('font-size: clamp(23px, 1.65vw, 32px)', self.html)
+        self.assertIn("const boardMessageDwellMs = 9000", self.planner)
+        self.assertIn('`DEP ${startCode}', self.planner)
+        self.assertIn('font-size: clamp(15px, 1.22vw, 24px)', self.html)
+
+    def test_route_information_has_a_static_readable_summary(self):
+        self.assertIn("function renderReadableRouteSummary", self.planner)
+        self.assertIn("Route im Klartext", self.planner)
+        self.assertIn("Sunrise ·", self.planner)
+        self.assertIn("Sunset ·", self.planner)
+        self.assertIn("Strecke · Luftlinie ohne Wind", self.planner)
+        self.assertIn(".route-summary-grid { display: grid;", self.html)
 
     def test_route_handle_exits_full_map_view(self):
         self.assertIn('if (grid.classList.contains("map-only"))', self.html)
@@ -50,9 +59,20 @@ class RouteBoardUiContractTests(unittest.TestCase):
         self.assertIn("Europa Beta · IT / DE / AT / CH", self.html)
 
     def test_primary_navigation_and_full_route_column_use_aviation_navy(self):
-        self.assertIn(".tabs { border-radius: 0; border: 0; border-bottom: 1px solid #365b70; position: static; background: #071b2b;", self.html)
+        self.assertIn("border-bottom: 1px solid #365b70; position: static; background: #071b2b;", self.html)
         self.assertIn(".mission-grid { gap: 0; background: #071b2b; }", self.html)
         self.assertIn(".route-rail { height: calc(100dvh - 112px);", self.html)
+
+    def test_top_navigation_keeps_a_fixed_compact_height(self):
+        self.assertIn("grid-template-rows: 51px minmax(0, 1fr)", self.html)
+        self.assertIn(".tabs { height: 51px; min-height: 51px; grid-template-rows: 42px;", self.html)
+        self.assertIn(".tabs .tab-button { height: 42px; min-height: 42px;", self.html)
+
+    def test_secondary_pages_use_ci_background_around_white_panels(self):
+        self.assertIn(".content-page { align-content: start; gap: 12px !important; padding: 12px; background: #071b2b; }", self.html)
+        self.assertIn('class="page content-page" id="listPage"', self.html)
+        self.assertIn('class="page content-page" id="sourcePage"', self.html)
+        self.assertIn('class="page content-page" id="referencePage"', self.html)
 
 
 if __name__ == "__main__":
