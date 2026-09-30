@@ -32,6 +32,15 @@
   let boardCycleTimers = new Map();
   const boardMessageDwellMs = 9000;
   const flapWheel = [..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ.:/—- "];
+  const boardRowIds = [
+    "boardDepartureRow",
+    "boardSunriseRow",
+    "boardArrivalRow",
+    "boardSunsetRow",
+    "boardMetricsRow",
+    "boardGapTwo",
+    "boardKm"
+  ];
   const boardCellWidths = {
     boardDepartureRow: 24,
     boardSunriseRow: 24,
@@ -117,16 +126,16 @@
           glyph.textContent = wheelSequence[step];
           tile.classList.remove("wheel-step-a", "wheel-step-b");
           tile.classList.add(step % 2 ? "wheel-step-a" : "wheel-step-b");
-          if (step + 1 < wheelSequence.length) setTimeout(() => advance(step + 1), 76);
-          else setTimeout(() => tile.classList.remove("wheel-step-a", "wheel-step-b"), 80);
+          if (step + 1 < wheelSequence.length) setTimeout(() => advance(step + 1), 84);
+          else setTimeout(() => tile.classList.remove("wheel-step-a", "wheel-step-b"), 90);
         };
         const stagger = Math.min(index, 28);
-        setTimeout(advance, stagger * 17);
+        setTimeout(advance, stagger * 18);
         setTimeout(() => {
           if (!tile.isConnected) return;
           glyph.textContent = character;
           tile.classList.remove("wheel-step-a", "wheel-step-b");
-        }, 2200 + stagger * 17);
+        }, 2400 + stagger * 18);
       }
       return tile;
     }));
@@ -137,22 +146,23 @@
     boardCycleTimers.clear();
   }
 
-  function startBoardCycles(rows, generation, { animateInitial = true, initialDelay = 8200 } = {}) {
+  function setBoardScreen(screen, animate, generation) {
+    boardRowIds.forEach((id) => setBoardValue(id, screen[id] || "", animate, generation));
+  }
+
+  function startBoardScreens(screens, generation, { animateInitial = true, initialDelay = boardMessageDwellMs } = {}) {
     clearBoardCycles();
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    Object.entries(rows).forEach(([id, messages], rowIndex) => {
-      const sequence = messages.filter(Boolean);
-      setBoardValue(id, sequence[0] || "", animateInitial && !reducedMotion, generation);
-      if (reducedMotion || sequence.length < 2) return;
-      const advance = (messageIndex) => {
-        if (generation !== boardAnimationGeneration) return;
-        setBoardValue(id, sequence[messageIndex], true, generation);
-        const timer = setTimeout(() => advance((messageIndex + 1) % sequence.length), boardMessageDwellMs);
-        boardCycleTimers.set(id, timer);
-      };
-      const timer = setTimeout(() => advance(1), initialDelay + rowIndex * 260);
-      boardCycleTimers.set(id, timer);
-    });
+    const sequence = screens.filter(Boolean);
+    setBoardScreen(sequence[0] || {}, animateInitial && !reducedMotion, generation);
+    if (reducedMotion || sequence.length < 2) return;
+    const advance = (screenIndex) => {
+      if (generation !== boardAnimationGeneration) return;
+      setBoardScreen(sequence[screenIndex], true, generation);
+      const timer = setTimeout(() => advance((screenIndex + 1) % sequence.length), boardMessageDwellMs);
+      boardCycleTimers.set("screen", timer);
+    };
+    boardCycleTimers.set("screen", setTimeout(() => advance(1), initialDelay));
   }
 
   function centralEuropeanDate(input) {
@@ -292,15 +302,15 @@
     clearTimeout(boardTimer);
     if (!ready) {
       const departure = centralEuropeanDate(document.getElementById("departureTime").value);
-      const placeholderValues = {
-        boardDepartureRow: ["DEPARTURE", departure ? `DATE ${boardDate(departure)}` : "DATE -- --- --", departure ? `${boardTime(departure, "Europe/Berlin")} LCL` : "--:-- LCL", departure ? `${boardTime(departure, "UTC")} UTC` : "--:-- UTC", "ICAO ----"],
-        boardSunriseRow: ["SUNRISE / SR", "SR AT ----", "--:-- LCL", "--:-- UTC"],
-        boardArrivalRow: ["ARRIVAL", "DATE -- --- --", "--:-- LCL", "--:-- UTC", "ICAO ----"],
-        boardSunsetRow: ["SUNSET / SS", "SS AT ----", "--:-- LCL", "--:-- UTC"],
-        boardMetricsRow: ["STRECKE --.- NM", "FLUGZEIT --- MIN", "VERBRAUCH OPTIONAL"],
-        boardGapTwo: [""],
-        boardKm: ["---.- KM", "ETAPPEN-LUFTLINIE", "OHNE WIND"]
-      };
+      const placeholderScreens = [{
+        boardDepartureRow: "DEPARTURE ----",
+        boardSunriseRow: departure ? `DATE ${boardDate(departure)}` : "DATE -- --- --",
+        boardArrivalRow: departure ? `${boardTime(departure, "Europe/Berlin")} LCL / ${boardTime(departure, "UTC")} UTC` : "--:-- LCL / --:-- UTC",
+        boardSunsetRow: "SR --:-- LCL/--:-- UTC",
+        boardMetricsRow: "",
+        boardGapTwo: "ROUTE EINGEBEN",
+        boardKm: ""
+      }];
       const placeholderKey = `EMPTY:${document.getElementById("departureTime").value}`;
       if (placeholderKey === boardKey) return;
       const generation = ++boardAnimationGeneration;
@@ -308,7 +318,7 @@
       document.getElementById("routeBoardState").textContent = "ROUTE EINGEBEN";
       document.getElementById("daylightWarning").hidden = true;
       routeSummary.textContent = "";
-      startBoardCycles(placeholderValues, generation, { animateInitial: false, initialDelay: 10500 });
+      startBoardScreens(placeholderScreens, generation, { animateInitial: false });
       boardKey = placeholderKey;
       window.vfrRouteSchedule = { destinationCode: "", arrivalLocal: "" };
       return;
@@ -326,17 +336,37 @@
     const sunsetUtc = daylight?.arrivalSun.sunset ? boardTime(daylight.arrivalSun.sunset, "UTC") : "--:--";
     const flightMinutes = Math.round(totalNm / speed * 60);
     const fuelText = burn > 0 ? `${(totalNm / speed * burn).toFixed(1)} ${fuelUnit}` : "OPTIONAL";
-    const values = {
-      boardDepartureRow: [`DEP ${startCode} ${departure ? boardDate(departure) : "DATE OFFEN"}`, departure ? `DEP ${boardTime(departure, "Europe/Berlin")} LCL/${boardTime(departure, "UTC")} UTC` : "DEP ZEIT NOCH OFFEN"],
-      boardSunriseRow: [`SR ${startCode} ${sunriseLocal} LCL/${sunriseUtc} UTC`],
-      boardArrivalRow: [`ARR ${destinationCode} ${arrival ? boardDate(arrival) : "DATE OFFEN"}`, arrival ? `ARR ${boardTime(arrival, "Europe/Berlin")} LCL/${boardTime(arrival, "UTC")} UTC` : "ARR ZEIT NOCH OFFEN"],
-      boardSunsetRow: [`SS ${destinationCode} ${sunsetLocal} LCL/${sunsetUtc} UTC`],
-      boardMetricsRow: [`DIST ${totalNm.toFixed(1)} NM/${(totalNm * 1.852).toFixed(1)} KM`, `TIME ${flightMinutes} MIN/FUEL ${fuelText}`],
-      boardGapTwo: [""],
-      boardKm: ["ETAPPEN · OHNE WIND"]
-    };
+    const screens = [
+      {
+        boardDepartureRow: `DEPARTURE ${startCode}`,
+        boardSunriseRow: departure ? `DATE ${boardDate(departure)}` : "DATE OFFEN",
+        boardArrivalRow: departure ? `${boardTime(departure, "Europe/Berlin")} LCL / ${boardTime(departure, "UTC")} UTC` : "ZEIT NOCH OFFEN",
+        boardSunsetRow: `SR ${sunriseLocal} LCL/${sunriseUtc} UTC`,
+        boardMetricsRow: "",
+        boardGapTwo: "",
+        boardKm: ""
+      },
+      {
+        boardDepartureRow: `ARRIVAL ${destinationCode}`,
+        boardSunriseRow: arrival ? `DATE ${boardDate(arrival)}` : "DATE OFFEN",
+        boardArrivalRow: arrival ? `${boardTime(arrival, "Europe/Berlin")} LCL / ${boardTime(arrival, "UTC")} UTC` : "ZEIT NOCH OFFEN",
+        boardSunsetRow: `SS ${sunsetLocal} LCL/${sunsetUtc} UTC`,
+        boardMetricsRow: "",
+        boardGapTwo: "",
+        boardKm: ""
+      },
+      {
+        boardDepartureRow: `STRECKE ${totalNm.toFixed(1)} NM`,
+        boardSunriseRow: `${(totalNm * 1.852).toFixed(1)} KM LUFTLINIE`,
+        boardArrivalRow: "OHNE WIND",
+        boardSunsetRow: "",
+        boardMetricsRow: `FLUGZEIT ${flightMinutes} MIN`,
+        boardGapTwo: `VERBRAUCH ${fuelText}`,
+        boardKm: ""
+      }
+    ];
     renderReadableRouteSummary({ totalNm, speed, burn, fuelUnit, departure, arrival, daylight, startCode, destinationCode });
-    const key = JSON.stringify(values) + document.getElementById("fuelUnit").value + document.getElementById("departureTime").value;
+    const key = JSON.stringify(screens) + document.getElementById("fuelUnit").value + document.getElementById("departureTime").value;
     if (key === boardKey) return;
     boardTimer = setTimeout(() => {
       board.hidden = false;
@@ -344,7 +374,7 @@
       boardKey = key;
       const animate = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const generation = ++boardAnimationGeneration;
-      startBoardCycles(values, generation, { animateInitial: animate });
+      startBoardScreens(screens, generation, { animateInitial: animate });
       window.vfrRouteSchedule = { destinationCode: resolvedPoints.at(-1)?.code || "", arrivalLocal: arrival ? scheduleLabel(arrival) : "" };
       if (animate && flapAudioContext?.state === "running") {
         for (let index = 0; index < 12; index += 1) setTimeout(playFlapSound, index * 190);
@@ -600,7 +630,7 @@
     const mode = exportMode();
     if (mode !== "places" && route.length < 2) { showTab("mapPage"); routeSummary.textContent = "Für den Routenexport bitte Start und Ziel wählen."; return; }
     const routeXml = mode === "places" ? "" : `<rte><name>VFR Italia Route</name>${resolvedPoints.map((point) => `<rtept lat="${point.coords[0].toFixed(6)}" lon="${point.coords[1].toFixed(6)}"><name>${xmlEscape(point.name)}</name><desc>${xmlEscape(pointLabel(point))}</desc></rtept>`).join("")}</rte>`;
-    const placeXml = mode === "route" ? "" : selectedPlaces().map((place) => `<wpt lat="${place.coords[0].toFixed(6)}" lon="${place.coords[1].toFixed(6)}"><name>${xmlEscape(waypointName(place))}</name><desc>${xmlEscape(`Fuel: ${place.fuel} | PPR: ${place.ppr} | Quelle: ${place.source}`)}</desc></wpt>`).join("");
+    const placeXml = mode === "route" ? "" : selectedPlaces().map((place) => `<wpt lat="${place.coords[0].toFixed(6)}" lon="${place.coords[1].toFixed(6)}"><name>${xmlEscape(waypointName(place))}</name><desc>${xmlEscape(`Fuel: ${place.fuel} | PPR: ${place.ppr}`)}</desc></wpt>`).join("");
     downloadFile(`${routeExportBaseName()}.gpx`, "application/gpx+xml;charset=utf-8", `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="VFR Italia" xmlns="http://www.topografix.com/GPX/1/1">${routeXml}${placeXml}</gpx>`);
   };
 
@@ -608,14 +638,14 @@
     const mode = exportMode();
     if (mode !== "places" && route.length < 2) { showTab("mapPage"); routeSummary.textContent = "Für den Routenexport bitte Start und Ziel wählen."; return; }
     const fuelColumn = document.getElementById("fuelUnit").value === "gal" ? "fuel_us_gal" : "fuel_l";
-    const rows = [["record_type", "sequence", "name", "code", "lat", "lon", "leg_nm", "leg_km", "leg_minutes", "bearing_true_deg", fuelColumn, "corridor_nm", "fuel_info", "ppr", "source"]];
+    const rows = [["record_type", "sequence", "name", "code", "lat", "lon", "leg_nm", "leg_km", "leg_minutes", "bearing_true_deg", fuelColumn, "corridor_nm", "fuel_info", "ppr"]];
     if (mode !== "places") resolvedPoints.forEach((point, index) => {
       const leg = legs[index - 1];
       const burn = Number(document.getElementById("fuelBurn").value);
-      rows.push([point.kind, index + 1, point.name, point.code, point.coords[0].toFixed(6), point.coords[1].toFixed(6), leg?.nm.toFixed(1) || "", leg ? (leg.nm * 1.852).toFixed(1) : "", leg?.hours === null || !leg ? "" : Math.round(leg.hours * 60), leg ? Math.round(leg.bearing) : "", leg?.hours && burn > 0 ? (leg.hours * burn).toFixed(1) : "", "", point.place?.fuel || "", point.place?.ppr || "", point.place?.source || ""]);
+      rows.push([point.kind, index + 1, point.name, point.code, point.coords[0].toFixed(6), point.coords[1].toFixed(6), leg?.nm.toFixed(1) || "", leg ? (leg.nm * 1.852).toFixed(1) : "", leg?.hours === null || !leg ? "" : Math.round(leg.hours * 60), leg ? Math.round(leg.bearing) : "", leg?.hours && burn > 0 ? (leg.hours * burn).toFixed(1) : "", "", point.place?.fuel || "", point.place?.ppr || ""]);
     });
     if (mode !== "route") selectedPlaces().forEach((place) => {
-      rows.push(["place", "", place.name, place.label, place.coords[0].toFixed(6), place.coords[1].toFixed(6), "", "", "", "", "", Number.isFinite(place.corridorNm) ? place.corridorNm.toFixed(1) : "", place.fuel, place.ppr, place.source]);
+      rows.push(["place", "", place.name, place.label, place.coords[0].toFixed(6), place.coords[1].toFixed(6), "", "", "", "", "", Number.isFinite(place.corridorNm) ? place.corridorNm.toFixed(1) : "", place.fuel, place.ppr]);
     });
     downloadFile(`${routeExportBaseName()}.csv`, "text/csv;charset=utf-8", "\ufeff" + rows.map((row) => row.map(csvEscape).join(",")).join("\n") + "\n");
   };
@@ -640,7 +670,7 @@
     if (printMap) { printMap.remove(); printMap = null; }
     const printedAt = new Date();
     const printStamp = `${printedAt.toLocaleDateString("de-DE")}<br>${printedAt.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })} Uhr`;
-    document.getElementById("printSheet").innerHTML = `<div class="print-head"><div><h1>Routenübersicht</h1><div>${escapeHtml(resolvedPoints[0].name)} → ${escapeHtml(resolvedPoints.at(-1).name)}</div></div><small>${printStamp}<br>Unverbindlicher Planstand</small></div><div class="print-kpis"><div><b>${totalNm.toFixed(1)} NM</b><span>${(totalNm * 1.852).toFixed(1)} km Gesamtstrecke</span></div><div><b>${speed > 0 ? formatMinutes(totalNm / speed) : "–"}</b><span>bei ${speed > 0 ? `${speed} kt` : "fehlender Geschwindigkeit"}</span></div><div><b>${burn > 0 && speed > 0 ? `${((totalNm / speed) * burn).toFixed(1)} ${fuelUnit}` : "–"}</b><span>rechnerischer Reiseflugverbrauch</span></div></div>${schedule}<div id="printMap" class="print-map" role="img" aria-label="Routenkarte mit Start, Zwischenpunkten und Ziel"></div><p class="print-small">Kartenbasis © OpenStreetMap-Mitwirkende. Gerade Etappen ohne Luftraum-/Geländeprüfung. Keine amtliche Luftfahrtkarte.</p><h2>Etappen</h2><table><thead><tr><th>#</th><th>Von → nach</th><th>Kurs wahr</th><th>NM</th><th>km</th><th>min</th><th>Σ NM / min</th><th>${fuelUnit}</th></tr></thead><tbody>${rows}</tbody></table><h2>Start, Landestopps und Ziel</h2>${landings.map((point) => `<p><b>${escapeHtml(point.name)}</b> · ${escapeHtml(point.place.fuel || "Kraftstoff unbekannt")} · PPR: ${escapeHtml(point.place.ppr || "prüfen")}<br><span class="print-small">${escapeHtml(point.place.contact || "Betreiberkontakt prüfen")} · Quelle: ${escapeHtml(point.place.source || "")}</span></p>`).join("")}<p class="print-small">Zeit und Kraftstoff ohne Wind, Start/Steigflug, Reserve oder Tankstopp. Vor dem Flug aktuelle AIP, NOTAM, Wetter, Luftraum, Betreiber, PPR und Kraftstoff prüfen. Keine operative Navigationsunterlage.</p><footer class="print-footer">flugschüler.de</footer>`;
+    document.getElementById("printSheet").innerHTML = `<div class="print-head"><div><h1>Routenübersicht</h1><div>${escapeHtml(resolvedPoints[0].name)} → ${escapeHtml(resolvedPoints.at(-1).name)}</div></div><small>${printStamp}<br>Unverbindlicher Planstand</small></div><div class="print-kpis"><div><b>${totalNm.toFixed(1)} NM</b><span>${(totalNm * 1.852).toFixed(1)} km Gesamtstrecke</span></div><div><b>${speed > 0 ? formatMinutes(totalNm / speed) : "–"}</b><span>bei ${speed > 0 ? `${speed} kt` : "fehlender Geschwindigkeit"}</span></div><div><b>${burn > 0 && speed > 0 ? `${((totalNm / speed) * burn).toFixed(1)} ${fuelUnit}` : "–"}</b><span>rechnerischer Reiseflugverbrauch</span></div></div>${schedule}<div id="printMap" class="print-map" role="img" aria-label="Routenkarte mit Start, Zwischenpunkten und Ziel"></div><p class="print-small">Kartenbasis © OpenStreetMap-Mitwirkende. Gerade Etappen ohne Luftraum-/Geländeprüfung. Keine amtliche Luftfahrtkarte.</p><h2>Etappen</h2><table><thead><tr><th>#</th><th>Von → nach</th><th>Kurs wahr</th><th>NM</th><th>km</th><th>min</th><th>Σ NM / min</th><th>${fuelUnit}</th></tr></thead><tbody>${rows}</tbody></table><h2>Start, Landestopps und Ziel</h2>${landings.map((point) => `<p><b>${escapeHtml(point.name)}</b> · ${escapeHtml(point.place.fuel || "Kraftstoff unbekannt")} · PPR: ${escapeHtml(point.place.ppr || "prüfen")}<br><span class="print-small">${escapeHtml(point.place.contact || "Betreiberkontakt prüfen")}</span></p>`).join("")}<p class="print-small">Zeit und Kraftstoff ohne Wind, Start/Steigflug, Reserve oder Tankstopp. Vor dem Flug aktuelle AIP, NOTAM, Wetter, Luftraum, Betreiber, PPR und Kraftstoff prüfen. Keine operative Navigationsunterlage.</p><footer class="print-footer">flugschüler.de</footer>`;
     printMap = L.map("printMap", { zoomControl: false, dragging: false, scrollWheelZoom: false, attributionControl: true });
     const tiles = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "© OpenStreetMap-Mitwirkende", maxZoom: 12 }).addTo(printMap);
     L.polyline(route, { color: "#a82469", weight: 4 }).addTo(printMap);
@@ -692,11 +722,11 @@
   function weatherMeta(report) {
     const height = weatherMode === "wind" ? "Stationswind" : weatherMode === "ceiling" || weatherMode === "cloud" ? "Wolkenbasis AGL" : "Stationsniveau";
     const unit = weatherMode === "wind" ? "kt / Grad" : weatherMode === "ceiling" ? "ft AGL" : weatherMode === "visibility" ? "SM" : weatherMode === "cloud" ? "Bedeckungscode" : "Flugwetterkategorie";
-    return `Beobachtung ${utc(report.reportTime)} · NOAA AWC · ${height} · ${unit} · Modelllauf: entfällt`;
+    return `Beobachtung ${utc(report.reportTime)} · ${height} · ${unit} · Modelllauf: entfällt`;
   }
 
   function weatherPopup(report) {
-    return `<div class="popup-title">${escapeHtml(report.icaoId)} · ${escapeHtml(report.name || "METAR")}</div><span class="tag ${reportCategory(report) === "unknown" ? "unknown" : "corridor"}">${reportCategory(report)}</span><p>${escapeHtml(report.rawOb || "Keine Meldung")}</p><small>${weatherMeta(report)}<br>Nur Stationswert, keine Aussage für die Fläche zwischen Stationen.</small><div class="popup-actions"><button type="button" class="open-taf">TAF anzeigen</button><a href="https://aviationweather.gov/data/metar/?id=${encodeURIComponent(report.icaoId)}" target="_blank" rel="noopener">Quelle</a></div>`;
+    return `<div class="popup-title">${escapeHtml(report.icaoId)} · ${escapeHtml(report.name || "METAR")}</div><span class="tag ${reportCategory(report) === "unknown" ? "unknown" : "corridor"}">${reportCategory(report)}</span><p>${escapeHtml(report.rawOb || "Keine Meldung")}</p><small>${weatherMeta(report)}<br>Nur Stationswert, keine Aussage für die Fläche zwischen Stationen.</small><div class="popup-actions"><button type="button" class="open-taf">TAF anzeigen</button></div>`;
   }
 
   function showTafSegment(index) {
@@ -722,7 +752,7 @@
       if (!activeTaf) { timeline.textContent = `${icao}: Kein TAF verfügbar.`; return; }
       const segments = activeTaf.fcsts || [];
       const issue = utc(activeTaf.issueTime || activeTaf.bulletinTime);
-      document.getElementById("weatherMeta").textContent = `TAF ${icao} · Prognose · NOAA AWC · Ausgabe ${issue} · Gültig ${utc(activeTaf.validTimeFrom)} bis ${utc(activeTaf.validTimeTo)} · Modelllauf: entfällt`;
+      document.getElementById("weatherMeta").textContent = `TAF ${icao} · Prognose · Ausgabe ${issue} · Gültig ${utc(activeTaf.validTimeFrom)} bis ${utc(activeTaf.validTimeTo)} · Modelllauf: entfällt`;
       if (!segments.length) { timeline.textContent = activeTaf.rawTAF || "Keine dekodierten Zeitabschnitte verfügbar."; return; }
       timeline.innerHTML = `<label for="tafStep">Prognoseabschnitt · ${escapeHtml(icao)}</label><input id="tafStep" type="range" min="0" max="${segments.length - 1}" step="1" value="0"><div class="taf-timeline-output"></div><small>TAF gilt am Flughafen; Zwischenräume und Gelände eigenständig prüfen.</small>`;
       timeline.querySelector("input").addEventListener("input", (event) => showTafSegment(Number(event.target.value)));
@@ -766,7 +796,7 @@
       if (!response.ok) throw new Error("Serverdienst nicht erreichbar");
       const payload = await response.json();
       weatherReports = payload.reports.filter((report) => Number.isFinite(Number(report.lat)) && Number.isFinite(Number(report.lon)) && report.rawOb);
-      layerStatus.textContent = `${weatherReports.length} METAR-Stationen · NOAA · Zeitstempel je Meldung`;
+      layerStatus.textContent = `${weatherReports.length} METAR-Stationen · Zeitstempel je Meldung`;
       renderWeatherMarkers();
       showSelectedWeather();
     } catch (error) {
@@ -812,13 +842,13 @@
         const icon = L.divIcon({ className: "camera-leaflet-icon", html: `<div class="camera-icon"><div class="camera-marker">${viewSector}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7.8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.8z"/><circle cx="12" cy="13" r="3.5"/></svg></div><span class="camera-label" title="${escapeHtml(displayName)}">${escapeHtml(displayName)}</span></div>`, iconSize: [132, 54], iconAnchor: [66, 13] });
         const image = `${camera.url}current/400.jpg`;
         const marker = L.marker([camera.latitude, camera.longitude], { icon });
-        marker.bindPopup(`<div class="popup-title">${escapeHtml(displayName)}</div><a href="${camera.url}" target="_blank" rel="noopener"><img class="camera-preview" src="${image}" alt="Aktuelles Bild ${escapeHtml(displayName)}" loading="lazy"></a><small class="camera-source">Blickrichtung ${direction === null ? "unbekannt" : `${direction}°`} · <a href="${camera.url}" target="_blank" rel="noopener">Bildquelle: foto-webcam.eu</a></small>`, { className: "camera-popup", maxWidth: 420 });
+        marker.bindPopup(`<div class="popup-title">${escapeHtml(displayName)}</div><a href="${camera.url}" target="_blank" rel="noopener"><img class="camera-preview" src="${image}" alt="Aktuelles Bild ${escapeHtml(displayName)}" loading="lazy"></a><small class="camera-source">Blickrichtung ${direction === null ? "unbekannt" : `${direction}°`} · <a href="${camera.url}" target="_blank" rel="noopener">Originalbild öffnen</a></small>`, { className: "camera-popup", maxWidth: 420 });
         marker.on("mouseover", () => marker.getElement()?.classList.add("camera-hover"));
         marker.on("mouseout", () => marker.getElement()?.classList.remove("camera-hover"));
         marker.addTo(webcamMarkers);
         webcamEntries.push({ camera, marker });
       });
-      layerStatus.textContent = `${webcamData.length} Webcams · foto-webcam.eu`;
+      layerStatus.textContent = `${webcamData.length} Webcams im Kartenausschnitt`;
       requestAnimationFrame(updateCameraLabels);
     } catch (error) {
       layerStatus.textContent = `Webcams konnten nicht geladen werden: ${error.message}`;
@@ -980,7 +1010,7 @@
     const timeline = document.getElementById("tafTimeline");
     timeline.hidden = weatherMode !== "taf" || !activeTaf;
     if (!enabled) document.getElementById("weatherMeta").textContent = "Eine Stationsanzeige gleichzeitig. Marker öffnen, um METAR und TAF gemeinsam zu sehen.";
-    else document.getElementById("weatherMeta").textContent = `${button.textContent} · METAR-Stationsbeobachtung · NOAA AWC · Marker öffnen: vollständiges METAR + TAF`;
+    else document.getElementById("weatherMeta").textContent = `${button.textContent} · Stationsbeobachtung · Marker öffnen: vollständiges METAR + TAF`;
   }));
   document.getElementById("webcamLayer").addEventListener("change", (event) => { if (event.target.checked) { webcamMarkers.addTo(map); loadWebcams(); } else webcamMarkers.remove(); });
   function updateTrafficSelection() {

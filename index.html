@@ -814,7 +814,7 @@
     .split-tile.flip .split-old { animation: flap .42s cubic-bezier(.42,0,.22,1) both; }
     @keyframes flap { 0% { transform: rotateX(0); } 100% { transform: rotateX(-180deg); opacity: 0; } }
     .split-tile.wheel-step-a .split-glyph,
-    .split-tile.wheel-step-b .split-glyph { animation: flap-wheel-step 72ms linear both; }
+    .split-tile.wheel-step-b .split-glyph { animation: flap-wheel-step 82ms linear both; }
     @keyframes flap-wheel-step {
       0% { transform: rotateX(72deg) translateY(-2px); filter: brightness(1.45); opacity: .45; }
       48% { transform: rotateX(6deg); opacity: 1; }
@@ -912,14 +912,14 @@
     .route-board-stream { display: grid; gap: 4px; padding: 7px; overflow: hidden; border: 1px solid #28495e; background: #071b2b; }
     .board-cycle-row, .board-gap-row { min-width: 0; overflow: hidden; }
     .route-rail .route-board .board-cycle-track,
-    .route-rail .route-board .board-gap-track { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); width: 100%; max-width: none; gap: 2px; font-size: clamp(15px, 1.22vw, 24px); }
+    .route-rail .route-board .board-gap-track { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); width: 100%; max-width: none; gap: 2px; font-family: "Avenir Next Condensed", "Arial Narrow", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: clamp(18px, 1.45vw, 28px); font-weight: 800; }
     .route-rail .route-board .board-cycle-track .split-tile,
-    .route-rail .route-board .board-gap-track .split-tile { width: 100%; height: clamp(44px, 3.15vw, 58px); min-width: 0; flex-basis: auto; border-radius: 3px; }
-    .board-gap-row { height: clamp(44px, 3.15vw, 58px); }
+    .route-rail .route-board .board-gap-track .split-tile { width: 100%; height: clamp(50px, 3.5vw, 64px); min-width: 0; flex-basis: auto; border-radius: 3px; }
+    .board-gap-row { height: clamp(50px, 3.5vw, 64px); }
     @media (max-width: 520px) {
       .route-summary-grid { grid-template-columns: 1fr; }
       .route-rail .route-board .board-cycle-track,
-      .route-rail .route-board .board-gap-track { gap: 1px; font-size: clamp(13px, 3.8vw, 18px); }
+      .route-rail .route-board .board-gap-track { gap: 1px; font-size: clamp(15px, 4.2vw, 20px); }
     }
     .route-export-actions { display: grid; gap: 5px; }
     .route-export-actions > .btn { width: 100%; min-height: 40px; }
@@ -999,10 +999,13 @@
     .dock-popover strong { display: block; font-size: 13px; margin-bottom: 9px; }
     .dock-popover small { display: block; margin-top: 8px; color: #b8cbd4; font-size: 10px; line-height: 1.4; }
     .dock-popover small a { color: #f5c870; }
-    .dock-options { display: flex; flex-wrap: wrap; gap: 5px; }
-    .dock-options button { min-height: 31px; padding: 0 8px; border: 1px solid #456a83; border-radius: 4px; background: #10344e; color: #e7eff2; font-size: 11px; font-weight: 750; cursor: pointer; }
+    .dock-options { display: grid; grid-template-columns: 1fr; gap: 6px; }
+    .dock-options button { width: 100%; min-height: 36px; padding: 0 10px; border: 1px solid #456a83; border-radius: 4px; background: #10344e; color: #e7eff2; font-size: 11px; font-weight: 750; text-align: left; cursor: pointer; }
     .dock-options button[aria-pressed="true"] { background: #0e5f86; color: white; border-color: #0e5f86; }
-    .dock-options .layer-toggles { display: flex; }
+    .dock-options.layer-toggles { display: grid; grid-template-columns: 1fr; }
+    .dock-options.layer-toggles label { display: flex; align-items: center; width: 100%; min-height: 36px; padding: 0 10px; }
+    #navigationTools .dock-popover { top: -41px; }
+    #trafficTools .dock-popover { top: -205px; }
     .taf-timeline { border-top: 1px solid #cbdae0; margin-top: 9px; padding-top: 9px; }
     .taf-timeline label { display: block; font-size: 10px; font-weight: 700; }
     .taf-timeline input { width: 100%; margin: 8px 0; accent-color: #0e7199; }
@@ -1126,11 +1129,11 @@
       .map-card .filter-panel { top: 104px; left: 50%; width: calc(100% - 16px); max-height: 42dvh; overflow: auto; }
       .map-card:has(.map-dock .dock-group[open]) .filter-panel { display: none; }
       .map-dock { top: 54px; right: 8px; display: flex; }
-      .dock-popover { top: 43px; right: 0; width: min(258px, calc(100vw - 24px)); }
+      .dock-popover, #navigationTools .dock-popover, #trafficTools .dock-popover { top: 43px; right: 0; width: min(258px, calc(100vw - 24px)); }
       #weatherTools .dock-popover { left: -6px; right: auto; }
       #navigationTools .dock-popover { left: -46px; right: auto; }
-      .layer-toggles { flex-wrap: nowrap; overflow-x: auto; }
-      .layer-toggles label { white-space: nowrap; flex: 0 0 auto; }
+      .dock-options.layer-toggles { overflow: visible; }
+      .dock-options.layer-toggles label { white-space: normal; }
       .map-only-toggle { top: 9px; right: 8px; }
       .map-tools { top: 9px; left: 8px; display: flex; max-width: calc(100% - 120px); }
       .map-tools button { white-space: nowrap; }
@@ -1185,7 +1188,7 @@
           <div class="eyebrow">Europa Beta · IT / DE / AT / CH</div>
           <h1><span class="brand-name">flugschüler.de</span> <span class="product-name">— VFR Flight Planner</span></h1>
           <div class="coverage-note">Frankreich · Spanien · Portugal — coming soon</div>
-          <div class="sub">VFR-Routen und Etappen planen. Platzdaten aus öffentlichen und kuratierten Quellen; vor dem Flug AIP, NOTAM, Wetter, Betreiber und Kraftstoff prüfen.</div>
+          <div class="sub">VFR-Routen und Etappen planen. Platzdaten redaktionell aufbereitet; vor dem Flug AIP, NOTAM, Wetter, Betreiber und Kraftstoff prüfen.</div>
         </div>
         <div class="stats" aria-label="Kurzübersicht">
           <div class="stat"><strong id="statPlaces">0</strong><span>Plätze mit Kartenposition</span></div>
@@ -1250,12 +1253,12 @@
                   <button class="btn primary" id="printBriefing" type="button"><i data-lucide="file-text" aria-hidden="true"></i> Briefing drucken / PDF</button>
                   <div><button class="btn" type="button" onclick="downloadWaypointsGpx()"><i data-lucide="route" aria-hidden="true"></i> SkyDemon GPX</button><button class="btn" type="button" onclick="downloadWaypointsCsv()"><i data-lucide="table-2" aria-hidden="true"></i> CSV</button></div>
                 </div>
-                <small class="helper">Ortsdaten: OpenStreetMap/Nominatim · Flugplatzcodes: OurAirports. Ergebnisse vor Flug prüfen.</small>
+                <small class="helper">Orts- und Platzdaten vor dem Flug in aktuellen Unterlagen prüfen.</small>
               </div>
             </div>
           </aside>
 
-          <section class="panel map-card" aria-label="Karte">
+          <section class="panel map-card search-panel-hidden" aria-label="Karte">
             <div id="map"></div>
             <button class="route-rail-handle" id="routeRailHandle" type="button" aria-pressed="false" title="Routenleiste einklappen" aria-label="Routenleiste einklappen" onclick="toggleRouteRail(this)"><i data-lucide="chevron-left"></i></button>
             <div class="filter-panel" aria-label="Kartenebenen und Suche">
@@ -1306,10 +1309,10 @@
                     <label><input type="checkbox" id="vorLayer"> VOR / DME</label>
                     <label><input type="checkbox" id="ndbLayer"> NDB</label>
                     <label><input type="checkbox" id="fixLayer"> VFR-Punkte / RNAV</label>
-                    <label><input type="checkbox" id="ofmLayer"> OpenFlightMaps VFR</label>
+                    <label><input type="checkbox" id="ofmLayer"> VFR-Kartenebene</label>
                   </div>
-                  <small id="navigationMeta">Datenstand und Quellen im Punktdetail</small>
-                  <small id="ofmMeta">Optionale aeronautische Orientierungsebene. Ergänzend, nicht als primäre Navigationsquelle. <a href="https://openflightmaps.org/faq/" target="_blank" rel="noopener">Quelle & Hinweis</a></small>
+                  <small id="navigationMeta">Funkfeuer & VFR-Meldepunkte · AIRAC 2609</small>
+                  <small id="ofmMeta">Optionale VFR-Orientierung · AIRAC 2609 · nicht als primäre Navigationsquelle.</small>
                 </div>
               </details>
               <button class="dock-action" type="button" id="topographyToggle" title="Topografische Karte ausschalten" aria-label="Topografische Karte" aria-pressed="true"><i data-lucide="mountain"></i></button>
@@ -1415,13 +1418,13 @@
                 <p>Deutschland -> Italien benötigt wegen Grenzübertritt einen Flugplan. Inneritalienischer VFR-Tagflug benötigt nicht pauschal immer einen vollständigen FPL, aber für ATC-Service, kontrollierte Abschnitte, designierte Gebiete/Routen, militärische Koordination, Nachtflug oder grenzüberschreitende Abschnitte sind FPL-Informationen erforderlich.</p>
                 <small>Abgekürzter Flugplan per Funk kann nur für definierte Abschnitte passen; finale Regel über ENAV AIP ENR 1.10/ATS prüfen.</small>
               </article>
-              <article class="briefing-card">
+              <article class="briefing-card" hidden>
                 <b>Quellenprinzip</b>
                 <p>Deutschland über DFS AIS, Italien über ENAV/ENAC, Plätze zusätzlich über Betreiber/PPR und webAAI/Avioportolano prüfen. Europäische Datenplattformen können FIR-übergreifend helfen, ersetzen aber nicht die nationale Zuständigkeit.</p>
                 <small>Militärische-only Plätze und nicht abgeschlossene Istruttoria-Fälle bleiben außerhalb der nutzbaren Kartenebene.</small>
               </article>
             </div>
-            <div class="source-strip" aria-label="Offizielle Quellen">
+            <div class="source-strip" aria-label="Offizielle Quellen" hidden>
               <a href="https://www.enac.gov.it/aeroporti/infrastrutture-aeroportuali/avio-eli-idrosuperfici" target="_blank" rel="noopener">ENAC Avio-/Elisuperfici</a>
               <a href="https://avio-occasionali.enac.gov.it/login" target="_blank" rel="noopener">ENAC Occasional Portal</a>
               <a href="https://mobilitaet.provinz.bz.it/it/divieto-di-sorvolo" target="_blank" rel="noopener">Südtirol No-Fly</a>
@@ -1451,8 +1454,8 @@
       <section class="page content-page" id="sourcePage">
         <section class="panel">
           <div class="panel-header">
-            <b>Korridor-Audit</b>
-            <span>Italienweiter ENAC/WebAAI-Scan. Der Korridor folgt der vom Besucher geplanten Route.</span>
+            <b>Abdeckung der Planungskarte</b>
+            <span>Die Karte trennt operative Orientierung, bewusste Ausschlüsse und bekannte Vollständigkeitsgrenzen.</span>
           </div>
           <div class="briefing-panel">
             <div class="briefing-grid">
@@ -1471,7 +1474,7 @@
             </div>
           </div>
         </section>
-        <section class="panel">
+        <section class="panel" hidden>
           <div class="panel-header">
             <b>Offizielle Basisquellen</b>
             <span>Diese Links sind die Arbeitsbasis für AIP/NOTAM, ENAC/webAAI, Außenlandungen, Schutzgebiete und SERA-Regeln.</span>
@@ -1548,7 +1551,7 @@
           </div>
         </section>
 
-        <section class="panel">
+        <section class="panel" hidden>
           <div class="panel-header">
             <b>Platzquellen</b>
             <span>Jeder Marker führt direkt zur konkreten Platzseite. Bei ENAC/webAAI sind Kontakte und weitere Detaildaten teilweise erst nach kostenloser Anmeldung sichtbar.</span>
@@ -1709,18 +1712,18 @@
     openFlightMapsTiles.on("tileload", () => {
       if (openFlightMapsLoaded) return;
       openFlightMapsLoaded = true;
-      openFlightMapsMeta.innerHTML = `OpenFlightMaps AIRAC ${openFlightMapsAirac} · ergänzende, nicht zertifizierte Orientierungsebene. <a href="https://openflightmaps.org/faq/" target="_blank" rel="noopener">Quelle & Hinweis</a>`;
+      openFlightMapsMeta.textContent = `VFR-Kartenebene · AIRAC ${openFlightMapsAirac} · ergänzende, nicht zertifizierte Orientierung.`;
     });
     openFlightMapsTiles.on("tileerror", () => {
       if (openFlightMapsLoaded || !openFlightMapsToggle.checked) return;
-      openFlightMapsMeta.textContent = `OpenFlightMaps AIRAC ${openFlightMapsAirac}: Für diesen Ausschnitt ist derzeit keine Kachel verfügbar.`;
+      openFlightMapsMeta.textContent = `VFR-Kartenebene · AIRAC ${openFlightMapsAirac} · für diesen Ausschnitt derzeit nicht verfügbar.`;
     });
     function setOpenFlightMaps(enabled, persist = true) {
       if (enabled) openFlightMapsTiles.addTo(map);
       else openFlightMapsTiles.remove();
       openFlightMapsToggle.checked = enabled;
-      openFlightMapsToggle.closest("label").title = enabled ? "OpenFlightMaps ausblenden" : "OpenFlightMaps einblenden";
-      if (!enabled) openFlightMapsMeta.innerHTML = `OpenFlightMaps AIRAC ${openFlightMapsAirac} · optional und nicht als primäre Navigationsquelle. <a href="https://openflightmaps.org/faq/" target="_blank" rel="noopener">Quelle & Hinweis</a>`;
+      openFlightMapsToggle.closest("label").title = enabled ? "VFR-Kartenebene ausblenden" : "VFR-Kartenebene einblenden";
+      if (!enabled) openFlightMapsMeta.textContent = `VFR-Kartenebene · AIRAC ${openFlightMapsAirac} · optional und nicht als primäre Navigationsquelle.`;
       if (persist) try { localStorage.setItem("vfr-openflightmaps", enabled ? "on" : "off"); } catch (_) {}
     }
     openFlightMapsToggle.addEventListener("change", (event) => setOpenFlightMaps(event.target.checked));
@@ -2022,8 +2025,7 @@
           `Telefon: ${operatorPhone(place)}`,
           `Kontakt: ${deText(place.contact)}`,
           ...(place.officialData ? [`Offizielle Platzdaten: ${place.officialData}`] : []),
-          `Korridor: ${place.corridorNm.toFixed(1)} NM`,
-          `Quellen: ${allSourceUrls(place)}`
+          `Korridor: ${place.corridorNm.toFixed(1)} NM`
         ].join(" | ");
         return `  <wpt lat="${place.coords[0].toFixed(6)}" lon="${place.coords[1].toFixed(6)}">
     <name>${xmlEscape(waypointName(place))}</name>
@@ -2039,7 +2041,7 @@ ${waypoints}
     };
 
     window.downloadWaypointsCsv = function() {
-      const header = ["name", "code", "type", "lat", "lon", "dms", "corridor_nm", "in_15nm_corridor", "access", "fuel", "phone", "contact", "ppr", "hours", "official_data", "sources"];
+      const header = ["name", "code", "type", "lat", "lon", "dms", "corridor_nm", "in_15nm_corridor", "access", "fuel", "phone", "contact", "ppr", "hours", "official_data"];
       const rows = places.map((place) => [
         place.name,
         place.label,
@@ -2055,8 +2057,7 @@ ${waypoints}
         deText(place.contact),
         deText(place.ppr),
         deText(place.hours),
-        deText(place.officialData || ""),
-        allSourceUrls(place)
+        deText(place.officialData || "")
       ].map(csvEscape).join(","));
       downloadFile("helikopter-italien-waypoints.csv", "text/csv;charset=utf-8", `${header.join(",")}\n${rows.join("\n")}\n`);
     };
@@ -2541,7 +2542,7 @@ ${waypoints}
   </script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script>window.lucide?.createIcons();</script>
-  <script src="navaids.js?v=20260925b"></script>
-  <script src="planner.js?v=20260926d"></script>
+  <script src="navaids.js?v=20260930a"></script>
+  <script src="planner.js?v=20260930a"></script>
 </body>
 </html>

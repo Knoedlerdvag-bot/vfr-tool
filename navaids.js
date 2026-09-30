@@ -21,7 +21,7 @@
     return '<svg viewBox="0 0 34 34" aria-hidden="true"><path class="nav-outline" d="M17 5 27 11v12l-10 6-10-6V11Z"/><circle class="nav-fill" cx="17" cy="17" r="2.2"/></svg>';
   }
 
-  function addMarker(point, kind, sourceUrl, sourceNote) {
+  function addMarker(point, kind, sourceNote) {
     const subtype = kind === "vor" && /DME|TAC/.test(point.type || "") ? " vor-dme" : "";
     const icon = L.divIcon({
       className: "",
@@ -36,7 +36,7 @@
     marker.bindPopup(`<div class="popup-title">${escapeHtml(point.ident)} · ${escapeHtml(point.name)}</div>
       <p>${escapeHtml(point.type || "VFR-Meldepunkt")}${association}${frequency ? ` · ${frequency}` : ""}</p>
       <small>${escapeHtml(sourceNote)} · Vor Nutzung aktuelle AIP prüfen.</small>
-      <div class="popup-actions"><button type="button" class="add-nav-point">Als Überflugpunkt</button><a href="${sourceUrl}" target="_blank" rel="noopener">Quelle</a></div>`);
+      <div class="popup-actions"><button type="button" class="add-nav-point">Als Überflugpunkt</button></div>`);
     marker.on("popupopen", () => marker.getPopup().getElement().querySelector(".add-nav-point")?.addEventListener("click", () => {
       window.dispatchEvent(new CustomEvent("vfr-add-navigation-point", { detail: point }));
       map.closePopup();
@@ -56,7 +56,7 @@
     const parts = [];
     if (enabled.includes("vor")) parts.push(`${counts.vor} VOR / VOR-DME`);
     if (enabled.includes("ndb")) parts.push(`${counts.ndb} NDB`);
-    if (enabled.includes("fix")) parts.push(`${counts.fix} VFR-Punkte · OpenFlightMaps AIRAC ${ofmAirac}`);
+    if (enabled.includes("fix")) parts.push(`${counts.fix} VFR-Punkte · AIRAC ${ofmAirac}`);
     meta.textContent = `${parts.join(" · ")} · hineinzoomen für Kennungen`;
   }
 
@@ -80,20 +80,17 @@
       navaids.navaids.forEach((point) => addMarker(
         point,
         point.type.startsWith("NDB") ? "ndb" : "vor",
-        navaids.source_url,
-        "OurAirports, unamtlicher Funkfeuerindex"
+        "Funkfeuer-Datenbestand"
       ));
       ofm.points.forEach((point) => addMarker(
         point,
         "fix",
-        ofm.source_url,
-        `OpenFlightMaps OFMX AIRAC ${ofm.airac}, ergänzende VFR-Orientierung`
+        `AIRAC ${ofm.airac}, ergänzende VFR-Orientierung`
       ));
       lowi.fixes.forEach((point) => addMarker(
         { ...point, type: "LOWI RNP-Fix", country: "LO" },
         "fix",
-        lowi.source_url,
-        "Austro Control, veröffentlichte LOWI-RNP-Auswahl"
+        `AIRAC ${ofm.airac}, veröffentlichte RNP-Auswahl`
       ));
 
       ["vor", "ndb", "fix"].forEach((kind) => {

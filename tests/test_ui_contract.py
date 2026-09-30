@@ -21,12 +21,10 @@ class RouteBoardUiContractTests(unittest.TestCase):
 
     def test_empty_board_uses_full_split_flap_placeholders(self):
         self.assertIn("const boardCellWidths", self.planner)
-        self.assertIn('boardDepartureRow: ["DEPARTURE"', self.planner)
-        self.assertIn('boardSunriseRow: ["SUNRISE / SR"', self.planner)
-        self.assertIn('boardArrivalRow: ["ARRIVAL"', self.planner)
-        self.assertIn('boardSunsetRow: ["SUNSET / SS"', self.planner)
-        self.assertIn('boardMetricsRow: ["STRECKE --.- NM"', self.planner)
-        self.assertIn('boardKm: ["---.- KM", "ETAPPEN-LUFTLINIE", "OHNE WIND"]', self.planner)
+        self.assertIn('boardDepartureRow: "DEPARTURE ----"', self.planner)
+        self.assertIn('boardSunriseRow: departure ? `DATE ${boardDate(departure)}`', self.planner)
+        self.assertIn('boardSunsetRow: "SR --:-- LCL/--:-- UTC"', self.planner)
+        self.assertIn('boardGapTwo: "ROUTE EINGEBEN"', self.planner)
 
     def test_board_is_one_large_cycling_surface(self):
         self.assertIn('class="route-board-stream"', self.html)
@@ -36,10 +34,19 @@ class RouteBoardUiContractTests(unittest.TestCase):
         self.assertIn('id="boardSunsetRow" class="split-value board-cycle-track"', self.html)
         self.assertIn('id="boardGapTwo" class="split-value board-gap-track"', self.html)
         self.assertIn("grid-template-columns: repeat(24, minmax(0, 1fr))", self.html)
-        self.assertIn("startBoardCycles", self.planner)
+        self.assertIn("startBoardScreens", self.planner)
+        self.assertIn("setBoardScreen", self.planner)
         self.assertIn("const boardMessageDwellMs = 9000", self.planner)
-        self.assertIn('`DEP ${startCode}', self.planner)
-        self.assertIn('font-size: clamp(15px, 1.22vw, 24px)', self.html)
+        self.assertIn('`DEPARTURE ${startCode}`', self.planner)
+        self.assertIn('`ARRIVAL ${destinationCode}`', self.planner)
+        self.assertIn('`STRECKE ${totalNm.toFixed(1)} NM`', self.planner)
+        self.assertIn('font-size: clamp(18px, 1.45vw, 28px)', self.html)
+
+    def test_map_search_starts_collapsed_and_tools_use_uniform_rows(self):
+        self.assertIn('class="panel map-card search-panel-hidden"', self.html)
+        self.assertIn('.dock-options { display: grid; grid-template-columns: 1fr;', self.html)
+        self.assertIn('.dock-options button { width: 100%;', self.html)
+        self.assertIn('.dock-options.layer-toggles label { display: flex; align-items: center; width: 100%;', self.html)
 
     def test_route_information_has_a_static_readable_summary(self):
         self.assertIn("function renderReadableRouteSummary", self.planner)
