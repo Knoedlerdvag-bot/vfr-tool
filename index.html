@@ -18,7 +18,7 @@
       --airport: #1769aa;
       --aviosurface: #16805d;
       --flightfield: #c45f08;
-      --heli: #0879aa;
+      --heli: #0088ba;
       --fuel: #11895b;
       --warn: #c87014;
       --danger: #b42318;
@@ -1113,11 +1113,13 @@
     .aviation-pin.helipad .aviation-symbol { width: 31px; height: 31px; border: 0; box-shadow: none; }
     .aviation-pin .place-symbol-aerodrome .symbol-ring,
     .aviation-pin .place-symbol-private circle,
-    .aviation-pin .place-symbol-glider circle,
-    .aviation-pin .place-symbol-heli circle { fill: #fff; stroke: #164778; stroke-width: 2.2; }
+    .aviation-pin .place-symbol-glider circle { fill: #fff; stroke: #164778; stroke-width: 2.2; }
+    .aviation-pin .place-symbol-heli circle { fill: #0088ba; stroke: #0088ba; stroke-width: 2.2; }
+    .aviation-pin .place-symbol-heli { filter: drop-shadow(0 0 1px #fffd) drop-shadow(0 0 2.5px #20c4ff) drop-shadow(0 0 5px #20c4ffaa); }
     .aviation-pin .place-symbol-aerodrome .symbol-ticks,
-    .aviation-pin .place-symbol-private path,
-    .aviation-pin .place-symbol-heli path { fill: none; stroke: #164778; stroke-width: 2.2; stroke-linecap: square; }
+    .aviation-pin .place-symbol-private path { fill: none; stroke: #164778; stroke-width: 2.2; stroke-linecap: square; }
+    .aviation-pin .place-symbol-heli path { fill: none; stroke: #fff; stroke-width: 3.2; stroke-linecap: butt; }
+    .aviation-pin.helipad .aviation-symbol svg { filter: drop-shadow(0 0 1px #fffd) drop-shadow(0 0 4px #0088baaa) drop-shadow(0 0 9px #0088ba88); }
     .aviation-pin .place-symbol-aerodrome .symbol-runway, .aviation-pin .place-symbol-private .symbol-runway { fill: none; stroke: #164778; stroke-width: 4.4; stroke-linecap: butt; }
     .aviation-pin .symbol-runway.outline { stroke-width: 5.4; }
     .aviation-pin .symbol-runway.core { stroke: #fff; stroke-width: 2.2; }
@@ -1139,19 +1141,27 @@
     #map.compact-map .aviation-pin.major .aviation-symbol svg,
     #map.compact-map .aviation-pin.large_airport .aviation-symbol svg { width: 27px; height: 27px; }
     .nav-marker { display: grid; justify-items: center; width: 82px; transform: translateX(-50%); color: #392b92; pointer-events: none; }
-    .nav-marker { --nav-glow: #6a4dff; color: #5b3df5; }
-    .nav-marker.vfr { --nav-glow: #ff3d9a; color: #e0197d; }
-    .nav-marker.rnav { --nav-glow: #00c8f0; color: #0a9fc2; }
-    .nav-marker .nav-symbol { display: grid; place-items: center; width: 34px; height: 34px; background: none; pointer-events: auto; filter: drop-shadow(0 0 1px #fffd) drop-shadow(0 0 3px var(--nav-glow)) drop-shadow(0 0 8px var(--nav-glow)); }
-    .nav-marker.vor-dme .nav-symbol { width: 38px; }
+    /* ICAO-Violettblau (aus der ICAO-Zeichenerklärung gemessen: #402890); Glow in aufgehelltem Ton derselben Farbe */
+    /* Farben aus der OpenFlightMaps-VFR-Karte (Kachelmessung): Pflichtmeldepunkt marineblau #00008b, übrige Navigationssymbole dunkelgrau #505050, Heliport #0088ba.
+       Glow jeweils in aufgehelltem Ton derselben Farbe; RNAV-Wegpunkte (nicht in der Karte) in ICAO-Violettblau #402890. */
+    .nav-marker { --nav-glow: #8aa3d6; color: #505050; }
+    .nav-marker.vfr.mrp { --nav-glow: #3d5cff; color: #00008b; }
+    .nav-marker.rnav { --nav-glow: #8466ff; color: #402890; }
+    .nav-marker.ndb .nav-outline { stroke: #7a7a7a; }
+    .nav-marker.ndb .nav-fill { fill: #333; }
+    .nav-marker .nav-symbol { display: grid; place-items: center; width: 34px; height: 34px; background: none; pointer-events: auto; filter: drop-shadow(0 0 1px #fffe) drop-shadow(0 0 2.5px var(--nav-glow)) drop-shadow(0 0 5px #8466ff99); }
+    .nav-marker.vor-dme .nav-symbol { width: 36px; height: 36px; }
     .nav-marker .nav-symbol svg { width: 100%; height: 100%; overflow: visible; }
     #map.nav-far .nav-marker .nav-symbol { filter: drop-shadow(0 0 1px #fffd) drop-shadow(0 0 2px var(--nav-glow)); }
-    .nav-marker .nav-outline, .nav-marker .ndb-ring { fill: none; stroke: currentColor; stroke-width: 3.2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+    .nav-marker .nav-outline, .nav-marker .ndb-ring { fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
     .nav-marker .nav-fill { fill: currentColor; }
     .nav-marker .nav-outline.nav-fill { fill: currentColor; }
     .nav-marker .ndb-ring { stroke-linecap: round; }
-    .nav-marker .ndb-ring.outer { stroke-dasharray: .6 3; stroke-width: 3.4; }
-    .nav-marker .ndb-ring.inner { stroke-dasharray: .6 2.6; stroke-width: 3; }
+    .nav-marker .ndb-ring.dots { stroke-linecap: round; stroke-width: 1.8; }
+    .nav-marker .ndb-ring.d1 { stroke-dasharray: .1 3.1; }
+    .nav-marker .ndb-ring.d2 { stroke-dasharray: .1 2.6; }
+    .nav-marker .ndb-ring.d3 { stroke-dasharray: .1 2.2; }
+    .nav-marker .nav-outline.thin { stroke-width: 2.4; }
     .nav-marker.vfr .nav-symbol, .nav-marker.rnav .nav-symbol { width: 27px; height: 27px; }
     .nav-marker .nav-label { max-width: 74px; padding: 2px 4px; margin-top: 2px; border-radius: 3px; background: rgba(255,255,255,.95); font: 800 10px/1.1 sans-serif; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; pointer-events: none; }
     #map.compact-map .nav-marker .nav-label, #map.nav-labels-hidden .nav-marker .nav-label { display: none; }
@@ -1420,9 +1430,9 @@
               <div class="legend-row"><span class="swatch flightfield"></span><span><b>Campo di volo</b> – oranges Quadrat; VDS-/UL-Fluggelände, R44 ausdrücklich bestätigen</span></div>
               <div class="legend-row"><span class="swatch heli"></span><span><b>Helikopterfläche</b> – rundes H; Heliport oder Elisuperficie laut Platzdetail</span></div>
               <div class="legend-row"><span class="legend-map-symbol glider-symbol">⋈</span><span><b>Segelflugbetrieb</b> – magentafarbenes Doppelkegel-Symbol nur bei entsprechend belegter Platzklassifikation</span></div>
-              <div class="legend-row"><span class="nav-symbol-legend">⬡</span><span><b>VOR</b> – ICAO-Sechseck mit Mittelpunkt; VOR/DME zusätzlich im Rechteck</span></div>
-              <div class="legend-row"><span class="nav-symbol-legend">◉</span><span><b>NDB</b> – Mittelpunkt mit zwei gepunkteten Kreisringen</span></div>
-              <div class="legend-row"><span class="nav-symbol-legend">▲</span><span><b>VFR-Meldepunkte</b> – Dreieck; ausgefüllt = Pflichtmeldepunkt (MRP), offen = Meldepunkt (RP) / Streckenpunkt; Kennungen ab näherem Zoom</span></div>
+              <div class="legend-row"><span class="nav-symbol-legend">⬡</span><span><b>VOR</b> – ICAO-Sechseck mit Mittelpunkt; VOR/DME als Sechseck im Quadrat; DME als Quadrat mit Punkt</span></div>
+              <div class="legend-row"><span class="nav-symbol-legend">◉</span><span><b>NDB</b> – Ring mit dunklem Mittelpunkt (wie VFR-Luftraumkarte)</span></div>
+              <div class="legend-row"><span class="nav-symbol-legend">▲</span><span><b>VFR-Meldepunkte</b> – gefülltes Dreieck im Kreis = Pflichtmeldepunkt (MRP); Dreieck ohne Kreis = Meldepunkt (RP) / Streckenpunkt; Kennungen ab näherem Zoom</span></div>
               <div class="legend-row"><span class="nav-symbol-legend">✦</span><span><b>RNAV-Wegpunkte</b> – Flächennavigations-Wegpunkte (GNSS/RNP), keine VFR-Meldepunkte; vierzackiger Stern</span></div>
               <div class="legend-row"><span></span><span>Flugplatz-, Funkfeuer- und Meldepunktsymbole folgen den Formen der amtlichen ICAO-Zeichenerklärung 2026. Die Karte bleibt eine Planungshilfe und keine amtliche DFS-/ENAV-Karte. <a href="https://www.swisstopo.admin.ch/dam/de/sd-web/oAbJkfKRzznX/LegendeICAO_A4_2026.pdf" target="_blank" rel="noopener">Amtliche ICAO-Zeichenerklärung 2026</a></span></div>
               <div class="legend-row"><span class="tag avgas100">100LL</span><span>AVGAS 100LL ausdrücklich belegt; Blau folgt der Kraftstofffärbung</span></div>

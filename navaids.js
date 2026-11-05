@@ -19,28 +19,35 @@
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   })[character]);
 
+  // Symbole 1:1 nach der OpenFlightMaps-VFR-Luftraumkarte (ICAO-Annex-4-Formen); Farben aus der Karte
+  const HEXAGON = "M9 17 13 10H21L25 17 21 24H13Z";
   function symbolSvg(point, kind) {
     if (kind === "ndb") {
-      return '<svg viewBox="0 0 34 34" aria-hidden="true"><circle class="ndb-ring outer" cx="17" cy="17" r="13"/><circle class="ndb-ring inner" cx="17" cy="17" r="9"/><circle class="nav-fill" cx="17" cy="17" r="2.3"/></svg>';
+      return '<svg viewBox="0 0 34 34" aria-hidden="true"><circle class="nav-outline" cx="17" cy="17" r="12"/><circle class="nav-fill" cx="17" cy="17" r="3.6"/></svg>';
     }
     if (kind === "vfr") {
-      const mandatory = point.type === "VFR-MRP";
-      return `<svg viewBox="0 0 34 34" aria-hidden="true"><path class="${mandatory ? "nav-fill nav-outline" : "nav-outline"} reporting-triangle" d="M17 5 28 26H6Z"/></svg>`;
+      if (point.type === "VFR-MRP") {
+        // Pflichtmeldepunkt: gefülltes Dreieck im offenen Kreis
+        return '<svg viewBox="0 0 34 34" aria-hidden="true"><circle class="nav-outline" cx="17" cy="17" r="13"/><path class="nav-fill" d="M17 8 25 23H9Z"/></svg>';
+      }
+      // Meldepunkt auf Anforderung (RP/ENR): gefülltes Dreieck ohne Kreis
+      return '<svg viewBox="0 0 34 34" aria-hidden="true"><path class="nav-fill" d="M17 6 28 26H6Z"/></svg>';
     }
     if (kind === "rnav") {
       return '<svg viewBox="0 0 34 34" aria-hidden="true"><path class="nav-outline rnav-star" d="M17 4 20.2 13.8 30 17 20.2 20.2 17 30 13.8 20.2 4 17 13.8 13.8Z"/></svg>';
     }
     if (point.type === "DME") {
-      return '<svg viewBox="0 0 34 34" aria-hidden="true"><rect class="nav-outline" x="8" y="8" width="18" height="18"/><circle class="nav-fill" cx="17" cy="17" r="2"/></svg>';
+      return '<svg viewBox="0 0 34 34" aria-hidden="true"><rect class="nav-outline" x="6" y="6" width="22" height="22"/><circle class="nav-fill" cx="17" cy="17" r="2.2"/></svg>';
     }
     if (/DME|TAC/.test(point.type || "")) {
-      return '<svg viewBox="0 0 38 34" aria-hidden="true"><rect class="nav-outline" x="3" y="7" width="32" height="20"/><path class="nav-outline" d="M19 9 27 14v8l-8 4-8-4v-8Z"/><circle class="nav-fill" cx="19" cy="18" r="2"/></svg>';
+      // VOR/DME bzw. VORTAC: Sechseck im Quadrat
+      return `<svg viewBox="0 0 34 34" aria-hidden="true"><rect class="nav-outline" x="4" y="4" width="26" height="26"/><path class="nav-outline" d="${HEXAGON}"/><circle class="nav-fill" cx="17" cy="17" r="2"/></svg>`;
     }
-    return '<svg viewBox="0 0 34 34" aria-hidden="true"><path class="nav-outline" d="M17 5 27 11v12l-10 6-10-6V11Z"/><circle class="nav-fill" cx="17" cy="17" r="2.2"/></svg>';
+    return '<svg viewBox="0 0 34 34" aria-hidden="true"><path class="nav-outline" d="M5 17 11 7H23L29 17 23 27H11Z"/><circle class="nav-fill" cx="17" cy="17" r="2.2"/></svg>';
   }
 
   function addMarker(point, kind, sourceNote) {
-    const subtype = kind === "vor" && /DME|TAC/.test(point.type || "") ? " vor-dme" : "";
+    const subtype = kind === "vfr" ? (point.type === "VFR-MRP" ? " mrp" : " rp") : "";
     const icon = L.divIcon({
       className: "",
       html: `<div class="nav-marker ${kind}${subtype}"><span class="nav-symbol">${symbolSvg(point, kind)}</span><span class="nav-label">${escapeHtml(point.ident)}</span></div>`,
