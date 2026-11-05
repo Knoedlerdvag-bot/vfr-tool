@@ -873,7 +873,7 @@
       }
       const stale = reportCategory(report) === "unknown";
       const marker = L.marker([report.lat, report.lon], { icon: L.divIcon({ className: "", html: `<div class="wx-card ${reportCategory(report).toLowerCase()}">${value}</div>`, iconSize: weatherMode === "combo" ? [92, 80] : [92, 62], iconAnchor: weatherMode === "combo" ? [46, 84] : [46, 66] }), zIndexOffset: -150 });
-      marker.bindPopup(weatherPopup(report));
+      marker.bindPopup(weatherPopup(report), { maxWidth: 290, className: "wx-popup-wrap" });
       marker.on("popupopen", () => marker.getPopup().getElement().querySelector(".open-taf")?.addEventListener("click", () => openTaf(report.icaoId)));
       marker.addTo(weatherMarkers);
       displayed += 1;
