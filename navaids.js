@@ -5,7 +5,7 @@
     vor: { kind: "vor", minZoom: 6, group: L.layerGroup() },
     ndb: { kind: "ndb", minZoom: 8, group: L.layerGroup() },
     vfr: { kind: "vfr", minZoom: 9, group: L.layerGroup() },
-    vfrMinor: { kind: "vfr", minZoom: 10, group: L.layerGroup() },
+    vfrMinor: { kind: "vfr", minZoom: 9, group: L.layerGroup() },
     rnav: { kind: "rnav", minZoom: 8, group: L.layerGroup() }
   };
   const groupKey = (kind, point) => (kind === "vfr" && point.type !== "VFR-MRP" ? "vfrMinor" : kind);
@@ -30,8 +30,8 @@
         // Pflichtmeldepunkt: gefülltes Dreieck im offenen Kreis
         return '<svg viewBox="0 0 34 34" aria-hidden="true"><circle class="nav-outline" cx="17" cy="17" r="13"/><path class="nav-fill" d="M17 8 25 23H9Z"/></svg>';
       }
-      // Meldepunkt auf Anforderung (RP/ENR): gefülltes Dreieck ohne Kreis
-      return '<svg viewBox="0 0 34 34" aria-hidden="true"><path class="nav-fill" d="M17 6 28 26H6Z"/></svg>';
+      // Meldepunkt auf Anforderung (RP/ENR): hohles Dreieck (nur Umriss, Innenraum frei) ohne Kreis
+      return '<svg viewBox="0 0 34 34" aria-hidden="true"><path class="nav-outline" d="M17 6 28 26H6Z"/></svg>';
     }
     if (kind === "rnav") {
       return '<svg viewBox="0 0 34 34" aria-hidden="true"><path class="nav-outline rnav-star" d="M17 4 20.2 13.8 30 17 20.2 20.2 17 30 13.8 20.2 4 17 13.8 13.8Z"/></svg>';
@@ -46,11 +46,13 @@
     return '<svg viewBox="0 0 34 34" aria-hidden="true"><path class="nav-outline" d="M5 17 11 7H23L29 17 23 27H11Z"/><circle class="nav-fill" cx="17" cy="17" r="2.2"/></svg>';
   }
 
+  // Die OFM-Karte zeigt Meldepunkte (ED/LI) sowie VOR/NDB in DE und IT selbst; AT/CH/FR und RNAV nicht.
+  const ofmCovered = (point, kind) => kind === "vfr" || ((kind === "vor" || kind === "ndb") && ["DE", "IT"].includes(point.country));
   function addMarker(point, kind, sourceNote) {
     const subtype = kind === "vfr" ? (point.type === "VFR-MRP" ? " mrp" : " rp") : "";
     const icon = L.divIcon({
       className: "",
-      html: `<div class="nav-marker ${kind}${subtype}"><span class="nav-symbol">${symbolSvg(point, kind)}</span><span class="nav-label">${escapeHtml(point.ident)}</span></div>`,
+      html: `<div class="nav-marker ${kind}${subtype}${ofmCovered(point, kind) ? " ofm-covered" : ""}"><span class="nav-symbol">${symbolSvg(point, kind)}</span><span class="nav-label">${escapeHtml(point.ident)}</span></div>`,
       iconSize: [1, 42], iconAnchor: [0, 14], popupAnchor: [0, -18]
     });
     const frequency = point.frequency_khz

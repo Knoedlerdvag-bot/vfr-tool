@@ -252,6 +252,10 @@
     .plan-numbers .corridor-field, .plan-numbers .fuel-type-field { grid-column: 1 / -1; }
     .fuel-conversion { display: block; margin-top: 3px; font-weight: 600; opacity: .85; }
     .fuel-input-row { display: flex !important; gap: 6px; }
+    .plan-numbers .speed-field { grid-column: span 2; }
+    .unit-toggle { display: inline-flex !important; flex: 0 0 auto; border: 1px solid #456a83; border-radius: 5px; overflow: hidden; }
+    .unit-toggle button { min-height: 30px; padding: 0 9px; border: 0; background: #10344e; color: #e7eff2; font: 800 11px sans-serif; cursor: pointer; }
+    .unit-toggle button.active { background: #1f7fb3; color: #fff; }
     .fuel-input-row input { flex: 1 1 auto; }
     .fuel-input-row select { flex: 0 0 92px; width: 92px !important; }
     .plan-numbers input, .plan-numbers select, .export-scope select { width: 100%; min-width: 0; min-height: 36px; border: 1px solid var(--line); border-radius: 5px; padding: 0 6px; background: white; }
@@ -301,7 +305,7 @@
     .camera-preview { width: 100%; height: auto; aspect-ratio: 16/9; object-fit: contain; display: block; background: #eef2f5; }
     .camera-popup .leaflet-popup-content { width: min(380px, calc(100vw - 72px)); min-width: 0; }
     .camera-leaflet-icon { z-index: 1; }
-    .traffic-icon { display: flex; align-items: center; gap: 4px; width: max-content; max-width: 150px; color: #17394b; font: 700 10px/1 sans-serif; }
+    .traffic-icon { display: flex; align-items: center; gap: 4px; width: max-content; max-width: 260px; color: #17394b; font: 700 10px/1 sans-serif; }
     .traffic-icon .traffic-glyph { display: grid; place-items: center; width: 28px; height: 28px; flex: 0 0 28px; filter: drop-shadow(0 1px 1px #fff) drop-shadow(0 1px 2px #1238); transform-origin: center; }
     .traffic-icon svg { width: 28px; height: 28px; fill: #fff; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
     .traffic-icon { color: #1f4e79; }
@@ -322,7 +326,7 @@
     .traffic-icon.helicopter, .traffic-icon.heli { color: #9d3479; }
     .traffic-icon.glider { color: #187d81; }
     .traffic-icon.paraglider, .traffic-icon.parachute { color: #955b13; }
-    .traffic-icon b { background: rgba(255,255,255,.72); padding: 3px 4px; border-radius: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; box-shadow: 0 1px 3px #fff9; }
+    .traffic-icon b { color: #17394b; background: rgba(255,255,255,.94); padding: 3px 5px; border-radius: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; box-shadow: 0 1px 3px #fff9; }
     .map-tools { position: absolute; left: 12px; top: 80px; z-index: 600; display: grid; gap: 5px; justify-items: start; }
     .map-tools button { background: white; border: 1px solid var(--line); border-radius: 5px; min-height: 34px; padding: 0 9px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 8px #0002; }
     .map-tools button.active { background: var(--deck); color: white; }
@@ -1058,6 +1062,8 @@
     .wx-card { display: grid; gap: 1px; box-sizing: border-box; width: 88px; padding: 5px 4px 6px; overflow: hidden; border: 1.5px solid #fff; border-radius: 6px; background: #0e668b; box-shadow: 0 2px 7px #17354477; color: #fff; text-align: center; font: 800 10px/1.2 sans-serif; white-space: nowrap; }
     .wx-card b { display: block; font-size: 12px; letter-spacing: .02em; }
     .wx-card span { display: block; font-weight: 700; opacity: .96; }
+    .wx-chip { box-sizing: border-box; width: 46px; height: 18px; border: 1.5px solid #fff; border-radius: 9px; background: #78818b; box-shadow: 0 1px 4px #17354477; color: #fff; text-align: center; font: 800 10px/15px sans-serif; letter-spacing: .02em; }
+    .wx-chip.vfr { background: #167853; } .wx-chip.mvfr { background: #1765a7; } .wx-chip.ifr { background: #b92f43; } .wx-chip.lifr { background: #773d8a; }
     .wx-card .wx-wind-arrow { display: inline-block; margin-right: 2px; transform: rotate(var(--direction)); }
     .wx-card.vfr { background: #167853; } .wx-card.mvfr { background: #1765a7; } .wx-card.ifr { background: #b92f43; } .wx-card.lifr { background: #773d8a; } .wx-card.unknown { background: #78818b; }
     .wx-card .wx-taf { margin-top: 2px; padding: 1px 3px; border-radius: 3px; background: #0b2535; }
@@ -1102,7 +1108,7 @@
     .mission-grid.route-collapsed { grid-template-columns: 0 minmax(0,1fr); }
     .mission-grid.route-collapsed .route-rail { min-width: 0; opacity: 0; transform: translateX(-100%); pointer-events: none; }
     .mission-grid.route-collapsed .route-rail-handle svg { transform: rotate(180deg); }
-    .map-watermark { top: auto; bottom: 22px; left: 12px; right: auto; padding: 4px 7px; border-radius: 3px; font-size: 10px; background: rgba(255,255,255,.88); box-shadow: none; }
+    .map-watermark { top: auto; bottom: 22px; left: 120px; right: auto; padding: 4px 7px; border-radius: 3px; font-size: 10px; background: rgba(255,255,255,.88); box-shadow: none; }
     .selected-card { position: absolute; z-index: 640; left: 12px; bottom: 62px; width: min(350px, calc(100% - 24px)); max-height: min(50dvh, 430px); overflow: auto; border: 1px solid #aebfca; border-radius: 7px; background: rgba(255,255,255,.96); box-shadow: 0 12px 34px #1b364633; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
     .selected-card[hidden] { display: none; }
     .selected-close { border: 0; background: #e8f0f4; border-radius: 4px; color: #21485c; width: 26px; height: 26px; cursor: pointer; font-size: 17px; }
@@ -1146,6 +1152,7 @@
     .aviation-pin .symbol-runway.unknown { stroke-width: 3.4; stroke-dasharray: 4 2.6; }
     .aviation-rwy { display: none; margin-top: 2px; padding: 2px 4px; border-radius: 3px; background: rgba(255,255,255,.92); border: 1px solid #afc8dc; color: #164778; font: 750 9.5px/1.15 sans-serif; white-space: nowrap; box-shadow: 0 1px 4px #0002; }
     #map.show-rwy .aviation-pin .aviation-rwy { display: block; }
+    .aviation-rwy .rwy-more { margin-left: 3px; padding: 0 3px; border-radius: 6px; background: #164778; color: #fff; font-weight: 800; }
     .aviation-pin.aviosurface .aviation-symbol { transform: none; }
     #map.compact-map .aviation-label { display: none; }
     #map.compact-map .aviation-pin.major .aviation-label { display: block; }
@@ -1160,16 +1167,15 @@
     #map.compact-map .aviation-pin .aviation-symbol svg { width: 22px; height: 22px; }
     #map.compact-map .aviation-pin.major .aviation-symbol svg,
     #map.compact-map .aviation-pin.large_airport .aviation-symbol svg { width: 27px; height: 27px; }
+    /* Solange die OFM-Luftraumkarte sichtbar ist (Zoom 7–12), zeigt sie Navi-Punkte und ICAO-Flugplätze (DE/IT) selbst: unsere Doppelsymbole ausblenden. */
+    #map.ofm-on .nav-marker.ofm-covered, #map.ofm-on .aviation-pin.ofm-covered { display: none; }
     .nav-marker { display: grid; justify-items: center; width: 82px; transform: translateX(-50%); color: #392b92; pointer-events: none; }
     /* ICAO-Violettblau (aus der ICAO-Zeichenerklärung gemessen: #402890); Glow in aufgehelltem Ton derselben Farbe */
     /* Farben aus der OpenFlightMaps-VFR-Karte (Kachelmessung): Pflichtmeldepunkt marineblau #00008b, übrige Navigationssymbole dunkelgrau #505050, Heliport #0088ba.
        Glow jeweils in aufgehelltem Ton derselben Farbe; RNAV-Wegpunkte (nicht in der Karte) in ICAO-Violettblau #402890. */
-    .nav-marker { --nav-glow: #8aa3d6; color: #505050; }
-    .nav-marker.vfr.mrp { --nav-glow: #3d5cff; color: #00008b; }
-    .nav-marker.rnav { --nav-glow: #8466ff; color: #402890; }
-    .nav-marker.ndb .nav-outline { stroke: #7a7a7a; }
-    .nav-marker.ndb .nav-fill { fill: #333; }
-    .nav-marker .nav-symbol { display: grid; place-items: center; width: 34px; height: 34px; background: none; pointer-events: auto; filter: drop-shadow(0 0 1px #fffe) drop-shadow(0 0 2.5px var(--nav-glow)) drop-shadow(0 0 5px #8466ff99); }
+    /* Einheitlich: ALLE Navigationshilfen (VOR/DME, NDB, MRP, RP, RNAV) im Blau der Flugplatzsymbole (#164778) mit identischem Glow; Flugplätze selbst ohne Glow. */
+    .nav-marker { --nav-glow: #3d7fd1; color: #164778; } /* Blauton wie die Flugplatzsymbole (#164778) */
+    .nav-marker .nav-symbol { display: grid; place-items: center; width: 34px; height: 34px; background: none; pointer-events: auto; filter: drop-shadow(0 0 1px #fffe) drop-shadow(0 0 2.5px var(--nav-glow)) drop-shadow(0 0 5px #3d7fd199); }
     .nav-marker.vor-dme .nav-symbol { width: 36px; height: 36px; }
     .nav-marker .nav-symbol svg { width: 100%; height: 100%; overflow: visible; }
     #map.nav-far .nav-marker .nav-symbol { filter: drop-shadow(0 0 1px #fffd) drop-shadow(0 0 2px var(--nav-glow)); }
@@ -1310,7 +1316,7 @@
                   <button class="btn" id="addStop" type="button">+ Landestopp</button>
                 </div>
                 <div class="plan-numbers">
-                  <label>Reisegeschwindigkeit <span>kt</span><input id="cruiseSpeed" type="number" min="1" max="600" step="1" value="100"></label>
+                  <label class="speed-field">Reisegeschwindigkeit <span>Einheit umschaltbar</span><span class="fuel-input-row"><input id="cruiseSpeed" type="number" min="1" max="1200" step="1" value="100" aria-label="Reisegeschwindigkeit"><span class="unit-toggle" role="group" aria-label="Geschwindigkeitseinheit"><button type="button" id="speedUnitKt" class="active" aria-pressed="true">kt</button><button type="button" id="speedUnitKmh" aria-pressed="false">km/h</button></span></span></label>
                   <label class="fuel-field">Verbrauch <span>pro Stunde · Einheit wählbar</span><span class="fuel-input-row"><input id="fuelBurn" type="number" min="0" max="999" step="0.1" placeholder="eingeben" aria-label="Verbrauch pro Stunde"><select id="fuelUnit" aria-label="Einheit des Verbrauchs"><option value="L">L/h</option><option value="gal">US gal/h</option><option value="kg">kg/h</option></select></span></label>
                   <label class="fuel-type-field">Kraftstoff <span>für Umrechnung in kg und L</span><select id="fuelType" aria-label="Kraftstoffart für die Umrechnung"><option value="avgas">Avgas 100LL · 0,72 kg/L</option><option value="jeta1">Jet A-1 · 0,80 kg/L</option><option value="mogas">Mogas · 0,74 kg/L</option><option value="diesel">Diesel · 0,84 kg/L</option></select></label>
                   <label class="corridor-field">Korridor <span>optional</span><select id="corridorWidth"><option value="" selected>Aus · alle Plätze</option><option value="1">1 NM je Seite</option><option value="2">2 NM je Seite</option><option value="2.5">2,5 NM je Seite</option><option value="5">5 NM je Seite</option><option value="10">10 NM je Seite</option><option value="15">15 NM je Seite</option><option value="20">20 NM je Seite</option></select></label>
@@ -1812,7 +1818,7 @@
         pane: "openFlightMapsPane",
         minZoom: 7,
         maxNativeZoom: 12,
-        maxZoom: 18,
+        maxZoom: 12, /* darüber würden die 256-px-Kacheln hochskaliert (verpixelt) – Schicht verschwindet */
         opacity: 0.92,
         attribution: '&copy; <a href="https://openflightmaps.org/" target="_blank" rel="noopener">open flightmaps contributors</a>'
       }
@@ -1823,16 +1829,23 @@
     openFlightMapsTiles.on("tileload", () => {
       if (openFlightMapsLoaded) return;
       openFlightMapsLoaded = true;
-      openFlightMapsMeta.textContent = `VFR-Luftraumkarte · AIRAC ${openFlightMapsAirac} · ergänzende, nicht zertifizierte Orientierung.`;
+      syncOfmCoverage();
+      openFlightMapsMeta.textContent = `VFR-Luftraumkarte · AIRAC ${openFlightMapsAirac} · ergänzende, nicht zertifizierte Orientierung. Zoom 7–12; dabei blenden wir Meldepunkte, VOR/NDB und ICAO-Plätze in DE/IT aus, weil die Karte sie selbst zeigt.`;
     });
     openFlightMapsTiles.on("tileerror", () => {
       if (openFlightMapsLoaded || !openFlightMapsToggle.checked) return;
       openFlightMapsMeta.textContent = `VFR-Luftraumkarte · AIRAC ${openFlightMapsAirac} · für diesen Ausschnitt derzeit nicht verfügbar.`;
     });
+    function syncOfmCoverage() {
+      const zoom = map.getZoom();
+      document.getElementById("map").classList.toggle("ofm-on", openFlightMapsToggle.checked && openFlightMapsLoaded && zoom >= 7 && zoom <= 12);
+    }
+    map.on("zoomend", syncOfmCoverage);
     function setOpenFlightMaps(enabled, persist = true) {
       if (enabled) openFlightMapsTiles.addTo(map);
       else openFlightMapsTiles.remove();
       openFlightMapsToggle.checked = enabled;
+      syncOfmCoverage();
       openFlightMapsToggle.closest("label").title = enabled ? "VFR-Luftraumkarte ausblenden" : "VFR-Luftraumkarte einblenden";
       if (!enabled) openFlightMapsMeta.textContent = `VFR-Luftraumkarte · AIRAC ${openFlightMapsAirac} · optional und nicht als primäre Navigationsquelle.`;
       if (persist) try { localStorage.setItem("vfr-openflightmaps", enabled ? "on" : "off"); } catch (_) {}
@@ -1937,12 +1950,12 @@
         }
       }
       if (!record) return null;
-      const main = record.runways[0];
+      const main = record.runways.reduce((best, r) => (r.ft > best.ft ? r : best), record.runways[0]);
       const headingFromIdent = (ident) => { const n = parseInt(String(ident), 10); return Number.isFinite(n) ? (n * 10) % 360 : null; };
       const paved = record.runways.some((r) => PAVED_CODES.has(r.surface));
       const allUnknown = record.runways.every((r) => r.surface === "U");
       place.rwy = {
-        record, main, designators: `${main.le}/${main.he}`,
+        record, main, designators: `${main.le}/${main.he}`, extra: record.runways.length - 1,
         meters: Math.round(main.ft * 0.3048), feet: main.ft,
         heading: Number.isFinite(main.heading) ? main.heading : headingFromIdent(main.le),
         paved: allUnknown ? null : paved,
@@ -1964,7 +1977,7 @@
     function runwayLabelLine(place) {
       const rwy = ensureRunway(place);
       if (!rwy) return "";
-      return `<span class="aviation-rwy">${rwy.designators} · ${rwy.meters} m / ${rwy.feet} ft · ${rwy.surfaceName}</span>`;
+      return `<span class="aviation-rwy">${rwy.designators} · ${rwy.meters} m / ${rwy.feet} ft · ${rwy.surfaceName}${rwy.extra > 0 ? ` <b class="rwy-more" title="${rwy.extra} weitere Piste${rwy.extra > 1 ? "n" : ""} im Popup">+${rwy.extra}</b>` : ""}</span>`;
     }
 
     function runwayPopupRows(place) {
@@ -1989,7 +2002,7 @@
       const major = ["large_airport", "medium_airport"].includes(place.referenceType);
       return L.divIcon({
         className: "",
-        html: `<div class="aviation-pin ${typeClass}${major ? " major" : ""} ${place.referenceType || ""}"><span class="aviation-symbol">${markerSymbol(place)}</span><span class="aviation-label" title="${safeName}">${safeName}</span>${runwayLabelLine(place)}</div>`,
+        html: `<div class="aviation-pin ${typeClass}${major ? " major" : ""} ${place.referenceType || ""}${place.type === "airport" && /^(ED|ET|LI)[A-Z0-9]{2}$/.test(place.label) ? " ofm-covered" : ""}"><span class="aviation-symbol">${markerSymbol(place)}</span><span class="aviation-label" title="${safeName}">${safeName}</span>${runwayLabelLine(place)}</div>`,
         iconSize: [1, 42],
         iconAnchor: [0, 12],
         popupAnchor: [0, -20]

@@ -14,6 +14,10 @@
   let legs = [];
   let resolvedPoints = [];
   let weatherReports = [];
+  let speedUnit = "kt";
+  const KMH_PER_KT = 1.852;
+  // Eingabe in gewählter Einheit, gerechnet wird intern immer in Knoten.
+  const cruiseSpeedKt = () => { const v = Number(document.getElementById("cruiseSpeed").value); return speedUnit === "kmh" ? v / KMH_PER_KT : v; };
   const fuelUnitLabel = () => ({ L: "L", gal: "US gal", kg: "kg" })[document.getElementById("fuelUnit").value] || "L";
   const FUEL_DENSITY = { avgas: 0.72, jeta1: 0.80, mogas: 0.74, diesel: 0.84 };
   const FUEL_NAMES = { avgas: "Avgas 100LL", jeta1: "Jet A-1", mogas: "Mogas", diesel: "Diesel" };
@@ -93,6 +97,15 @@
   };
   document.addEventListener("pointerdown", unlockFlapAudio, { passive: true });
   document.addEventListener("keydown", unlockFlapAudio);
+
+  // Klackern über die gesamte Umschlagdauer (~2,3 s) – bei jedem Wechsel der Anzeige (Departure → Arrival → Strecke/Verbrauch …).
+  function playFlapBurst(generation) {
+    if (flapAudioContext?.state !== "running") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    for (let index = 0; index < 12; index += 1) {
+      setTimeout(() => { if (generation === undefined || generation === boardAnimationGeneration) playFlapSound(); }, index * 190);
+    }
+  }
 
   function playFlapSound() {
     if (flapAudioContext?.state !== "running") return;
@@ -194,6 +207,7 @@
     const advance = (screenIndex) => {
       if (generation !== boardAnimationGeneration) return;
       setBoardScreen(sequence[screenIndex], true, generation);
+      playFlapBurst(generation);
       const timer = setTimeout(() => advance((screenIndex + 1) % sequence.length), boardMessageDwellMs);
       boardCycleTimers.set("screen", timer);
     };
@@ -423,9 +437,7 @@
       const generation = ++boardAnimationGeneration;
       startBoardScreens(screens, generation, { animateInitial: animate });
       window.vfrRouteSchedule = { destinationCode: resolvedPoints.at(-1)?.code || "", arrivalLocal: arrival ? scheduleLabel(arrival) : "" };
-      if (animate && flapAudioContext?.state === "running") {
-        for (let index = 0; index < 12; index += 1) setTimeout(playFlapSound, index * 190);
-      }
+      if (animate) playFlapBurst(generation);
     }, 420);
   }
 
@@ -592,7 +604,7 @@
     });
     const valid = resolvedPoints.every((point) => point && !point.error);
     route = valid ? resolvedPoints.map((point) => point.coords) : [];
-    const speed = Number(document.getElementById("cruiseSpeed").value);
+    const speed = cruiseSpeedKt();
     const burn = Number(document.getElementById("fuelBurn").value);
     legs = [];
     routeLayer.clearLayers();
@@ -700,7 +712,7 @@
 
   function printBriefing() {
     if (route.length < 2) { routeSummary.textContent = "Für das Briefing bitte Start und Ziel auflösen."; searchUnresolved(); return; }
-    const speed = Number(document.getElementById("cruiseSpeed").value);
+    const speed = cruiseSpeedKt();
     const burn = Number(document.getElementById("fuelBurn").value);
     const fuelUnit = fuelUnitLabel();
     const totalNm = legs.reduce((sum, leg) => sum + leg.nm, 0);
@@ -858,13 +870,17 @@
   function renderWeatherMarkers() {
     weatherMarkers.clearLayers();
     if (!weatherMode) return;
-    const cellSize = map.getZoom() < 7 ? 130 : map.getZoom() < 9 ? 104 : 0;
+    const zoom = map.getZoom();
+    const compact = zoom < 7;
+    const cellSize = zoom < 5 ? 70 : zoom < 7 ? 56 : zoom < 9 ? 104 : 0;
     const occupied = new Set();
     let displayed = 0;
-    weatherReports.forEach((report) => {
+    // Pro Zelle zuerst die wichtigste Station: Stationen mit TAF (größere Flughäfen) vor reinen METAR-Stationen.
+    const ordered = [...weatherReports].sort((a, b) => Number(Boolean(tafByIcao[b.icaoId])) - Number(Boolean(tafByIcao[a.icaoId])));
+    ordered.forEach((report) => {
       if (!map.getBounds().contains([report.lat, report.lon])) return;
-      const value = weatherValue(report);
-      if (!value) return;
+      const value = compact ? "" : weatherValue(report);
+      if (!compact && !value) return;
       if (cellSize) {
         const pixel = map.latLngToContainerPoint([report.lat, report.lon]);
         const cell = `${Math.floor(pixel.x / cellSize)},${Math.floor(pixel.y / cellSize)}`;
@@ -872,7 +888,11 @@
         occupied.add(cell);
       }
       const stale = reportCategory(report) === "unknown";
-      const marker = L.marker([report.lat, report.lon], { icon: L.divIcon({ className: "", html: `<div class="wx-card ${reportCategory(report).toLowerCase()}">${value}</div>`, iconSize: weatherMode === "combo" ? [92, 80] : [92, 62], iconAnchor: weatherMode === "combo" ? [46, 84] : [46, 66] }), zIndexOffset: -150 });
+      const category = reportCategory(report).toLowerCase();
+      const icon = compact
+        ? L.divIcon({ className: "", html: `<div class="wx-chip ${category}" title="${escapeHtml(report.icaoId)} · ${category === "unknown" ? "keine Kategorie" : category.toUpperCase()}">${escapeHtml(report.icaoId)}</div>`, iconSize: [46, 18], iconAnchor: [23, 9] })
+        : L.divIcon({ className: "", html: `<div class="wx-card ${category}">${value}</div>`, iconSize: weatherMode === "combo" ? [92, 80] : [92, 62], iconAnchor: weatherMode === "combo" ? [46, 84] : [46, 66] });
+      const marker = L.marker([report.lat, report.lon], { icon, zIndexOffset: -150 });
       marker.bindPopup(weatherPopup(report), { maxWidth: 290, className: "wx-popup-wrap" });
       marker.on("popupopen", () => marker.getPopup().getElement().querySelector(".open-taf")?.addEventListener("click", () => openTaf(report.icaoId)));
       marker.addTo(weatherMarkers);
@@ -1111,6 +1131,20 @@
     } else document.querySelector(".planner-box").scrollIntoView({ behavior: "smooth", block: "start" });
   });
   document.getElementById("addStop").addEventListener("click", () => { points.splice(points.length - 1, 0, { kind: "stop", value: "" }); renderPointRows(); recalculate(); });
+  function setSpeedUnit(unit) {
+    if (unit === speedUnit) return;
+    const input = document.getElementById("cruiseSpeed");
+    const current = Number(input.value);
+    if (current > 0) input.value = Math.round(unit === "kmh" ? current * KMH_PER_KT : current / KMH_PER_KT);
+    speedUnit = unit;
+    document.getElementById("speedUnitKt").classList.toggle("active", unit === "kt");
+    document.getElementById("speedUnitKmh").classList.toggle("active", unit === "kmh");
+    document.getElementById("speedUnitKt").setAttribute("aria-pressed", String(unit === "kt"));
+    document.getElementById("speedUnitKmh").setAttribute("aria-pressed", String(unit === "kmh"));
+    recalculate(); if (measuring) renderMeasurement();
+  }
+  document.getElementById("speedUnitKt").addEventListener("click", () => setSpeedUnit("kt"));
+  document.getElementById("speedUnitKmh").addEventListener("click", () => setSpeedUnit("kmh"));
   document.getElementById("cruiseSpeed").addEventListener("input", () => { recalculate(); if (measuring) renderMeasurement(); });
   document.getElementById("fuelBurn").addEventListener("input", () => { recalculate(); if (measuring) renderMeasurement(); });
   document.getElementById("fuelType").addEventListener("change", () => { recalculate(); if (measuring) renderMeasurement(); });
@@ -1285,7 +1319,7 @@
     const undo = document.getElementById("measureUndo");
     undo.hidden = !measuring || measurePoints.length === 0;
     let totalNm = 0;
-    const speed = Number(document.getElementById("cruiseSpeed").value);
+    const speed = cruiseSpeedKt();
     const burn = Number(document.getElementById("fuelBurn").value);
     const fuelUnit = fuelUnitLabel();
     measurePoints.forEach((point, index) => {
