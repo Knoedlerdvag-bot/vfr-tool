@@ -249,7 +249,8 @@
     .plan-numbers label { font-size: 11px; color: var(--muted); display: grid; gap: 3px; }
     .plan-numbers label span { color: var(--ink); font-weight: 700; }
     .plan-numbers .fuel-field { grid-column: span 2; }
-    .plan-numbers .corridor-field { grid-column: 1 / -1; }
+    .plan-numbers .corridor-field, .plan-numbers .fuel-type-field { grid-column: 1 / -1; }
+    .fuel-conversion { display: block; margin-top: 3px; font-weight: 600; opacity: .85; }
     .fuel-input-row { display: flex !important; gap: 6px; }
     .fuel-input-row input { flex: 1 1 auto; }
     .fuel-input-row select { flex: 0 0 92px; width: 92px !important; }
@@ -1272,6 +1273,7 @@
                 <div class="plan-numbers">
                   <label>Reisegeschwindigkeit <span>kt</span><input id="cruiseSpeed" type="number" min="1" max="600" step="1" value="100"></label>
                   <label class="fuel-field">Verbrauch <span>pro Stunde · Einheit wählbar</span><span class="fuel-input-row"><input id="fuelBurn" type="number" min="0" max="999" step="0.1" placeholder="eingeben" aria-label="Verbrauch pro Stunde"><select id="fuelUnit" aria-label="Einheit des Verbrauchs"><option value="L">L/h</option><option value="gal">US gal/h</option><option value="kg">kg/h</option></select></span></label>
+                  <label class="fuel-type-field">Kraftstoff <span>für Umrechnung in kg und L</span><select id="fuelType" aria-label="Kraftstoffart für die Umrechnung"><option value="avgas">Avgas 100LL · 0,72 kg/L</option><option value="jeta1">Jet A-1 · 0,80 kg/L</option><option value="mogas">Mogas · 0,74 kg/L</option><option value="diesel">Diesel · 0,84 kg/L</option></select></label>
                   <label class="corridor-field">Korridor <span>optional</span><select id="corridorWidth"><option value="" selected>Aus · alle Plätze</option><option value="1">1 NM je Seite</option><option value="2">2 NM je Seite</option><option value="2.5">2,5 NM je Seite</option><option value="5">5 NM je Seite</option><option value="10">10 NM je Seite</option><option value="15">15 NM je Seite</option><option value="20">20 NM je Seite</option></select></label>
                 </div>
                 <div class="flight-time-picker" aria-labelledby="departurePickerTitle">
@@ -1368,8 +1370,8 @@
                     <label><input type="checkbox" id="rnavLayer"> RNAV-Wegpunkte (GNSS)</label>
                     <label><input type="checkbox" id="ofmLayer"> VFR-Luftraumkarte</label>
                   </div>
-                  <small id="navigationMeta">Funkfeuer, VFR-Meldepunkte & RNAV-Wegpunkte · AIRAC 2609</small>
-                  <small id="ofmMeta">Optionale VFR-Orientierung · AIRAC 2609 · nicht als primäre Navigationsquelle.</small>
+                  <small id="navigationMeta">Funkfeuer, VFR-Meldepunkte & RNAV-Wegpunkte · AIRAC 2611</small>
+                  <small id="ofmMeta">Optionale VFR-Orientierung · AIRAC 2611 · nicht als primäre Navigationsquelle.</small>
                 </div>
               </details>
               <button class="dock-action" type="button" id="topographyToggle" title="Topografische Karte ausschalten" aria-label="Topografische Karte" aria-pressed="true"><i data-lucide="mountain"></i></button>
@@ -2312,6 +2314,25 @@ ${waypoints}
       selectPlace(index, true);
     }
 
+    // ---- Amtliche Platzkarten (AIP) je Land ----
+    let dfsAipLinks = null;
+    let austriaAip = null;
+    Promise.all([
+      fetch("data/dfs-aip-links.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+      fetch("/api/aip-links").then((r) => (r.ok ? r.json() : null)).catch(() => null)
+    ]).then(([dfs, aip]) => { dfsAipLinks = dfs; austriaAip = aip && aip.at; });
+
+    function aipChartLink(place) {
+      const icao = /^[A-Z]{4}$/.test(String(place.label || "")) ? place.label : "";
+      if (!icao) return "";
+      const link = (href, text) => `<a href="${href}" target="_blank" rel="noopener">${text}</a>`;
+      if (dfsAipLinks?.airports?.[icao]) return link(dfsAipLinks.url_template.replace("{id}", dfsAipLinks.airports[icao]), "VFR-Platzkarte · AIP DFS");
+      if (austriaAip?.pages?.[icao]) return link(austriaAip.base + austriaAip.pages[icao], "Platzkarten · AIP Austria");
+      if (icao.startsWith("LS")) return link("https://www.skyguide.ch/services/aeronautical-information-management", "VFR Manual Schweiz (skyguide, kostenpflichtig)");
+      if (icao.startsWith("LI")) return link("https://www.enav.it/en/online-services", "AIP Italia (ENAV, Zugang beantragen)");
+      return "";
+    }
+
     function popupHtml(place, index) {
       const googleMaps = `https://www.google.com/maps/search/?api=1&query=${place.coords[0]},${place.coords[1]}`;
       return `
@@ -2333,6 +2354,7 @@ ${waypoints}
           </div>
           <div class="popup-actions">
             <button type="button" onclick="copyCoords(${index})">Koordinaten kopieren</button>
+            ${aipChartLink(place)}
             <a href="${googleMaps}" target="_blank" rel="noopener">Google Maps</a>
             <a href="${place.source}" target="_blank" rel="noopener">Platzquelle</a>
           </div>
@@ -2371,7 +2393,7 @@ ${waypoints}
     function syncRunwayLabels() { document.getElementById("map").classList.toggle("show-rwy", map.getZoom() >= 11); }
     map.on("zoomend", syncRunwayLabels);
     syncRunwayLabels();
-    fetch("data/runways.json")
+    fetch("data/runways.json", { cache: "no-cache" })
       .then((response) => (response.ok ? response.json() : Promise.reject(new Error("Pistendaten nicht erreichbar"))))
       .then((payload) => {
         loadRunwayIndex(payload);

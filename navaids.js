@@ -80,9 +80,9 @@
   async function loadNavigation() {
     try {
       const [navaidsResponse, lowiResponse, ofmResponse] = await Promise.all([
-        fetch("data/navaids.json"),
-        fetch("data/gps-fixes.json"),
-        fetch("data/navigation-points.json")
+        fetch("data/navaids.json", { cache: "no-cache" }),
+        fetch("data/gps-fixes.json", { cache: "no-cache" }),
+        fetch("data/navigation-points.json", { cache: "no-cache" })
       ]);
       if (!navaidsResponse.ok || !lowiResponse.ok || !ofmResponse.ok) throw new Error("Datensatz nicht erreichbar");
       const navaids = await navaidsResponse.json();

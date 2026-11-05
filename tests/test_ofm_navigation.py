@@ -17,7 +17,7 @@ class OpenFlightMapsNavigationTests(unittest.TestCase):
 
     def test_generated_index_contains_visible_vfr_points(self):
         payload = json.loads((ROOT / "data" / "navigation-points.json").read_text(encoding="utf-8"))
-        self.assertEqual(payload["airac"], 2609)
+        self.assertEqual(payload["airac"], 2611)
         self.assertGreater(len(payload["points"]), 800)
         self.assertIn("VFR-MRP", {point["type"] for point in payload["points"]})
         self.assertTrue(all(point["ident"] and isinstance(point["lat"], float) for point in payload["points"]))

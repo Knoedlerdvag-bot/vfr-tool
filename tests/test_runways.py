@@ -23,5 +23,40 @@ class SurfaceCodeTests(unittest.TestCase):
         self.assertEqual(edsh[4][0][4], "G")
 
 
+
+class AipLinkTests(unittest.TestCase):
+    def test_dfs_permalink_table(self):
+        payload = json.loads((ROOT / "data" / "dfs-aip-links.json").read_text(encoding="utf-8"))
+        self.assertIn("{id}", payload["url_template"])
+        self.assertEqual(payload["airports"]["EDSH"], "C01964")
+        self.assertGreater(len(payload["airports"]), 400)
+
+    def test_austria_page_parser_uses_first_current_edition(self):
+        import server
+        root = '<a href="./lo/261030/index.htm">aktuelle</a><a href="./lo/261126/index.htm">zukünftige</a>'
+        chapters = {"ad_2.htm": '<a href="ad_2_lowi.htm">Karten</a><a href="ad_2_lowg.htm">x</a>', "ad_3.htm": '<a href="ad_3_loat.htm">y</a>'}
+        class FakeResponse:
+            def __init__(self, text): self.text = text
+            def read(self): return self.text.encode("latin-1")
+            def __enter__(self): return self
+            def __exit__(self, *args): return False
+        def fake_urlopen(request, timeout=0):
+            url = request.full_url
+            if url == server.AUSTRO_EAIP_ROOT:
+                return FakeResponse(root)
+            return FakeResponse(chapters[url.rsplit("/", 1)[1]])
+        server.cache.pop("at-aip", None)
+        original = server.urlopen
+        server.urlopen = fake_urlopen
+        try:
+            result = server.austria_aip_pages()
+        finally:
+            server.urlopen = original
+            server.cache.pop("at-aip", None)
+        self.assertTrue(result["base"].endswith("/lo/261030/"))
+        self.assertEqual(result["pages"]["LOWI"], "ad_2_lowi.htm")
+        self.assertEqual(result["pages"]["LOAT"], "ad_3_loat.htm")
+
+
 if __name__ == "__main__":
     unittest.main()

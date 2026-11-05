@@ -29,6 +29,7 @@ ADSB_URL = "https://api.adsb.lol/v2/point"
 ADSB_FALLBACK_URL = "https://opendata.adsb.fi/api/v2/lat/{lat}/lon/{lon}/dist/{radius}"
 ADSB_CACHE_SECONDS = 6
 RAINVIEWER_URL = "https://api.rainviewer.com/public/weather-maps.json"
+AUSTRO_EAIP_ROOT = "https://eaip.austrocontrol.at/"
 EUMETVIEW_CAPS_URL = "https://view.eumetsat.int/geoserver/wms?service=WMS&request=GetCapabilities&version=1.3.0"
 ROUTE_AIRPORTS = json.loads((ROOT / "data" / "route-airports.json").read_text(encoding="utf-8"))["airports"]
 cache = {}
@@ -288,6 +289,32 @@ def normalize_adsb_aircraft(aircraft):
             "vs_fpm": optional_number("baro_rate"), "age_sec": round(age)}
 
 
+def austria_aip_pages():
+    """Aktuelle AIP-Austria-Ausgabe (Austro Control, frei zugänglich) und deren AD-2/AD-3-Flugplatzseiten."""
+    key = "at-aip"
+    with cache_lock:
+        item = cache.get(key)
+        if item and time.time() - item[0] < 6 * 3600:
+            return item[1]
+    def read(url):
+        request = Request(url, headers={"User-Agent": USER_AGENT})
+        with urlopen(request, timeout=25) as response:
+            return response.read().decode("latin-1", "replace")
+    root = read(AUSTRO_EAIP_ROOT)
+    match = re.search(r'href="\./(lo/\d{6})/index\.htm"', root)
+    if not match:
+        raise RuntimeError("aktuelle AIP-Austria-Ausgabe nicht gefunden")
+    base = f"{AUSTRO_EAIP_ROOT}{match.group(1)}/"
+    pages = {}
+    for chapter in ("ad_2.htm", "ad_3.htm"):
+        for icao_page in re.findall(r'href="(ad_[23]_([a-z]{4})\.htm)"', read(base + chapter)):
+            pages[icao_page[1].upper()] = icao_page[0]
+    result = {"base": base, "pages": pages, "source": "Austro Control – AIP Austria (eAIP)", "source_url": AUSTRO_EAIP_ROOT}
+    with cache_lock:
+        cache[key] = (time.time(), result)
+    return result
+
+
 def latest_satellite_time():
     """Newest available MSG IR 10.8 scene (15-min cadence) from EUMETView capabilities."""
     def read():
@@ -423,6 +450,12 @@ class Handler(SimpleHTTPRequestHandler):
                 self.send_json(200, {"reports": tafs, "source": "NOAA Aviation Weather Center"})
             except Exception as exc:
                 self.send_json(503, {"error": str(exc)})
+            return
+        if parsed.path == "/api/aip-links":
+            try:
+                self.send_json(200, {"at": austria_aip_pages()})
+            except Exception as exc:
+                self.send_json(200, {"at": None, "error": str(exc)})
             return
         if parsed.path == "/api/radar":
             try:

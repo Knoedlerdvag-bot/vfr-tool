@@ -15,6 +15,20 @@
   let resolvedPoints = [];
   let weatherReports = [];
   const fuelUnitLabel = () => ({ L: "L", gal: "US gal", kg: "kg" })[document.getElementById("fuelUnit").value] || "L";
+  const FUEL_DENSITY = { avgas: 0.72, jeta1: 0.80, mogas: 0.74, diesel: 0.84 };
+  const FUEL_NAMES = { avgas: "Avgas 100LL", jeta1: "Jet A-1", mogas: "Mogas", diesel: "Diesel" };
+  function fuelConversion(amount) {
+    const type = document.getElementById("fuelType").value;
+    const density = FUEL_DENSITY[type] || 0.72;
+    const unit = document.getElementById("fuelUnit").value;
+    const liters = unit === "gal" ? amount * 3.78541 : unit === "kg" ? amount / density : amount;
+    return { liters, gal: liters / 3.78541, kg: liters * density, density, name: FUEL_NAMES[type] };
+  }
+  function fuelConversionText(amount) {
+    if (!(amount > 0)) return "";
+    const c = fuelConversion(amount);
+    return `${c.liters.toFixed(1)} L · ${c.gal.toFixed(1)} US gal · ${c.kg.toFixed(1)} kg (${c.name}, ${String(c.density.toFixed(2)).replace(".", ",")} kg/L)`;
+  }
   let weatherMode = "";
   let tafByIcao = {};
   let activeTaf = null;
@@ -305,7 +319,7 @@
         <div><small>Arrival · ${escapeHtml(destinationCode)}</small><b>${escapeHtml(dateTime(arrival))}</b></div>
         <div><small>Sunset · ${escapeHtml(destinationCode)}</small><b>${escapeHtml(sunTime(daylight?.arrivalSun.sunset))}</b></div>
         <div><small>Strecke · Luftlinie ohne Wind</small><b>${totalNm.toFixed(1)} NM / ${(totalNm * 1.852).toFixed(1)} km</b></div>
-        <div><small>Flugzeit · Verbrauch</small><b>${flightMinutes} min / ${escapeHtml(fuelText)}</b></div>
+        <div><small>Flugzeit · Verbrauch</small><b>${flightMinutes} min / ${escapeHtml(fuelText)}</b>${burn > 0 ? `<small class="fuel-conversion">= ${escapeHtml(fuelConversionText(totalNm / speed * burn))}</small>` : ""}</div>
       </div>
       <div class="route-leg-list">${legRows}</div>`;
   }
@@ -685,7 +699,7 @@
     if (printMap) { printMap.remove(); printMap = null; }
     const printedAt = new Date();
     const printStamp = `${printedAt.toLocaleDateString("de-DE")}<br>${printedAt.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })} Uhr`;
-    document.getElementById("printSheet").innerHTML = `<div class="print-head"><div><h1>Routenübersicht</h1><div>${escapeHtml(resolvedPoints[0].name)} → ${escapeHtml(resolvedPoints.at(-1).name)}</div></div><small>${printStamp}<br>Unverbindlicher Planstand</small></div><div class="print-kpis"><div><b>${totalNm.toFixed(1)} NM</b><span>${(totalNm * 1.852).toFixed(1)} km Gesamtstrecke</span></div><div><b>${speed > 0 ? formatMinutes(totalNm / speed) : "–"}</b><span>bei ${speed > 0 ? `${speed} kt` : "fehlender Geschwindigkeit"}</span></div><div><b>${burn > 0 && speed > 0 ? `${((totalNm / speed) * burn).toFixed(1)} ${fuelUnit}` : "–"}</b><span>rechnerischer Reiseflugverbrauch</span></div></div>${schedule}<div id="printMap" class="print-map" role="img" aria-label="Routenkarte mit Start, Zwischenpunkten und Ziel"></div><p class="print-small">Kartenbasis © OpenStreetMap-Mitwirkende. Gerade Etappen ohne Luftraum-/Geländeprüfung. Keine amtliche Luftfahrtkarte.</p><h2>Etappen</h2><table><thead><tr><th>#</th><th>Von → nach</th><th>Kurs wahr</th><th>NM</th><th>km</th><th>min</th><th>Σ NM / min</th><th>${fuelUnit}</th></tr></thead><tbody>${rows}</tbody></table><h2>Start, Landestopps und Ziel</h2>${landings.map((point) => `<p><b>${escapeHtml(point.name)}</b> · ${escapeHtml(point.place.fuel || "Kraftstoff unbekannt")} · PPR: ${escapeHtml(point.place.ppr || "prüfen")}<br><span class="print-small">${escapeHtml(point.place.contact || "Betreiberkontakt prüfen")}</span></p>`).join("")}<p class="print-small">Zeit und Kraftstoff ohne Wind, Start/Steigflug, Reserve oder Tankstopp. Vor dem Flug aktuelle AIP, NOTAM, Wetter, Luftraum, Betreiber, PPR und Kraftstoff prüfen. Keine operative Navigationsunterlage.</p><footer class="print-footer">flugschüler.de</footer>`;
+    document.getElementById("printSheet").innerHTML = `<div class="print-head"><div><h1>Routenübersicht</h1><div>${escapeHtml(resolvedPoints[0].name)} → ${escapeHtml(resolvedPoints.at(-1).name)}</div></div><small>${printStamp}<br>Unverbindlicher Planstand</small></div><div class="print-kpis"><div><b>${totalNm.toFixed(1)} NM</b><span>${(totalNm * 1.852).toFixed(1)} km Gesamtstrecke</span></div><div><b>${speed > 0 ? formatMinutes(totalNm / speed) : "–"}</b><span>bei ${speed > 0 ? `${speed} kt` : "fehlender Geschwindigkeit"}</span></div><div><b>${burn > 0 && speed > 0 ? `${((totalNm / speed) * burn).toFixed(1)} ${fuelUnit}` : "–"}</b><span>rechnerischer Reiseflugverbrauch${burn > 0 && speed > 0 ? `<br>= ${fuelConversionText((totalNm / speed) * burn)}` : ""}</span></div></div>${schedule}<div id="printMap" class="print-map" role="img" aria-label="Routenkarte mit Start, Zwischenpunkten und Ziel"></div><p class="print-small">Kartenbasis © OpenStreetMap-Mitwirkende. Gerade Etappen ohne Luftraum-/Geländeprüfung. Keine amtliche Luftfahrtkarte.</p><h2>Etappen</h2><table><thead><tr><th>#</th><th>Von → nach</th><th>Kurs wahr</th><th>NM</th><th>km</th><th>min</th><th>Σ NM / min</th><th>${fuelUnit}</th></tr></thead><tbody>${rows}</tbody></table><h2>Start, Landestopps und Ziel</h2>${landings.map((point) => `<p><b>${escapeHtml(point.name)}</b> · ${escapeHtml(point.place.fuel || "Kraftstoff unbekannt")} · PPR: ${escapeHtml(point.place.ppr || "prüfen")}<br><span class="print-small">${escapeHtml(point.place.contact || "Betreiberkontakt prüfen")}</span></p>`).join("")}<p class="print-small">Zeit und Kraftstoff ohne Wind, Start/Steigflug, Reserve oder Tankstopp. Vor dem Flug aktuelle AIP, NOTAM, Wetter, Luftraum, Betreiber, PPR und Kraftstoff prüfen. Keine operative Navigationsunterlage.</p><footer class="print-footer">flugschüler.de</footer>`;
     printMap = L.map("printMap", { zoomControl: false, dragging: false, scrollWheelZoom: false, attributionControl: true });
     const tiles = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "© OpenStreetMap-Mitwirkende", maxZoom: 12 }).addTo(printMap);
     L.polyline(route, { color: "#a82469", weight: 4 }).addTo(printMap);
@@ -1073,6 +1087,7 @@
   document.getElementById("addStop").addEventListener("click", () => { points.splice(points.length - 1, 0, { kind: "stop", value: "" }); renderPointRows(); recalculate(); });
   document.getElementById("cruiseSpeed").addEventListener("input", () => { recalculate(); if (measuring) renderMeasurement(); });
   document.getElementById("fuelBurn").addEventListener("input", () => { recalculate(); if (measuring) renderMeasurement(); });
+  document.getElementById("fuelType").addEventListener("change", () => { recalculate(); if (measuring) renderMeasurement(); });
   document.getElementById("fuelUnit").addEventListener("change", (event) => {
     recalculate();
     if (measuring) renderMeasurement();
