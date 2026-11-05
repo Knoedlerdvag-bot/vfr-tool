@@ -1076,7 +1076,7 @@
           Number.isFinite(position.speed_kt) ? `GS: ${position.speed_kt} kt` : "",
           Number.isFinite(position.vs_fpm) && Math.abs(position.vs_fpm) >= 100 ? `Steigen/Sinken: ${position.vs_fpm > 0 ? "+" : ""}${position.vs_fpm} ft/min` : "",
           Number.isFinite(position.track_deg) ? `Track: ${position.track_deg}°` : "",
-          position.squawk ? `Squawk: ${escapeHtml(position.squawk)}` : "",
+          position.squawk ? `Squawk: ${escapeHtml(position.squawk)}${position.squawk === "1000" ? " <small>(Mode-S-Kennung, Europa: kein Einzelcode; meist IFR-Verkehr)</small>" : position.squawk === "7000" ? " <small>(Sichtflug-Standardcode Europa)</small>" : ""}` : "",
           rulesLabel[position.flight_rules] ? `Flugregeln: ${rulesLabel[position.flight_rules]}` : "",
           `Quelle: ${escapeHtml(position.source || "ADS-B")} · Signal vor ${position.age_sec} s${position.type_source === "db" ? " · Typ aus Datenbank" : ""}`
         ].filter(Boolean).join("<br>");

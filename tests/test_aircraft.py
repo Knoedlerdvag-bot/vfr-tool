@@ -34,6 +34,8 @@ class FlightRulesTests(unittest.TestCase):
         self.assertEqual(aircraft.estimate_flight_rules("airliner", "DLH73A", "1000", 34000), "ifr")
         self.assertEqual(aircraft.estimate_flight_rules("prop1", "DEXYZ", "7000", 3000, "D-EXYZ"), "vfr")
         self.assertEqual(aircraft.estimate_flight_rules("glider", "", "", 5000), "vfr")
+        self.assertEqual(aircraft.estimate_flight_rules("prop2", "DEABC", "1000", 8000, "D-EABC"), "ifr")
+        self.assertEqual(aircraft.estimate_flight_rules("glider", "", "1000", 5000), "vfr")
         self.assertEqual(aircraft.estimate_flight_rules("bizjet", "EJU23A", "1000", 25000), "ifr")
         self.assertEqual(aircraft.estimate_flight_rules("heli", "PROVA25", "", 2000), "unknown")
 

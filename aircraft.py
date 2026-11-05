@@ -108,6 +108,7 @@ def estimate_flight_rules(shape, callsign="", squawk="", altitude_ft=None, regis
     """Rough estimate. ADS-B does not carry flight rules; this is only a display filter.
 
     ifr     Linien-/Geschäftsverkehr mit Airline-Rufzeichen, schwere Jets, oder oberhalb FL195
+    ifr     auch Transpondercode 1000 (Mode-S-Konspikuitätscode, Europa)
     vfr     Transpondercode 7000, Segler/Ultraleicht/Tragschrauber, Kleinflugzeuge mit Kennzeichen als Rufzeichen
     unknown sonst (wird nur bei „Alle" gezeigt)
     """
@@ -119,6 +120,9 @@ def estimate_flight_rules(shape, callsign="", squawk="", altitude_ft=None, regis
         return "ifr"
     if squawk == "7000" or shape in ("glider", "ulm", "gyro"):
         return "vfr"
+    # 1000 = europäischer Mode-S-Konspikuitätscode (Kennung wird per Mode S mitgesendet): fast ausschließlich IFR-Verkehr.
+    if squawk == "1000":
+        return "ifr"
     airline_call = bool(CALLSIGN_AIRLINE_RE.match(call)) and not REGISTRATION_RE.match(call.replace("-", "")) or \
         (bool(CALLSIGN_AIRLINE_RE.match(call)) and shape in ("bizjet", "turboprop"))
     if airline_call and shape in ("bizjet", "turboprop", "prop2"):
