@@ -43,6 +43,12 @@
       <p>${escapeHtml(VFR_TYPE_LABELS[point.type] || point.type || "Navigationspunkt")}${association}${frequency ? ` · ${frequency}` : ""}</p>
       <small>${escapeHtml(sourceNote)} · Vor Nutzung aktuelle AIP prüfen.</small>
       <div class="popup-actions"><button type="button" class="add-nav-point">Als Überflugpunkt</button></div>`);
+    marker.off("click", marker._openPopup, marker);
+    marker.on("click", () => {
+      const handled = !window.dispatchEvent(new CustomEvent("vfr-measure-point", { cancelable: true, detail: { coords: [point.lat, point.lon] } }));
+      if (!handled) marker.openPopup();
+    });
+    marker.on("contextmenu", () => marker.openPopup());
     marker.on("popupopen", () => marker.getPopup().getElement().querySelector(".add-nav-point")?.addEventListener("click", () => {
       window.dispatchEvent(new CustomEvent("vfr-add-navigation-point", { detail: point }));
       map.closePopup();

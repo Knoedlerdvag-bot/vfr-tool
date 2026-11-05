@@ -380,6 +380,12 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def end_headers(self):
+        path = urlparse(self.path).path
+        if path.endswith((".js", ".html", ".json", ".css")) or path.endswith("/"):
+            self.send_header("Cache-Control", "no-cache")  # immer revalidieren: verhindert alte Skripte zu neuem HTML
+        super().end_headers()
+
     def do_GET(self):
         parsed = urlparse(self.path)
         if parsed.path == "/api/fixes":

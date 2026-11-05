@@ -14,6 +14,7 @@
   let legs = [];
   let resolvedPoints = [];
   let weatherReports = [];
+  const fuelUnitLabel = () => ({ L: "L", gal: "US gal", kg: "kg" })[document.getElementById("fuelUnit").value] || "L";
   let weatherMode = "";
   let tafByIcao = {};
   let activeTaf = null;
@@ -337,7 +338,7 @@
       return;
     }
     const code = (point) => (point.code || point.name || "").replace(/[^A-Za-z0-9 -]/g, "").trim().slice(0, 8).toUpperCase() || "PUNKT";
-    const fuelUnit = document.getElementById("fuelUnit").value;
+    const fuelUnit = fuelUnitLabel();
     const departure = centralEuropeanDate(document.getElementById("departureTime").value);
     const arrival = departure ? new Date(departure.getTime() + totalNm / speed * 3600000) : null;
     const startCode = code(resolvedPoints[0]);
@@ -651,7 +652,7 @@
   window.downloadWaypointsCsv = () => {
     const mode = exportMode();
     if (mode !== "places" && route.length < 2) { showTab("mapPage"); routeSummary.textContent = "Für den Routenexport bitte Start und Ziel wählen."; return; }
-    const fuelColumn = document.getElementById("fuelUnit").value === "gal" ? "fuel_us_gal" : "fuel_l";
+    const fuelColumn = { gal: "fuel_us_gal", kg: "fuel_kg" }[document.getElementById("fuelUnit").value] || "fuel_l";
     const rows = [["record_type", "sequence", "name", "code", "lat", "lon", "leg_nm", "leg_km", "leg_minutes", "bearing_true_deg", fuelColumn, "corridor_nm", "fuel_info", "ppr"]];
     if (mode !== "places") resolvedPoints.forEach((point, index) => {
       const leg = legs[index - 1];
@@ -668,7 +669,7 @@
     if (route.length < 2) { routeSummary.textContent = "Für das Briefing bitte Start und Ziel auflösen."; searchUnresolved(); return; }
     const speed = Number(document.getElementById("cruiseSpeed").value);
     const burn = Number(document.getElementById("fuelBurn").value);
-    const fuelUnit = document.getElementById("fuelUnit").value === "gal" ? "US gal" : "L";
+    const fuelUnit = fuelUnitLabel();
     const totalNm = legs.reduce((sum, leg) => sum + leg.nm, 0);
     const departure = centralEuropeanDate(document.getElementById("departureTime").value);
     const arrival = departure && speed > 0 ? new Date(departure.getTime() + totalNm / speed * 3600000) : null;
@@ -750,6 +751,14 @@
     return (report.clouds || []).length ? escapeHtml(report.clouds[0].cover) : "CLR";
   }
 
+  function cloudLayersText(report) {
+    const layers = (report.clouds || []).filter((cloud) => Number.isFinite(Number(cloud.base)));
+    const feet = (base) => `${Math.round(Number(base))} ft (${Math.round(Number(base) * 0.3048)} m)`;
+    const listed = layers.length ? layers.map((cloud) => `${escapeHtml(cloud.cover)} ${feet(cloud.base)}`).join(" · ") : "keine Schicht gemeldet (CLR/CAVOK)";
+    const ceiling = layers.find((cloud) => ["BKN", "OVC", "VV"].includes(cloud.cover));
+    return `<b>Wolkenschichten (über Grund):</b> ${listed}<br><b>Ceiling</b> (niedrigste Schicht BKN/OVC): ${ceiling ? feet(ceiling.base) : "keine"}`;
+  }
+
   function windText(report) {
     if (!Number.isFinite(Number(report.wspd))) return "Wind –";
     const direction = Number(report.wdir);
@@ -777,7 +786,7 @@
     if (weatherMode === "combo") {
       const taf = tafByIcao[report.icaoId];
       const tafCat = tafWorstCategory(taf);
-      return `<div class="popup-title">${escapeHtml(report.icaoId)} · ${escapeHtml(report.name || "METAR")}</div><b>METAR · ${reportCategory(report)}</b><p>${escapeHtml(report.rawOb || "Keine Meldung")}</p><b>TAF · schlechteste Kategorie nächste 6 h: ${tafCat === "unknown" ? "kein TAF" : tafCat}</b><p>${escapeHtml(taf?.rawTAF || "Für diese Station liegt kein TAF vor.")}</p><small>Beobachtung ${utc(report.reportTime)}. Kategorie des TAF aus Sicht und Wolkenuntergrenze der Abschnitte abgeleitet (Näherung). Nur Stationswerte.</small><div class="popup-actions"><button type="button" class="open-taf">TAF-Zeitleiste</button></div>`;
+      return `<div class="popup-title">${escapeHtml(report.icaoId)} · ${escapeHtml(report.name || "METAR")}</div><b>METAR · ${reportCategory(report)}</b><p>${escapeHtml(report.rawOb || "Keine Meldung")}</p><p>${cloudLayersText(report)}</p><b>TAF · schlechteste Kategorie nächste 6 h: ${tafCat === "unknown" ? "kein TAF" : tafCat}</b><p>${escapeHtml(taf?.rawTAF || "Für diese Station liegt kein TAF vor.")}</p><small>Beobachtung ${utc(report.reportTime)}. Kategorie des TAF aus Sicht und Wolkenuntergrenze der Abschnitte abgeleitet (Näherung). Nur Stationswerte.</small><div class="popup-actions"><button type="button" class="open-taf">TAF-Zeitleiste</button></div>`;
     }
     return `<div class="popup-title">${escapeHtml(report.icaoId)} · ${escapeHtml(report.name || "METAR")}</div><span class="tag ${reportCategory(report) === "unknown" ? "unknown" : "corridor"}">${reportCategory(report)}</span><p>${escapeHtml(report.rawOb || "Keine Meldung")}</p><small>${weatherMeta(report)}<br>Nur Stationswert, keine Aussage für die Fläche zwischen Stationen.</small><div class="popup-actions"><button type="button" class="open-taf">TAF anzeigen</button></div>`;
   }
@@ -1065,7 +1074,6 @@
   document.getElementById("cruiseSpeed").addEventListener("input", () => { recalculate(); if (measuring) renderMeasurement(); });
   document.getElementById("fuelBurn").addEventListener("input", () => { recalculate(); if (measuring) renderMeasurement(); });
   document.getElementById("fuelUnit").addEventListener("change", (event) => {
-    document.getElementById("fuelRateUnit").textContent = `${event.target.value}/h`;
     recalculate();
     if (measuring) renderMeasurement();
   });
@@ -1238,7 +1246,7 @@
     let totalNm = 0;
     const speed = Number(document.getElementById("cruiseSpeed").value);
     const burn = Number(document.getElementById("fuelBurn").value);
-    const fuelUnit = document.getElementById("fuelUnit").value;
+    const fuelUnit = fuelUnitLabel();
     measurePoints.forEach((point, index) => {
       L.circleMarker(point, { radius: 5, color: "#0879aa", fillColor: "white", fillOpacity: 1, weight: 2 }).addTo(measureLayer);
       if (!index) return;
@@ -1288,6 +1296,12 @@
       }));
     });
     popup.openOn(map);
+  });
+  window.addEventListener("vfr-measure-point", (event) => {
+    if (!measuring) return;
+    event.preventDefault();
+    measurePoints.push(event.detail.coords);
+    renderMeasurement();
   });
   document.getElementById("measureToggle").addEventListener("click", (event) => {
     measuring = !measuring;

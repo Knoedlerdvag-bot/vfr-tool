@@ -248,6 +248,11 @@
     .plan-numbers { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }
     .plan-numbers label { font-size: 11px; color: var(--muted); display: grid; gap: 3px; }
     .plan-numbers label span { color: var(--ink); font-weight: 700; }
+    .plan-numbers .fuel-field { grid-column: span 2; }
+    .plan-numbers .corridor-field { grid-column: 1 / -1; }
+    .fuel-input-row { display: flex !important; gap: 6px; }
+    .fuel-input-row input { flex: 1 1 auto; }
+    .fuel-input-row select { flex: 0 0 92px; width: 92px !important; }
     .plan-numbers input, .plan-numbers select, .export-scope select { width: 100%; min-width: 0; min-height: 36px; border: 1px solid var(--line); border-radius: 5px; padding: 0 6px; background: white; }
     .route-summary { display: grid; gap: 8px; margin-top: 8px; padding: 10px; border: 1px solid #365b70; border-radius: 5px; background: #0b2639; color: #eef3f1; font-size: 12px; line-height: 1.4; }
     .route-summary:empty { display: none; }
@@ -899,6 +904,8 @@
     .route-rail .route-board .sun-event-values .split-value { font-size: 12px; gap: 1px; }
     .route-rail .route-board .sun-event-values .split-tile { width: 12px; height: 21px; flex-basis: 12px; }
     .daylight-warning { display: grid; gap: 3px; margin-top: 8px; padding: 7px 8px; border-left: 3px solid #d3a851; background: #3f341f; color: #ffe0a1; font-size: 10px; line-height: 1.35; }
+    .daylight-warning b { font-size: 15px; line-height: 1.3; letter-spacing: .01em; }
+    .daylight-warning span { font-size: 10px; opacity: .9; }
     .daylight-warning.danger { border-left-color: #e1594b; background: #462423; color: #ffd0ca; }
     .daylight-warning[hidden] { display: none; }
     .airport-board-columns { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); border-top: 1px solid #315166; border-left: 1px solid #315166; }
@@ -963,7 +970,7 @@
     body.night .leaflet-popup-tip { background: #213034; }
     .map-card .filter-panel { left: 50%; transform: translateX(-50%); width: min(430px, calc(100% - 260px)); }
     .map-dock { border-color: #98adb4; background: #fafcfbe0; box-shadow: 0 6px 22px #173b4b31; }
-    .dock-popover { width: 276px; border-color: #98adb4; background: #fcfdfbe9; }
+    .dock-popover { width: 236px; border-color: #98adb4; background: #fcfdfbe9; }
     .dock-popover .layer-toggles label { min-height: 34px; }
     .popup-actions a, .popup-actions button { transition: transform .14s, box-shadow .14s, border-color .14s; }
     .popup-actions a:hover, .popup-actions button:hover { transform: translateY(-2px); box-shadow: 0 4px 10px #14374c29; }
@@ -1010,7 +1017,7 @@
     .dock-action { border: 0; background: transparent; }
     .dock-icon-toggle { position: relative; }
     .dock-icon-toggle input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-    .dock-popover { position: absolute; top: 0; right: 43px; width: 258px; max-height: min(65dvh, 430px); overflow: auto; padding: 12px; border: 1px solid #365b70; border-radius: 6px; background: #071b2bf5; color: #e7eff2; box-shadow: 0 9px 25px #071b2b5c; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+    .dock-popover { position: absolute; top: 0; right: 43px; width: 236px; max-height: min(65dvh, 430px); overflow: auto; padding: 12px; border: 1px solid #365b70; border-radius: 6px; background: #071b2bf5; color: #e7eff2; box-shadow: 0 9px 25px #071b2b5c; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
     .dock-popover strong { display: block; font-size: 13px; margin-bottom: 9px; }
     .dock-popover small { display: block; margin-top: 8px; color: #b8cbd4; font-size: 10px; line-height: 1.4; }
     .dock-popover small a { color: #f5c870; }
@@ -1118,7 +1125,10 @@
     #map.compact-map .aviation-pin.major .aviation-symbol svg,
     #map.compact-map .aviation-pin.large_airport .aviation-symbol svg { width: 27px; height: 27px; }
     .nav-marker { display: grid; justify-items: center; width: 82px; transform: translateX(-50%); color: #392b92; pointer-events: none; }
-    .nav-marker .nav-symbol { display: grid; place-items: center; width: 34px; height: 34px; background: none; pointer-events: auto; filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 2px #fffc); }
+    .nav-marker { --nav-glow: #6a4dff; color: #5b3df5; }
+    .nav-marker.vfr { --nav-glow: #ff3d9a; color: #e0197d; }
+    .nav-marker.rnav { --nav-glow: #00c8f0; color: #0a9fc2; }
+    .nav-marker .nav-symbol { display: grid; place-items: center; width: 34px; height: 34px; background: none; pointer-events: auto; filter: drop-shadow(0 0 1px #fffd) drop-shadow(0 0 3px var(--nav-glow)) drop-shadow(0 0 8px var(--nav-glow)); }
     .nav-marker.vor-dme .nav-symbol { width: 38px; }
     .nav-marker .nav-symbol svg { width: 100%; height: 100%; overflow: visible; }
     .nav-marker .nav-outline, .nav-marker .ndb-ring { fill: none; stroke: currentColor; stroke-width: 3.2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
@@ -1128,7 +1138,6 @@
     .nav-marker .ndb-ring.outer { stroke-dasharray: .6 3; stroke-width: 3.4; }
     .nav-marker .ndb-ring.inner { stroke-dasharray: .6 2.6; stroke-width: 3; }
     .nav-marker.vfr .nav-symbol, .nav-marker.rnav .nav-symbol { width: 27px; height: 27px; }
-    .nav-marker.rnav { color: #0b6e8a; }
     .nav-marker .nav-label { max-width: 74px; padding: 2px 4px; margin-top: 2px; border-radius: 3px; background: rgba(255,255,255,.95); font: 800 10px/1.1 sans-serif; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; pointer-events: none; }
     #map.compact-map .nav-marker .nav-label, #map.nav-labels-hidden .nav-marker .nav-label { display: none; }
     .camera-marker .bearing { display: none; }
@@ -1257,9 +1266,8 @@
                 </div>
                 <div class="plan-numbers">
                   <label>Reisegeschwindigkeit <span>kt</span><input id="cruiseSpeed" type="number" min="1" max="600" step="1" value="100"></label>
-                  <label>Verbrauch <span id="fuelRateUnit">L/h</span><input id="fuelBurn" type="number" min="0" max="999" step="0.1" placeholder="eingeben"></label>
-                  <label>Einheit <span>pro Stunde</span><select id="fuelUnit"><option value="L">Liter</option><option value="gal">US-Gallonen</option></select></label>
-                  <label>Korridor <span>optional</span><select id="corridorWidth"><option value="" selected>Aus · alle Plätze</option><option value="1">1 NM je Seite</option><option value="2">2 NM je Seite</option><option value="2.5">2,5 NM je Seite</option><option value="5">5 NM je Seite</option><option value="10">10 NM je Seite</option><option value="15">15 NM je Seite</option><option value="20">20 NM je Seite</option></select></label>
+                  <label class="fuel-field">Verbrauch <span>pro Stunde · Einheit wählbar</span><span class="fuel-input-row"><input id="fuelBurn" type="number" min="0" max="999" step="0.1" placeholder="eingeben" aria-label="Verbrauch pro Stunde"><select id="fuelUnit" aria-label="Einheit des Verbrauchs"><option value="L">L/h</option><option value="gal">US gal/h</option><option value="kg">kg/h</option></select></span></label>
+                  <label class="corridor-field">Korridor <span>optional</span><select id="corridorWidth"><option value="" selected>Aus · alle Plätze</option><option value="1">1 NM je Seite</option><option value="2">2 NM je Seite</option><option value="2.5">2,5 NM je Seite</option><option value="5">5 NM je Seite</option><option value="10">10 NM je Seite</option><option value="15">15 NM je Seite</option><option value="20">20 NM je Seite</option></select></label>
                 </div>
                 <div class="flight-time-picker" aria-labelledby="departurePickerTitle">
                   <div class="flight-time-title" id="departurePickerTitle">Departure <span>Ortszeit der Route</span></div>
@@ -1328,8 +1336,7 @@
                 <div class="dock-popover" role="group" aria-label="Wetterebene">
                   <strong>Wetter</strong>
                   <div class="dock-options" id="weatherModes">
-                    <button type="button" data-weather-mode="metar" aria-pressed="false">Stationen · Kategorie, Wolken, Wind</button>
-                    <button type="button" data-weather-mode="combo" aria-pressed="false">Stationen + TAF</button>
+                    <button type="button" data-weather-mode="combo" aria-pressed="false">Wetterstationen · METAR + TAF</button>
                   </div>
                   <strong class="traffic-filter-title">Flächenebenen</strong>
                   <div class="dock-options" id="weatherOverlays" role="group" aria-label="Wetterflächen">
@@ -1354,7 +1361,7 @@
                     <label><input type="checkbox" id="ndbLayer"> NDB</label>
                     <label><input type="checkbox" id="vfrLayer"> VFR-Meldepunkte</label>
                     <label><input type="checkbox" id="rnavLayer"> RNAV-Wegpunkte (GNSS)</label>
-                    <label><input type="checkbox" id="ofmLayer"> VFR-Luftraumkarte (OpenFlightMaps)</label>
+                    <label><input type="checkbox" id="ofmLayer"> VFR-Luftraumkarte</label>
                   </div>
                   <small id="navigationMeta">Funkfeuer, VFR-Meldepunkte & RNAV-Wegpunkte · AIRAC 2609</small>
                   <small id="ofmMeta">Optionale VFR-Orientierung · AIRAC 2609 · nicht als primäre Navigationsquelle.</small>
@@ -2261,7 +2268,15 @@ ${waypoints}
       markerBounds.push(place.coords);
       const marker = L.marker(place.coords, { icon: markerIcon(place), zIndexOffset: place.referenceType === "large_airport" ? 500 : place.referenceType === "medium_airport" ? 400 : 100 })
         .bindPopup(popupHtml(place, index), { maxWidth: 360, autoPanPaddingTopLeft: [24, 150], autoPanPaddingBottomRight: [24, 76] });
-      marker.on("click", () => { activeIndex = index; renderList(); });
+      marker.off("click", marker._openPopup, marker);
+      marker.on("click", () => {
+        // Lineal aktiv: Linksklick setzt einen Messpunkt auf den Platz, Info per Rechtsklick
+        const handled = !window.dispatchEvent(new CustomEvent("vfr-measure-point", { cancelable: true, detail: { coords: place.coords } }));
+        if (handled) return;
+        activeIndex = index;
+        marker.openPopup();
+        renderList();
+      });
       marker.on("contextmenu", (event) => {
         if (event.originalEvent) L.DomEvent.stopPropagation(event.originalEvent);
         activeIndex = index;
@@ -2595,7 +2610,7 @@ ${waypoints}
   </script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script>window.lucide?.createIcons();</script>
-  <script src="navaids.js?v=20260930a"></script>
-  <script src="planner.js?v=20260930a"></script>
+  <script src="navaids.js?v=20261105b"></script>
+  <script src="planner.js?v=20261105b"></script>
 </body>
 </html>
