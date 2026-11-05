@@ -15,6 +15,7 @@
   let resolvedPoints = [];
   let weatherReports = [];
   let weatherMode = "";
+  let tafByIcao = {};
   let activeTaf = null;
   let webcamData = [];
   const webcamEntries = [];
@@ -250,22 +251,34 @@
     const arrivalSun = sunTimes(arrival, resolvedPoints.at(-1).coords);
     const notices = [];
     let danger = false;
+    const HALF_HOUR = 30 * 60 * 1000;
+    const minutes = (ms) => Math.max(1, Math.ceil(ms / 60000));
+    const sunClock = (date, code) => `${boardTime(date, "Europe/Berlin")} LT / ${boardTime(date, "UTC")} UTC · ${code}`;
     if (departureSun.sunrise && departure < departureSun.sunrise) {
-      danger = !departureSun.civilDawn || departure < departureSun.civilDawn;
-      notices.push(danger
-        ? `Departure vor Beginn der bürgerlichen Morgendämmerung (${sunLabel(departureSun.civilDawn, startCode)}).`
-        : `Departure vor Sunrise (${sunLabel(departureSun.sunrise, startCode)}).`);
+      const limit = new Date(departureSun.sunrise.getTime() - HALF_HOUR);
+      const red = departure < limit;
+      danger ||= red;
+      notices.push(red
+        ? `DEP vor SR−30 (${minutes(limit - departure)} Min. davor) · SR ${sunClock(departureSun.sunrise, startCode)}`
+        : `DEP vor SR (${minutes(departureSun.sunrise - departure)} Min. davor) · SR ${sunClock(departureSun.sunrise, startCode)} · Grenze SR−30`);
     }
     if (arrivalSun.sunset && arrival >= arrivalSun.sunset) {
-      const afterCivilDusk = !arrivalSun.civilDusk || arrival >= arrivalSun.civilDusk;
-      danger ||= afterCivilDusk;
-      notices.push(afterCivilDusk
-        ? `Arrival nach Ende der bürgerlichen Abenddämmerung (${sunLabel(arrivalSun.civilDusk, destinationCode)}).`
-        : `Arrival nach Sunset; bürgerliche Abenddämmerung endet ${sunLabel(arrivalSun.civilDusk, destinationCode)}.`);
+      const limit = new Date(arrivalSun.sunset.getTime() + HALF_HOUR);
+      const red = arrival >= limit;
+      danger ||= red;
+      notices.push(red
+        ? `ARR nach SS+30 (+${minutes(arrival - limit)} Min. drüber) · SS ${sunClock(arrivalSun.sunset, destinationCode)}`
+        : `ARR nach SS (+${minutes(arrival - arrivalSun.sunset)} Min.) · SS ${sunClock(arrivalSun.sunset, destinationCode)} · Grenze SS+30`);
     }
     warning.hidden = notices.length === 0;
     warning.classList.toggle("danger", danger);
-    warning.textContent = notices.length ? `${notices.join(" ")} Platz-Betriebszeit, Nachtflugberechtigung und aktuelle Unterlagen separat prüfen.` : "";
+    warning.replaceChildren();
+    if (notices.length) {
+      notices.forEach((text) => { const line = document.createElement("b"); line.textContent = text; warning.append(line); });
+      const hint = document.createElement("span");
+      hint.textContent = "Außerhalb Tagfenster: NVFR-Berechtigung nötig, Platz muss für Nachtbetrieb zugelassen sein. Nur Sonnenstand, keine Platz-Betriebszeiten (AIP prüfen).";
+      warning.append(hint);
+    }
     return { departureSun, arrivalSun, startCode, destinationCode };
   }
 
@@ -695,6 +708,29 @@
     return ["VFR", "MVFR", "IFR", "LIFR"].includes(report.fltCat) ? report.fltCat : "unknown";
   }
 
+  function categoryFromValues(visSm, ceilFt) {
+    if ((visSm !== null && visSm < 1) || (ceilFt !== null && ceilFt < 500)) return "LIFR";
+    if ((visSm !== null && visSm < 3) || (ceilFt !== null && ceilFt < 1000)) return "IFR";
+    if ((visSm !== null && visSm <= 5) || (ceilFt !== null && ceilFt <= 3000)) return "MVFR";
+    return "VFR";
+  }
+
+  // Schlechteste Flugwetterkategorie der TAF-Abschnitte in den nächsten 6 Stunden (Näherung nach Sicht/Untergrenze).
+  function tafWorstCategory(taf) {
+    if (!taf?.fcsts?.length) return "unknown";
+    const now = Date.now() / 1000;
+    const order = ["VFR", "MVFR", "IFR", "LIFR"];
+    let worst = -1;
+    taf.fcsts.forEach((segment) => {
+      if (segment.timeTo < now || segment.timeFrom > now + 6 * 3600) return;
+      const vis = parseFloat(String(segment.visib ?? "").replace("+", ""));
+      const base = (segment.clouds || []).filter((c) => ["BKN", "OVC", "VV"].includes(c.cover) && Number.isFinite(Number(c.base))).map((c) => Number(c.base));
+      const index = order.indexOf(categoryFromValues(Number.isFinite(vis) ? vis : null, base.length ? Math.min(...base) : null));
+      worst = Math.max(worst, index);
+    });
+    return worst < 0 ? "unknown" : order[worst];
+  }
+
   function ceilingFt(report) {
     const layer = (report.clouds || []).find((cloud) => ["BKN", "OVC", "VV"].includes(cloud.cover) && Number.isFinite(Number(cloud.base)));
     return layer ? Number(layer.base) : null;
@@ -716,6 +752,11 @@
       ? escapeHtml(report.clouds.map((cloud) => cloud.cover).join("/")) : null;
     if (weatherMode === "ceiling") return ceilingFt(report) === null ? null : `${ceilingFt(report)} ft`;
     if (weatherMode === "visibility") return report.visib ? `${escapeHtml(report.visib)} SM` : null;
+    if (weatherMode === "combo") {
+      const metar = reportCategory(report);
+      const taf = tafWorstCategory(tafByIcao[report.icaoId]);
+      return `<span class="${metar.toLowerCase()}">M ${metar === "unknown" ? "–" : metar}</span><span class="${taf.toLowerCase()}">T ${taf === "unknown" ? "kein TAF" : taf}</span>`;
+    }
     return weatherMode === "taf" ? "TAF" : reportCategory(report);
   }
 
@@ -726,6 +767,11 @@
   }
 
   function weatherPopup(report) {
+    if (weatherMode === "combo") {
+      const taf = tafByIcao[report.icaoId];
+      const tafCat = tafWorstCategory(taf);
+      return `<div class="popup-title">${escapeHtml(report.icaoId)} · ${escapeHtml(report.name || "METAR")}</div><b>METAR · ${reportCategory(report)}</b><p>${escapeHtml(report.rawOb || "Keine Meldung")}</p><b>TAF · schlechteste Kategorie nächste 6 h: ${tafCat === "unknown" ? "kein TAF" : tafCat}</b><p>${escapeHtml(taf?.rawTAF || "Für diese Station liegt kein TAF vor.")}</p><small>Beobachtung ${utc(report.reportTime)}. Kategorie des TAF aus Sicht und Wolkenuntergrenze der Abschnitte abgeleitet (Näherung). Nur Stationswerte.</small><div class="popup-actions"><button type="button" class="open-taf">TAF-Zeitleiste</button></div>`;
+    }
     return `<div class="popup-title">${escapeHtml(report.icaoId)} · ${escapeHtml(report.name || "METAR")}</div><span class="tag ${reportCategory(report) === "unknown" ? "unknown" : "corridor"}">${reportCategory(report)}</span><p>${escapeHtml(report.rawOb || "Keine Meldung")}</p><small>${weatherMeta(report)}<br>Nur Stationswert, keine Aussage für die Fläche zwischen Stationen.</small><div class="popup-actions"><button type="button" class="open-taf">TAF anzeigen</button></div>`;
   }
 
@@ -777,15 +823,27 @@
         occupied.add(cell);
       }
       const stale = reportCategory(report) === "unknown";
-      const marker = L.marker([report.lat, report.lon], { icon: L.divIcon({ className: "", html: `<div class="wx-observation ${weatherMode} ${reportCategory(report).toLowerCase()} ${stale ? "stale" : ""}">${value}</div>`, iconSize: [72, 34], iconAnchor: [36, 40] }), zIndexOffset: -150 });
+      const marker = L.marker([report.lat, report.lon], { icon: L.divIcon({ className: "", html: `<div class="wx-observation ${weatherMode} ${weatherMode === "combo" ? "" : reportCategory(report).toLowerCase()} ${stale && weatherMode !== "combo" ? "stale" : ""}">${value}</div>`, iconSize: weatherMode === "combo" ? [78, 44] : [72, 34], iconAnchor: weatherMode === "combo" ? [39, 50] : [36, 40] }), zIndexOffset: -150 });
       marker.bindPopup(weatherPopup(report));
       marker.on("popupopen", () => marker.getPopup().getElement().querySelector(".open-taf")?.addEventListener("click", () => openTaf(report.icaoId)));
       marker.addTo(weatherMarkers);
       displayed += 1;
     });
     if (weatherReports.length) {
-      const label = weatherMode === "wind" ? "Windwerte" : weatherMode === "cloud" ? "Wolkenwerte" : weatherMode === "ceiling" ? "Untergrenzen" : weatherMode === "visibility" ? "Sichtwerte" : "METAR-Stationen";
+      const label = weatherMode === "wind" ? "Windwerte" : weatherMode === "cloud" ? "Wolkenwerte" : weatherMode === "ceiling" ? "Untergrenzen" : weatherMode === "visibility" ? "Sichtwerte" : weatherMode === "combo" ? "METAR+TAF-Stationen" : "METAR-Stationen";
       layerStatus.textContent = `${displayed} ${label} in der Ansicht · Stationswerte, keine Fläche`;
+    }
+  }
+
+  async function loadAllTafs() {
+    try {
+      const response = await fetch("/api/tafs");
+      if (!response.ok) throw new Error("TAF nicht erreichbar");
+      const payload = await response.json();
+      tafByIcao = Object.fromEntries((payload.reports || []).map((taf) => [taf.icaoId, taf]));
+      if (weatherMode === "combo") renderWeatherMarkers();
+    } catch (error) {
+      if (weatherMode === "combo") layerStatus.textContent = `TAF nicht verfügbar: ${error.message}`;
     }
   }
 
@@ -799,6 +857,7 @@
       layerStatus.textContent = `${weatherReports.length} METAR-Stationen · Zeitstempel je Meldung`;
       renderWeatherMarkers();
       showSelectedWeather();
+      loadAllTafs();
     } catch (error) {
       layerStatus.textContent = `METAR nicht verfügbar: ${error.message}. Bitte VFR-Italia-Server starten.`;
     }
@@ -1009,8 +1068,8 @@
     else renderWeatherMarkers();
     const timeline = document.getElementById("tafTimeline");
     timeline.hidden = weatherMode !== "taf" || !activeTaf;
-    if (!enabled) document.getElementById("weatherMeta").textContent = "Eine Stationsanzeige gleichzeitig. Marker öffnen, um METAR und TAF gemeinsam zu sehen.";
-    else document.getElementById("weatherMeta").textContent = `${button.textContent} · Stationsbeobachtung · Marker öffnen: vollständiges METAR + TAF`;
+    if (!enabled) document.getElementById("weatherMeta").textContent = "Eine Stationsanzeige gleichzeitig. „METAR + TAF“ zeigt beide Kategorien je Station; Marker öffnen für den Volltext.";
+    else document.getElementById("weatherMeta").textContent = `${button.textContent} · ${button.dataset.weatherMode === "combo" ? "M = METAR aktuell, T = TAF schlechteste Kategorie nächste 6 h" : "Stationsbeobachtung"} · Marker öffnen: vollständiges METAR + TAF`;
   }));
   document.getElementById("webcamLayer").addEventListener("change", (event) => { if (event.target.checked) { webcamMarkers.addTo(map); loadWebcams(); } else webcamMarkers.remove(); });
   function updateTrafficSelection() {

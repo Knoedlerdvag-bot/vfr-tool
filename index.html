@@ -1010,7 +1010,7 @@
     .taf-timeline label { display: block; font-size: 10px; font-weight: 700; }
     .taf-timeline input { width: 100%; margin: 8px 0; accent-color: #0e7199; }
     .taf-timeline-output { color: #284d62; font-size: 11px; line-height: 1.5; }
-    .wx-observation { min-width: 35px; max-width: 76px; padding: 4px 5px; border: 1.5px solid #fff; border-radius: 5px; background: #0e668b; box-shadow: 0 2px 7px #17354477; color: #fff; text-align: center; font: 800 11px/1.1 sans-serif; white-space: nowrap; }
+    .wx-observation { min-width: 35px; max-width: 96px; padding: 4px 5px; border: 1.5px solid #fff; border-radius: 5px; background: #0e668b; box-shadow: 0 2px 7px #17354477; color: #fff; text-align: center; font: 800 11px/1.1 sans-serif; white-space: nowrap; }
     .wx-observation.wind { background: #145873; }
     .wx-observation.metar.vfr { background: #167853; }
     .wx-observation.metar.mvfr { background: #1765a7; }
@@ -1020,6 +1020,13 @@
     .wx-observation.ceiling { background: #5e4f83; }
     .wx-observation.visibility { background: #48655d; }
     .wx-observation.taf { background: #a24771; }
+    .wx-observation.combo { display: grid; gap: 2px; padding: 3px 5px; background: #0b2535; text-align: left; }
+    .wx-observation.combo span { display: block; padding: 1px 4px; border-radius: 3px; }
+    .wx-observation.combo .vfr { background: #167853; }
+    .wx-observation.combo .mvfr { background: #1765a7; }
+    .wx-observation.combo .ifr { background: #b92f43; }
+    .wx-observation.combo .lifr { background: #773d8a; }
+    .wx-observation.combo .unknown { background: #78818b; }
     .wx-observation .wind-arrow { display: inline-block; margin-right: 2px; transform: rotate(var(--direction)); }
     .wx-observation.stale { background: #78818b; }
     .mission-grid.map-only .map-dock { display: none; }
@@ -1292,6 +1299,7 @@
                   <strong>Wetter</strong>
                   <div class="dock-options" id="weatherModes">
                     <button type="button" data-weather-mode="metar" aria-pressed="false">METAR</button>
+                    <button type="button" data-weather-mode="combo" aria-pressed="false">METAR + TAF</button>
                     <button type="button" data-weather-mode="wind" aria-pressed="false">Wind</button>
                     <button type="button" data-weather-mode="cloud" aria-pressed="false">Wolken</button>
                     <button type="button" data-weather-mode="ceiling" aria-pressed="false">Untergrenze</button>

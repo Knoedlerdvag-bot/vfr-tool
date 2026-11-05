@@ -19,6 +19,7 @@ from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parent
 USER_AGENT = "VFR Italia/0.1 (+https://flugschueler.de; contact via website)"
+TAF_BULK_URL = "https://aviationweather.gov/api/data/taf?bbox=35,5,51,20&format=json"
 WEATHER_URL = "https://aviationweather.gov/api/data/metar?bbox=35,5,51,20&format=json"
 DDB_URL = "https://ddb.glidernet.org/download/?j=1"
 GEOCODER_URL = "https://nominatim.openstreetmap.org/search"
@@ -346,6 +347,13 @@ class Handler(SimpleHTTPRequestHandler):
             try:
                 reports = cached_json("metar", WEATHER_URL, 300)
                 self.send_json(200, {"reports": reports, "source": "NOAA Aviation Weather Center"})
+            except Exception as exc:
+                self.send_json(503, {"error": str(exc)})
+            return
+        if parsed.path == "/api/tafs":
+            try:
+                tafs = cached_json("tafs", TAF_BULK_URL, 600)
+                self.send_json(200, {"reports": tafs, "source": "NOAA Aviation Weather Center"})
             except Exception as exc:
                 self.send_json(503, {"error": str(exc)})
             return
