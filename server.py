@@ -16,6 +16,8 @@ from urllib.parse import parse_qs, urlencode, urlparse
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
+import aircraft as aircraft_db
+
 
 ROOT = Path(__file__).resolve().parent
 USER_AGENT = "VFR Italia/0.1 (+https://flugschueler.de; contact via website)"
@@ -24,6 +26,8 @@ WEATHER_URL = "https://aviationweather.gov/api/data/metar?bbox=35,5,51,20&format
 DDB_URL = "https://ddb.glidernet.org/download/?j=1"
 GEOCODER_URL = "https://nominatim.openstreetmap.org/search"
 ADSB_URL = "https://api.adsb.lol/v2/point"
+ADSB_FALLBACK_URL = "https://opendata.adsb.fi/api/v2/lat/{lat}/lon/{lon}/dist/{radius}"
+ADSB_CACHE_SECONDS = 6
 ROUTE_AIRPORTS = json.loads((ROOT / "data" / "route-airports.json").read_text(encoding="utf-8"))["airports"]
 cache = {}
 cache_lock = threading.Lock()
@@ -172,7 +176,9 @@ def parse_beacon(line, devices):
     category = classify_aircraft(model, category)
     return (prefix, device_id), {"lat": round(latitude, 5), "lon": round(longitude, 5),
                                   "observed_at": time.time(), "label": label[:24], "category": category,
-                                  "model": model, "device_id": device_id,
+                                  "model": model, "device_id": device_id, "source": "OGN/FLARM",
+                                  "shape": aircraft_db.shape_for("", "", category) if category != "plane" else "prop1",
+                                  "flight_rules": "vfr", "type_name": model, "type_code": "", "registration": label[:12],
                                   "track_deg": int(course_speed[1]) if course_speed else None,
                                   "speed_kt": int(course_speed[2]) if course_speed else None,
                                   "altitude_ft": int(altitude[1]) if altitude else None}
@@ -230,6 +236,9 @@ def distance_nm(first, second):
 def normalize_adsb_aircraft(aircraft):
     if aircraft.get("ground") is True or str(aircraft.get("alt_baro", "")).lower() == "ground":
         return None
+    category_code = str(aircraft.get("category") or "")
+    if str(aircraft.get("t") or "").upper() == "GND" or category_code.startswith("C"):
+        return None  # Bodenfahrzeuge/Hindernisse
     try:
         latitude, longitude = float(aircraft["lat"]), float(aircraft["lon"])
         age = float(aircraft.get("seen_pos", 1000))
@@ -237,17 +246,17 @@ def normalize_adsb_aircraft(aircraft):
             return None
     except (KeyError, TypeError, ValueError):
         return None
-    model = str(aircraft.get("t") or "").strip()[:48]
-    category_code = str(aircraft.get("category") or "")
-    if category_code == "A7":
-        category = "helicopter"
-    elif category_code == "B1":
-        category = "glider"
-    elif category_code == "B3":
-        category = "parachute"
-    else:
-        category = "plane"
-    category = classify_aircraft(model, category)
+    hex_code = str(aircraft.get("hex") or "").lower()
+    type_code = str(aircraft.get("t") or "").strip().upper()[:8]
+    type_source = "feed" if type_code else ""
+    if not type_code and re.fullmatch(r"[0-9a-f]{6}", hex_code):
+        type_code = aircraft_db.lookup_hex_type(hex_code)
+        type_source = "db" if type_code else ""
+    model = type_code
+    reported = "helicopter" if category_code == "A7" else "glider" if category_code == "B1" else "parachute" if category_code == "B3" else "plane"
+    reported = classify_aircraft(model, reported)
+    shape = aircraft_db.shape_for(type_code, category_code, reported)
+    category = {"heli": "helicopter", "gyro": "helicopter", "glider": "glider", "ulm": "paraglider"}.get(shape, "plane")
     altitude = aircraft.get("alt_baro")
     try:
         altitude = round(float(altitude)) if altitude is not None else None
@@ -259,10 +268,39 @@ def normalize_adsb_aircraft(aircraft):
             return round(value) if math.isfinite(value) else None
         except (KeyError, TypeError, ValueError):
             return None
-    return {"lat": latitude, "lon": longitude, "label": str(aircraft.get("r") or aircraft.get("flight") or "").strip()[:24],
-            "category": category, "model": model, "hex": str(aircraft.get("hex") or "").upper(),
+    callsign = str(aircraft.get("flight") or "").strip()[:12]
+    registration = str(aircraft.get("r") or "").strip()[:12]
+    squawk = str(aircraft.get("squawk") or "").strip()[:4]
+    try:
+        military = bool(int(aircraft.get("dbFlags") or 0) & 1)
+    except (TypeError, ValueError):
+        military = False
+    return {"lat": latitude, "lon": longitude, "label": (registration or callsign)[:24],
+            "category": category, "model": model, "hex": hex_code.upper(),
+            "shape": shape, "type_code": type_code, "type_source": type_source,
+            "type_name": aircraft_db.type_name(type_code, aircraft.get("desc")),
+            "callsign": callsign, "registration": registration, "squawk": squawk,
+            "operator": str(aircraft.get("ownOp") or "").strip()[:40], "military": military,
+            "flight_rules": aircraft_db.estimate_flight_rules(shape, callsign, squawk, altitude, registration),
             "altitude_ft": altitude, "speed_kt": optional_number("gs"), "track_deg": optional_number("track"),
-            "age_sec": round(age)}
+            "vs_fpm": optional_number("baro_rate"), "age_sec": round(age)}
+
+
+def fetch_adsb(lat, lon, radius):
+    """adsb.lol first, adsb.fi as fallback. Returns (aircraft list, source name)."""
+    key = f"adsb:{round(lat, 1)}:{round(lon, 1)}:{round(radius / 10) * 10}"
+    sources = (("adsb.lol", f"{ADSB_URL}/{lat:.2f}/{lon:.2f}/{math.ceil(radius)}"),
+               ("adsb.fi", ADSB_FALLBACK_URL.format(lat=f"{lat:.2f}", lon=f"{lon:.2f}", radius=math.ceil(radius))))
+    last_error = None
+    for name, url in sources:
+        try:
+            payload = cached_json(f"{key}:{name}", url, ADSB_CACHE_SECONDS)
+            items = payload.get("ac") if "ac" in payload else payload.get("aircraft")
+            if isinstance(items, list) and (items or name == sources[-1][0]):
+                return items, name
+        except Exception as exc:
+            last_error = exc
+    raise last_error or RuntimeError("keine ADS-B-Quelle erreichbar")
 
 
 def traffic_in_area(lat, lon, radius, source):
@@ -284,13 +322,12 @@ def traffic_in_area(lat, lon, radius, source):
         if ogn_error:
             errors.append("Segelflugsignale derzeit nicht verfügbar")
     if source in ("adsb", "both"):
-        key = f"adsb:{round(lat, 1)}:{round(lon, 1)}:{round(radius / 10) * 10}"
-        url = f"{ADSB_URL}/{lat:.2f}/{lon:.2f}/{math.ceil(radius)}"
         try:
-            payload = cached_json(key, url, 20)
-            for aircraft in payload.get("ac", []):
+            items, adsb_source = fetch_adsb(lat, lon, radius)
+            for aircraft in items:
                 item = normalize_adsb_aircraft(aircraft)
                 if item and distance_nm((lat, lon), (item["lat"], item["lon"])) <= radius:
+                    item["source"] = adsb_source
                     result.append(item)
         except Exception:
             errors.append("ADS-B-Signale derzeit nicht verfügbar")

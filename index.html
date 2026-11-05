@@ -293,7 +293,22 @@
     .traffic-icon { display: flex; align-items: center; gap: 4px; width: max-content; max-width: 150px; color: #17394b; font: 700 10px/1 sans-serif; }
     .traffic-icon .traffic-glyph { display: grid; place-items: center; width: 28px; height: 28px; flex: 0 0 28px; filter: drop-shadow(0 1px 1px #fff) drop-shadow(0 1px 2px #1238); transform-origin: center; }
     .traffic-icon svg { width: 28px; height: 28px; fill: #fff; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-    .traffic-icon.helicopter { color: #9d3479; }
+    .traffic-icon { color: #1f4e79; }
+    .traffic-icon svg .engine { fill: none; stroke-width: 3.2; }
+    .traffic-icon.prop1 { color: #17566e; }
+    .traffic-icon.prop2 { color: #0e71a8; }
+    .traffic-icon.turboprop { color: #1f8a70; }
+    .traffic-icon.bizjet { color: #c0562a; }
+    .traffic-icon.airliner { color: #4b4f9e; }
+    .traffic-icon.heavy { color: #2f2a6f; }
+    .traffic-icon.gyro { color: #9d3479; }
+    .traffic-icon.ulm { color: #955b13; }
+    .traffic-icon.other { color: #4a5a66; }
+    .traffic-icon.heavy .traffic-glyph, .traffic-icon.heavy svg { width: 34px; height: 34px; flex-basis: 34px; }
+    .traffic-icon.airliner .traffic-glyph, .traffic-icon.airliner svg { width: 31px; height: 31px; flex-basis: 31px; }
+    .traffic-icon.prop1 .traffic-glyph, .traffic-icon.prop1 svg, .traffic-icon.ulm .traffic-glyph, .traffic-icon.ulm svg { width: 25px; height: 25px; flex-basis: 25px; }
+    .traffic-filter-title { display: block; margin-top: 8px; font-size: 11px; }
+    .traffic-icon.helicopter, .traffic-icon.heli { color: #9d3479; }
     .traffic-icon.glider { color: #187d81; }
     .traffic-icon.paraglider, .traffic-icon.parachute { color: #955b13; }
     .traffic-icon b { background: rgba(255,255,255,.72); padding: 3px 4px; border-radius: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; box-shadow: 0 1px 3px #fff9; }
@@ -1005,7 +1020,7 @@
     .dock-options.layer-toggles { display: grid; grid-template-columns: 1fr; }
     .dock-options.layer-toggles label { display: flex; align-items: center; width: 100%; min-height: 36px; padding: 0 10px; }
     #navigationTools .dock-popover { top: -41px; }
-    #trafficTools .dock-popover { top: -205px; }
+    #trafficTools .dock-popover { top: -300px; }
     .taf-timeline { border-top: 1px solid #cbdae0; margin-top: 9px; padding-top: 9px; }
     .taf-timeline label { display: block; font-size: 10px; font-weight: 700; }
     .taf-timeline input { width: 100%; margin: 8px 0; accent-color: #0e7199; }
@@ -1106,8 +1121,8 @@
     .camera-marker .view-sector path { fill: #0b759d66; stroke: #075377; stroke-width: 2; }
     .camera-marker .view-sector circle { fill: #0b759d; stroke: white; stroke-width: 1.5; }
     .camera-marker > svg:not(.view-sector) { position: relative; z-index: 1; }
-    .traffic-icon.helicopter .helicopter-top .rotor { fill: none; stroke: currentColor; stroke-width: 1.15; opacity: .78; }
-    .traffic-icon.helicopter .helicopter-top .airframe { fill: #fff; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+    .traffic-icon.heli .helicopter-top .rotor, .traffic-icon.helicopter .helicopter-top .rotor { fill: none; stroke: currentColor; stroke-width: 1.15; opacity: .78; }
+    .traffic-icon.heli .helicopter-top .airframe, .traffic-icon.helicopter .helicopter-top .airframe { fill: #fff; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
     #printSheet { display: block; position: fixed; left: -10000px; top: 0; width: 760px; visibility: hidden; }
     .print-map { height: 250px; border: 1px solid #aac2cd; margin: 10px 0 14px; }
     .print-head { display: flex; justify-content: space-between; gap: 16px; border-bottom: 2px solid #176d91; padding-bottom: 8px; }
@@ -1334,6 +1349,13 @@
                     <label><input type="checkbox" id="flarmTraffic"> Segelflug & FLARM</label>
                     <label><input type="checkbox" id="adsbTraffic"> ADS-B</label>
                   </div>
+                  <strong class="traffic-filter-title">Verkehrsart</strong>
+                  <div class="dock-options" id="trafficRules" role="group" aria-label="Verkehrsart filtern">
+                    <button type="button" data-traffic-rules="all" aria-pressed="true">Alle</button>
+                    <button type="button" data-traffic-rules="vfr" aria-pressed="false">Nur VFR</button>
+                    <button type="button" data-traffic-rules="ifr" aria-pressed="false">Nur IFR</button>
+                  </div>
+                  <small class="traffic-filter-note">IFR/VFR ist eine Schätzung (Rufzeichen, Typ, Transpondercode, Höhe). Unklare Fälle erscheinen nur unter „Alle".</small>
                   <small id="trafficStatus">Unvollständige Abdeckung. Nicht zur Kollisionsvermeidung verwenden.</small>
                 </div>
               </details>
@@ -1362,7 +1384,7 @@
               <div class="legend-row"><span class="tag access-guest">GAST OK</span><span>Gast-/Privatanflug durch Betreiberquelle belegt; PPR bleibt maßgeblich</span></div>
               <div class="legend-row"><span class="tag access-open">OFFEN</span><span>Zivil veröffentlicht, Fremdnutzung für R44 aber nicht belegt</span></div>
               <div class="legend-row"><span class="tag corridor">KORRIDOR</span><span>innerhalb der gewählten Entfernung zur eigenen Route</span></div>
-              <p class="legend-note">Eigene Planungsdarstellung, keine amtliche DFS-/ENAV-Luftfahrtkarte. WebAAI-IDs sind keine ICAO-Kennungen. Verkehr: <a href="https://www.adsb.lol/docs/open-data/api/" target="_blank" rel="noopener">ADSB.lol (ODbL)</a> und <a href="https://www.glidernet.org/ogn-data-usage/" target="_blank" rel="noopener">OGN (ODbL)</a>; nur freigegebene Signale, unvollständige Abdeckung.</p>
+              <p class="legend-note">Eigene Planungsdarstellung, keine amtliche DFS-/ENAV-Luftfahrtkarte. WebAAI-IDs sind keine ICAO-Kennungen. Verkehr: <a href="https://www.adsb.lol/docs/open-data/api/" target="_blank" rel="noopener">ADSB.lol (ODbL)</a>, Reserve <a href="https://adsb.fi" target="_blank" rel="noopener">adsb.fi</a>, Flugzeugtypen aus der <a href="https://opensky-network.org/datasets/metadata/" target="_blank" rel="noopener">OpenSky Aircraft Database</a> und <a href="https://www.glidernet.org/ogn-data-usage/" target="_blank" rel="noopener">OGN (ODbL)</a>; nur freigegebene Signale, unvollständige Abdeckung.</p>
             </div>
             <div class="map-tools"><button class="mobile-route-jump" id="jumpPlanner" type="button">Route</button><button id="measureUndo" type="button" title="Letzten Messpunkt entfernen" hidden><i data-lucide="undo-2"></i> Letzten Messpunkt</button><small id="measureStatus" aria-live="polite"></small></div>
             <button class="map-only-toggle" id="mapOnlyToggle" type="button" aria-pressed="false" title="Bedienelemente ausblenden">Vollansicht</button>

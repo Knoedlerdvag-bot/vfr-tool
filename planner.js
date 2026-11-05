@@ -948,6 +948,73 @@
 
   map.on("moveend zoomend resize", updateCameraLabels);
 
+  const TRAFFIC_SHAPES = {
+    heli: { label: "Hubschrauber", svg: '<svg class="helicopter-top" viewBox="0 0 32 32" aria-hidden="true"><path class="rotor" d="M3 13h26M16 1v24M7 4l18 18M25 4L7 22"/><path class="airframe" d="M16 6c2.800 0 4.200 3 4.200 6.400v4.300l2.800 7.700-2.100 1-3.200-5.100v7.100l2.700 1.700v1.400h-8.800v-1.400l2.700-1.700v-7.100l-3.200 5.100-2.100-1 2.800-7.700v-4.300C11.800 9 13.200 6 16 6z"/></svg>' },
+    gyro: { label: "Tragschrauber", svg: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 10h26"/><path d="M16 7c1.700 0 2.500 2.100 2.500 4.600V21l2.700 4.500H10.800L13.500 21v-9.400C13.500 9.100 14.300 7 16 7z"/></svg>' },
+    glider: { label: "Segelflugzeug", svg: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4.500c.9 0 1.400 1.200 1.400 2.700v7.700l14 1.400v2.300l-14-1.100v6.900l3.400 1.400v1.500h-9.600v-1.500l3.400-1.400v-6.900L.6 18.300V16l14-1.100V7.200c0-1.500.5-2.700 1.400-2.700z"/></svg>' },
+    ulm: { label: "Ultraleicht / Gleitschirm", svg: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 14C5 2 27 2 29 14M3 14l13 7 13-7M16 21v6m-4 1h8"/></svg>' },
+    prop1: { label: "Kolbenmotor, einmotorig", svg: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3c1.200 0 1.800 1.600 1.800 3.400V12l9.700 2.200v3.200l-9.700-.8v7.200l3.200 1.900v2.100H11v-2.100l3.200-1.900v-7.200l-9.700.8v-3.200l9.700-2.200V6.400C14.200 4.600 14.800 3 16 3z"/></svg>' },
+    prop2: { label: "Kolbenmotor, mehrmotorig", svg: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3c1.200 0 1.800 1.600 1.800 3.400V12l10.700 2.200v3.200l-10.700-.8v7.200l3.200 1.900v2.100H11v-2.100l3.200-1.900v-7.200l-10.700.8v-3.200l10.700-2.200V6.400C14.200 4.600 14.800 3 16 3z"/><path class="engine" d="M9.500 12.500v5.500M22.500 12.500v5.500"/></svg>' },
+    turboprop: { label: "Turboprop", svg: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2c1.300 0 2 1.700 2 3.600V11l12 2.600v3.400l-12-1.800v6.600l3.600 2.200v2.400h-9.200v-2.400l3.600-2.200v-6.600L2 17v-3.400L14 11V5.600C14 3.700 14.700 2 16 2z"/><path class="engine" d="M8.500 11.800v5.500M23.500 11.800v5.500"/></svg>' },
+    bizjet: { label: "Business-/Kleinjet", svg: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2c1.200 0 1.900 1.800 1.900 4v6.500l9.300 7.300v2.400l-9.300-3v4.600l2.800 2.400v1.900H11.300v-1.900l2.800-2.400v-4.600l-9.300 3v-2.400l9.300-7.300V6c0-2.200.7-4 1.900-4z"/></svg>' },
+    airliner: { label: "Verkehrsflugzeug", svg: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 1c1.500 0 2.300 2 2.300 4.600V11l12.200 9v3.200l-12.200-3.600v4.800l3.600 3.100V30H10.100v-2.500l3.600-3.100v-4.800L1.500 23.200V20l12.200-9V5.600C13.700 3 14.500 1 16 1z"/><path class="engine" d="M8.300 17.200v4.200M23.700 17.200v4.200"/></svg>' },
+    heavy: { label: "Großraumflugzeug", svg: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 .8c1.700 0 2.600 2.100 2.600 4.800V10.500l13 9.700v3.400l-13-3.800v4.700l3.800 3.200v2.700H9.600v-2.700l3.800-3.200v-4.700l-13 3.800v-3.400l13-9.700V5.600C13.400 2.900 14.300.8 16 .8z"/><path class="engine" d="M5.200 18.800v3.800M10.200 15.600v3.800M21.800 15.600v3.800M26.800 18.800v3.800"/></svg>' },
+    other: { label: "Luftfahrzeug", svg: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2l3 11 10 4v3l-10-2v8l3 2v2H10v-2l3-2v-8L3 20v-3l10-4z"/></svg>' }
+  };
+  let trafficRules = "all";
+  let lastTrafficPayload = null;
+
+  function trafficShapeKey(position) {
+    if (TRAFFIC_SHAPES[position.shape]) return position.shape;
+    return { glider: "glider", helicopter: "heli", paraglider: "ulm", parachute: "ulm", plane: "prop1" }[position.category] || "other";
+  }
+
+  function renderTraffic() {
+    const status = document.getElementById("trafficStatus");
+    trafficMarkers.clearLayers();
+    if (!lastTrafficPayload) return;
+    const payload = lastTrafficPayload;
+    const zoom = map.getZoom();
+    const compactMap = zoom < 10 || (map.getSize().x < 600 && zoom < 12);
+    const spacing = zoom < 8 ? 54 : zoom < 10 ? 38 : 22;
+    const occupied = new Set();
+    let displayed = 0;
+    const rulesLabel = { ifr: "IFR (geschätzt)", vfr: "VFR (geschätzt)", unknown: "Flugregeln unbekannt" };
+    const visible = payload.positions
+      .filter((position) => trafficRules === "all" || position.flight_rules === trafficRules)
+      .filter((position) => map.getBounds().contains([position.lat, position.lon]));
+    visible
+      .sort((a, b) => (Number(b.speed_kt || 0) > 20 ? 1 : 0) - (Number(a.speed_kt || 0) > 20 ? 1 : 0) || a.age_sec - b.age_sec)
+      .forEach((position) => {
+        const pixel = map.latLngToContainerPoint([position.lat, position.lon]);
+        const cell = `${Math.floor(pixel.x / spacing)}:${Math.floor(pixel.y / spacing)}`;
+        if (occupied.has(cell)) return;
+        occupied.add(cell);
+        displayed += 1;
+        const shape = trafficShapeKey(position);
+        const label = position.label || position.callsign || "nicht identifiziert";
+        const typeLine = position.type_name || position.type_code || position.model;
+        const detail = [
+          `<b>${escapeHtml(label)}</b>${position.callsign && position.callsign.replace(/-/g, "") !== label.replace(/-/g, "") ? ` · ${escapeHtml(position.callsign)}` : ""}${position.military ? " · Militär" : ""}`,
+          `${TRAFFIC_SHAPES[shape].label}${typeLine ? ` · ${escapeHtml(typeLine)}` : " · Typ unbekannt"}${position.type_code ? ` (${escapeHtml(position.type_code)})` : ""}`,
+          position.operator ? `Halter/Betreiber: ${escapeHtml(position.operator)}` : "",
+          Number.isFinite(position.altitude_ft) ? `Höhe: ${position.altitude_ft.toLocaleString("de-DE")} ft (Druckhöhe)` : "",
+          Number.isFinite(position.speed_kt) ? `GS: ${position.speed_kt} kt` : "",
+          Number.isFinite(position.vs_fpm) && Math.abs(position.vs_fpm) >= 100 ? `Steigen/Sinken: ${position.vs_fpm > 0 ? "+" : ""}${position.vs_fpm} ft/min` : "",
+          Number.isFinite(position.track_deg) ? `Track: ${position.track_deg}°` : "",
+          position.squawk ? `Squawk: ${escapeHtml(position.squawk)}` : "",
+          rulesLabel[position.flight_rules] ? `Flugregeln: ${rulesLabel[position.flight_rules]}` : "",
+          `Quelle: ${escapeHtml(position.source || "ADS-B")} · Signal vor ${position.age_sec} s${position.type_source === "db" ? " · Typ aus Datenbank" : ""}`
+        ].filter(Boolean).join("<br>");
+        const heading = Number.isFinite(position.track_deg) ? position.track_deg : 0;
+        const compact = [position.label, Number.isFinite(position.altitude_ft) ? `${Math.round(position.altitude_ft / 100) / 10}k ft` : "", Number.isFinite(position.speed_kt) ? `${position.speed_kt} kt` : ""].filter(Boolean).join(" · ");
+        L.marker([position.lat, position.lon], { icon: L.divIcon({ className: "", html: `<div class="traffic-icon ${shape}" title="${escapeHtml(label)}"><span class="traffic-glyph" style="transform:rotate(${heading}deg)">${TRAFFIC_SHAPES[shape].svg}</span>${!compactMap && compact ? `<b>${escapeHtml(compact)}</b>` : ""}</div>`, iconSize: [compactMap ? 34 : 150, 34], iconAnchor: [17, 17] }) })
+          .bindTooltip(detail, { direction: "top" }).addTo(trafficMarkers);
+      });
+    const filterNote = trafficRules === "all" ? "" : ` · Filter ${trafficRules.toUpperCase()}`;
+    status.textContent = `${payload.positions.length} Signale · ${displayed} auf der Karte${filterNote} · unvollständige Abdeckung${payload.status && payload.status !== "connected" ? ` · ${payload.status}` : ""}`;
+  }
+
   async function loadTraffic() {
     const flarm = document.getElementById("flarmTraffic").checked;
     const adsb = document.getElementById("adsbTraffic").checked;
@@ -959,46 +1026,8 @@
     try {
       const response = await fetch(`/api/traffic?lat=${center.lat.toFixed(3)}&lon=${center.lng.toFixed(3)}&radius=${radius}&source=${source}`);
       if (!response.ok) throw new Error("Serverdienst nicht erreichbar");
-      const payload = await response.json();
-      trafficMarkers.clearLayers();
-      const zoom = map.getZoom();
-      const compactMap = zoom < 10 || (map.getSize().x < 600 && zoom < 12);
-      const spacing = zoom < 8 ? 54 : zoom < 10 ? 38 : 22;
-      const occupied = new Set();
-      let displayed = 0;
-      payload.positions
-        .filter((position) => map.getBounds().contains([position.lat, position.lon]))
-        .sort((a, b) => (Number(b.speed_kt || 0) > 20 ? 1 : 0) - (Number(a.speed_kt || 0) > 20 ? 1 : 0) || a.age_sec - b.age_sec)
-        .forEach((position) => {
-        const pixel = map.latLngToContainerPoint([position.lat, position.lon]);
-        const cell = `${Math.floor(pixel.x / spacing)}:${Math.floor(pixel.y / spacing)}`;
-        if (occupied.has(cell)) return;
-        occupied.add(cell);
-        displayed += 1;
-        const category = ["glider", "plane", "helicopter", "paraglider", "parachute"].includes(position.category) ? position.category : "aircraft";
-        const symbol = category === "helicopter"
-          ? '<svg class="helicopter-top" viewBox="0 0 32 32" aria-hidden="true"><path class="rotor" d="M3 13h26M16 1v24M7 4l18 18M25 4L7 22"/><path class="airframe" d="M16 6c2.8 0 4.2 3 4.2 6.4v4.3l2.8 7.7-2.1 1-3.2-5.1v7.1l2.7 1.7v1.4h-8.8v-1.4l2.7-1.7v-7.1l-3.2 5.1-2.1-1 2.8-7.7v-4.3C11.8 9 13.2 6 16 6z"/></svg>'
-          : category === "glider"
-            ? '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2v27M2 16l14-3 14 3-14 2zM10 28h12"/></svg>'
-            : category === "paraglider" || category === "parachute"
-              ? '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 14C5 2 27 2 29 14M3 14l13 7 13-7M16 21v6m-4 1h8"/></svg>'
-              : '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2l3 11 10 4v3l-10-2v8l3 2v2H10v-2l3-2v-8L3 20v-3l10-4z"/></svg>';
-        const label = position.label || "nicht identifiziert";
-        const categoryLabel = { glider: "Segelflugzeug", plane: "Motorflugzeug", helicopter: "Hubschrauber", paraglider: "Gleitschirm", parachute: "Fallschirm", aircraft: "Luftfahrzeug" }[category];
-        const detail = [
-          `<b>${escapeHtml(label)}</b> · ${categoryLabel}`,
-          position.model ? `Muster: ${escapeHtml(position.model)}` : "",
-          Number.isFinite(position.altitude_ft) ? `Höhe: ${position.altitude_ft.toLocaleString("de-DE")} ft MSL` : "",
-          Number.isFinite(position.speed_kt) ? `GS: ${position.speed_kt} kt` : "",
-          Number.isFinite(position.track_deg) ? `Track: ${position.track_deg}°` : "",
-          `Letztes Signal vor ${position.age_sec} s`
-        ].filter(Boolean).join("<br>");
-        const heading = Number.isFinite(position.track_deg) ? position.track_deg : 0;
-        const compact = [position.label, Number.isFinite(position.altitude_ft) ? `${Math.round(position.altitude_ft / 100) / 10}k ft` : "", Number.isFinite(position.speed_kt) ? `${position.speed_kt} kt` : ""].filter(Boolean).join(" · ");
-        L.marker([position.lat, position.lon], { icon: L.divIcon({ className: "", html: `<div class="traffic-icon ${category}" title="${escapeHtml(label)}"><span class="traffic-glyph" style="transform:rotate(${heading}deg)">${symbol}</span>${!compactMap && compact ? `<b>${escapeHtml(compact)}</b>` : ""}</div>`, iconSize: [compactMap ? 30 : 150, 30], iconAnchor: [15, 15] }) })
-          .bindTooltip(detail, { direction: "top" }).addTo(trafficMarkers);
-      });
-      status.textContent = `${payload.positions.length} Signale · ${displayed} auf der Karte · unvollständige Abdeckung${payload.status && payload.status !== "connected" ? ` · ${payload.status}` : ""}`;
+      lastTrafficPayload = await response.json();
+      renderTraffic();
     } catch (error) {
       status.textContent = `Flugverkehr nicht verfügbar: ${error.message}`;
     }
@@ -1079,13 +1108,18 @@
     if (enabled) {
       trafficMarkers.addTo(map);
       loadTraffic();
-      trafficTimer = setInterval(loadTraffic, 20000);
+      trafficTimer = setInterval(loadTraffic, 10000);
     } else {
       trafficMarkers.remove();
       trafficMarkers.clearLayers();
       document.getElementById("trafficStatus").textContent = "Unvollständige Abdeckung. Nicht zur Kollisionsvermeidung verwenden.";
     }
   }
+  document.querySelectorAll("[data-traffic-rules]").forEach((button) => button.addEventListener("click", () => {
+    trafficRules = button.dataset.trafficRules;
+    document.querySelectorAll("[data-traffic-rules]").forEach((option) => option.setAttribute("aria-pressed", String(option === button)));
+    renderTraffic();
+  }));
   document.getElementById("flarmTraffic").addEventListener("change", updateTrafficSelection);
   document.getElementById("adsbTraffic").addEventListener("change", updateTrafficSelection);
   map.on("moveend", () => { if (map.hasLayer(trafficMarkers)) loadTraffic(); });
