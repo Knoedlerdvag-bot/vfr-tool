@@ -741,29 +741,35 @@
     return Number.isNaN(date.getTime()) ? "Zeit unbekannt" : date.toLocaleString("de-DE", { timeZone: "UTC", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) + " UTC";
   }
 
+  function cloudText(report) {
+    const layers = (report.clouds || []).filter((cloud) => Number.isFinite(Number(cloud.base)));
+    const ceiling = layers.find((cloud) => ["BKN", "OVC", "VV"].includes(cloud.cover));
+    const layer = ceiling || layers[0];
+    if (layer) return `${layer.cover} ${Number(layer.base).toLocaleString("de-DE")}`;
+    return (report.clouds || []).length ? escapeHtml(report.clouds[0].cover) : "CLR";
+  }
+
+  function windText(report) {
+    if (!Number.isFinite(Number(report.wspd))) return "Wind –";
+    const direction = Number(report.wdir);
+    const gust = Number.isFinite(Number(report.wgst)) && Number(report.wgst) > Number(report.wspd) ? `G${report.wgst}` : "";
+    if (!Number.isFinite(direction)) return `VRB ${report.wspd}${gust} kt`;
+    return `<span class="wx-wind-arrow" style="--direction:${(direction + 180) % 360}deg">↑</span>${String(Math.round(direction)).padStart(3, "0")}°/${report.wspd}${gust}`;
+  }
+
   function weatherValue(report) {
-    if (weatherMode === "wind") {
-      if (!Number.isFinite(Number(report.wspd))) return null;
-      const direction = Number(report.wdir);
-      const arrow = Number.isFinite(direction) ? `<span class="wind-arrow" style="--direction:${direction}deg">↑</span>` : "";
-      return `${arrow}${escapeHtml(report.wspd)} kt`;
-    }
-    if (weatherMode === "cloud") return (report.clouds || []).length
-      ? escapeHtml(report.clouds.map((cloud) => cloud.cover).join("/")) : null;
-    if (weatherMode === "ceiling") return ceilingFt(report) === null ? null : `${ceilingFt(report)} ft`;
-    if (weatherMode === "visibility") return report.visib ? `${escapeHtml(report.visib)} SM` : null;
+    const metar = reportCategory(report);
+    const label = metar === "unknown" ? "–" : metar;
+    let html = `<b>${label}</b><span>${cloudText(report)}</span><span>${windText(report)}</span>`;
     if (weatherMode === "combo") {
-      const metar = reportCategory(report);
       const taf = tafWorstCategory(tafByIcao[report.icaoId]);
-      return `<span class="${metar.toLowerCase()}">M ${metar === "unknown" ? "–" : metar}</span><span class="${taf.toLowerCase()}">T ${taf === "unknown" ? "kein TAF" : taf}</span>`;
+      html += `<span class="wx-taf ${taf.toLowerCase()}">TAF ${taf === "unknown" ? "–" : taf}</span>`;
     }
-    return weatherMode === "taf" ? "TAF" : reportCategory(report);
+    return html;
   }
 
   function weatherMeta(report) {
-    const height = weatherMode === "wind" ? "Stationswind" : weatherMode === "ceiling" || weatherMode === "cloud" ? "Wolkenbasis AGL" : "Stationsniveau";
-    const unit = weatherMode === "wind" ? "kt / Grad" : weatherMode === "ceiling" ? "ft AGL" : weatherMode === "visibility" ? "SM" : weatherMode === "cloud" ? "Bedeckungscode" : "Flugwetterkategorie";
-    return `Beobachtung ${utc(report.reportTime)} · ${height} · ${unit} · Modelllauf: entfällt`;
+    return `Beobachtung ${utc(report.reportTime)} · Stationsniveau · Wolkenbasis ft AGL · Modelllauf: entfällt`;
   }
 
   function weatherPopup(report) {
@@ -809,7 +815,7 @@
   function renderWeatherMarkers() {
     weatherMarkers.clearLayers();
     if (!weatherMode) return;
-    const cellSize = map.getZoom() < 7 ? 105 : map.getZoom() < 9 ? 72 : 0;
+    const cellSize = map.getZoom() < 7 ? 120 : map.getZoom() < 9 ? 96 : 0;
     const occupied = new Set();
     let displayed = 0;
     weatherReports.forEach((report) => {
@@ -823,14 +829,14 @@
         occupied.add(cell);
       }
       const stale = reportCategory(report) === "unknown";
-      const marker = L.marker([report.lat, report.lon], { icon: L.divIcon({ className: "", html: `<div class="wx-observation ${weatherMode} ${weatherMode === "combo" ? "" : reportCategory(report).toLowerCase()} ${stale && weatherMode !== "combo" ? "stale" : ""}">${value}</div>`, iconSize: weatherMode === "combo" ? [78, 44] : [72, 34], iconAnchor: weatherMode === "combo" ? [39, 50] : [36, 40] }), zIndexOffset: -150 });
+      const marker = L.marker([report.lat, report.lon], { icon: L.divIcon({ className: "", html: `<div class="wx-card ${reportCategory(report).toLowerCase()}">${value}</div>`, iconSize: weatherMode === "combo" ? [66, 74] : [66, 56], iconAnchor: weatherMode === "combo" ? [33, 78] : [33, 60] }), zIndexOffset: -150 });
       marker.bindPopup(weatherPopup(report));
       marker.on("popupopen", () => marker.getPopup().getElement().querySelector(".open-taf")?.addEventListener("click", () => openTaf(report.icaoId)));
       marker.addTo(weatherMarkers);
       displayed += 1;
     });
     if (weatherReports.length) {
-      const label = weatherMode === "wind" ? "Windwerte" : weatherMode === "cloud" ? "Wolkenwerte" : weatherMode === "ceiling" ? "Untergrenzen" : weatherMode === "visibility" ? "Sichtwerte" : weatherMode === "combo" ? "METAR+TAF-Stationen" : "METAR-Stationen";
+      const label = weatherMode === "combo" ? "Stationen mit METAR + TAF" : "METAR-Stationen";
       layerStatus.textContent = `${displayed} ${label} in der Ansicht · Stationswerte, keine Fläche`;
     }
   }
@@ -1097,9 +1103,97 @@
     else renderWeatherMarkers();
     const timeline = document.getElementById("tafTimeline");
     timeline.hidden = weatherMode !== "taf" || !activeTaf;
-    if (!enabled) document.getElementById("weatherMeta").textContent = "Eine Stationsanzeige gleichzeitig. „METAR + TAF“ zeigt beide Kategorien je Station; Marker öffnen für den Volltext.";
-    else document.getElementById("weatherMeta").textContent = `${button.textContent} · ${button.dataset.weatherMode === "combo" ? "M = METAR aktuell, T = TAF schlechteste Kategorie nächste 6 h" : "Stationsbeobachtung"} · Marker öffnen: vollständiges METAR + TAF`;
+    if (!enabled) document.getElementById("weatherMeta").textContent = "Stationskarten zeigen Kategorie, Wolken (niedrigste Schicht, ft AGL) und Wind (Richtung, Stärke, Böen).";
+    else document.getElementById("weatherMeta").textContent = weatherMode === "combo" ? "Oben METAR aktuell, unten TAF: schlechteste Kategorie der nächsten 6 h (Näherung). Marker öffnen für Volltext." : "Aktuelle METAR-Stationswerte. Marker öffnen für Volltext und TAF.";
   }));
+
+  // ---- Flächenebenen: Regenradar (RainViewer) und Wolken (EUMETSAT Meteosat IR) ----
+  const overlayState = { radar: null, satellite: null, frames: [], host: "", frameIndex: 0, timer: null };
+  const overlayInfo = document.getElementById("overlayInfo");
+
+  function overlayClock(seconds) {
+    const date = new Date(seconds * 1000);
+    const fmt = (zone) => date.toLocaleTimeString("de-DE", { timeZone: zone, hour: "2-digit", minute: "2-digit" });
+    const ageMin = Math.max(0, Math.round((Date.now() - date.getTime()) / 60000));
+    return `${fmt("Europe/Berlin")} LT / ${fmt("UTC")} UTC · vor ${ageMin} Min.`;
+  }
+
+  function showRadarFrame(index) {
+    const frame = overlayState.frames[index];
+    if (!frame || !overlayState.radar) return;
+    overlayState.frameIndex = index;
+    overlayState.radar.setUrl(`${overlayState.host}${frame.path}/256/{z}/{x}/{y}/2/1_1.png`);
+    document.getElementById("radarStep").value = index;
+    overlayInfo.textContent = `Regenradar ${frame.nowcast ? "Prognose" : "Messung"} ${overlayClock(frame.time)} · RainViewer · Niederschlagsintensität, keine Wolkenhöhe`;
+  }
+
+  function stopRadarPlay() {
+    clearInterval(overlayState.timer);
+    overlayState.timer = null;
+    const play = document.getElementById("radarPlay");
+    play.textContent = "▶";
+    play.setAttribute("aria-pressed", "false");
+  }
+
+  async function enableRadar() {
+    overlayInfo.textContent = "Regenradar wird geladen …";
+    try {
+      const response = await fetch("/api/radar");
+      if (!response.ok) throw new Error("Radar nicht erreichbar");
+      const payload = await response.json();
+      if (!payload.frames?.length) throw new Error("keine Radarbilder verfügbar");
+      overlayState.frames = payload.frames;
+      overlayState.host = payload.host;
+      overlayState.radar = L.tileLayer("", { opacity: 0.72, maxNativeZoom: 7, maxZoom: 12, zIndex: 6, attribution: '<a href="https://www.rainviewer.com/" target="_blank" rel="noopener">RainViewer</a>' }).addTo(map);
+      const slider = document.getElementById("radarStep");
+      slider.max = payload.frames.length - 1;
+      document.getElementById("radarControls").hidden = false;
+      showRadarFrame(payload.frames.findIndex((frame) => frame.nowcast) > 0 ? payload.frames.findIndex((frame) => frame.nowcast) - 1 : payload.frames.length - 1);
+    } catch (error) {
+      overlayInfo.textContent = `Regenradar nicht verfügbar: ${error.message}`;
+      document.querySelector('[data-weather-overlay="radar"]').setAttribute("aria-pressed", "false");
+    }
+  }
+
+  function disableRadar() {
+    stopRadarPlay();
+    overlayState.radar?.remove();
+    overlayState.radar = null;
+    document.getElementById("radarControls").hidden = true;
+  }
+
+  async function enableSatellite() {
+    overlayInfo.textContent = "Satellitenbild wird geladen …";
+    try {
+      const response = await fetch("/api/satellite");
+      if (!response.ok) throw new Error("Satellit nicht erreichbar");
+      const payload = await response.json();
+      overlayState.satellite = L.tileLayer.wms("https://view.eumetsat.int/geoserver/wms", { layers: payload.layer, format: "image/png", transparent: true, version: "1.3.0", time: payload.time, opacity: 0.9, zIndex: 5, className: "sat-ir", attribution: '© <a href="https://view.eumetsat.int/" target="_blank" rel="noopener">EUMETSAT</a>' }).addTo(map);
+      overlayState.satellite.satelliteTime = Date.parse(payload.time) / 1000;
+      overlayInfo.textContent = `Wolken (Meteosat Infrarot) Aufnahme ${overlayClock(overlayState.satellite.satelliteTime)} · hell = hohe/kalte Wolken, Bedeckung ohne Höhenangabe`;
+    } catch (error) {
+      overlayInfo.textContent = `Satellitenbild nicht verfügbar: ${error.message}`;
+      document.querySelector('[data-weather-overlay="satellite"]').setAttribute("aria-pressed", "false");
+    }
+  }
+
+  document.querySelectorAll("[data-weather-overlay]").forEach((button) => button.addEventListener("click", () => {
+    const kind = button.dataset.weatherOverlay;
+    const enable = button.getAttribute("aria-pressed") !== "true";
+    button.setAttribute("aria-pressed", String(enable));
+    if (kind === "radar") { enable ? enableRadar() : disableRadar(); }
+    else if (enable) enableSatellite();
+    else { overlayState.satellite?.remove(); overlayState.satellite = null; }
+    if (!enable && !overlayState.radar && !overlayState.satellite) overlayInfo.textContent = "";
+  }));
+  document.getElementById("radarStep").addEventListener("input", (event) => { stopRadarPlay(); showRadarFrame(Number(event.target.value)); });
+  document.getElementById("radarPlay").addEventListener("click", () => {
+    if (overlayState.timer) { stopRadarPlay(); return; }
+    const play = document.getElementById("radarPlay");
+    play.textContent = "❚❚";
+    play.setAttribute("aria-pressed", "true");
+    overlayState.timer = setInterval(() => showRadarFrame((overlayState.frameIndex + 1) % overlayState.frames.length), 700);
+  });
   document.getElementById("webcamLayer").addEventListener("change", (event) => { if (event.target.checked) { webcamMarkers.addTo(map); loadWebcams(); } else webcamMarkers.remove(); });
   function updateTrafficSelection() {
     clearInterval(trafficTimer);

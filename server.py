@@ -28,6 +28,8 @@ GEOCODER_URL = "https://nominatim.openstreetmap.org/search"
 ADSB_URL = "https://api.adsb.lol/v2/point"
 ADSB_FALLBACK_URL = "https://opendata.adsb.fi/api/v2/lat/{lat}/lon/{lon}/dist/{radius}"
 ADSB_CACHE_SECONDS = 6
+RAINVIEWER_URL = "https://api.rainviewer.com/public/weather-maps.json"
+EUMETVIEW_CAPS_URL = "https://view.eumetsat.int/geoserver/wms?service=WMS&request=GetCapabilities&version=1.3.0"
 ROUTE_AIRPORTS = json.loads((ROOT / "data" / "route-airports.json").read_text(encoding="utf-8"))["airports"]
 cache = {}
 cache_lock = threading.Lock()
@@ -286,6 +288,28 @@ def normalize_adsb_aircraft(aircraft):
             "vs_fpm": optional_number("baro_rate"), "age_sec": round(age)}
 
 
+def latest_satellite_time():
+    """Newest available MSG IR 10.8 scene (15-min cadence) from EUMETView capabilities."""
+    def read():
+        request = Request(EUMETVIEW_CAPS_URL, headers={"User-Agent": USER_AGENT})
+        with urlopen(request, timeout=25) as response:
+            return response.read().decode("utf-8", "replace")
+    key = "sat-caps"
+    with cache_lock:
+        item = cache.get(key)
+        if item and time.time() - item[0] < 300:
+            return item[1]
+    text = read()
+    start = text.find("<Name>msg_fes:ir108</Name>")
+    match = re.search(r'<Dimension name="time"[^>]*>[^<]*/(\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z)/PT15M', text[start:start + 6000]) if start >= 0 else None
+    if not match:
+        raise RuntimeError("Satellitenzeit nicht ermittelbar")
+    value = match.group(1)
+    with cache_lock:
+        cache[key] = (time.time(), value)
+    return value
+
+
 def fetch_adsb(lat, lon, radius):
     """adsb.lol first, adsb.fi as fallback. Returns (aircraft list, source name)."""
     key = f"adsb:{round(lat, 1)}:{round(lon, 1)}:{round(radius / 10) * 10}"
@@ -391,6 +415,21 @@ class Handler(SimpleHTTPRequestHandler):
             try:
                 tafs = cached_json("tafs", TAF_BULK_URL, 600)
                 self.send_json(200, {"reports": tafs, "source": "NOAA Aviation Weather Center"})
+            except Exception as exc:
+                self.send_json(503, {"error": str(exc)})
+            return
+        if parsed.path == "/api/radar":
+            try:
+                payload = cached_json("rainviewer", RAINVIEWER_URL, 120)
+                frames = list((payload.get("radar") or {}).get("past") or []) + list((payload.get("radar") or {}).get("nowcast") or [])
+                self.send_json(200, {"host": payload.get("host"), "frames": [{"time": f["time"], "path": f["path"], "nowcast": f in ((payload.get("radar") or {}).get("nowcast") or [])} for f in frames],
+                                     "source": "RainViewer", "source_url": "https://www.rainviewer.com/"})
+            except Exception as exc:
+                self.send_json(503, {"error": str(exc)})
+            return
+        if parsed.path == "/api/satellite":
+            try:
+                self.send_json(200, {"time": latest_satellite_time(), "layer": "msg_fes:ir108", "source": "EUMETSAT (EUMETView), Meteosat", "source_url": "https://view.eumetsat.int/"})
             except Exception as exc:
                 self.send_json(503, {"error": str(exc)})
             return

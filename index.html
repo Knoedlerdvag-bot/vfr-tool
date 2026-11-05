@@ -1034,6 +1034,19 @@
     .wx-observation.cloud { background: #536b86; }
     .wx-observation.ceiling { background: #5e4f83; }
     .wx-observation.visibility { background: #48655d; }
+    .wx-card { display: grid; gap: 1px; width: 66px; padding: 4px 5px 5px; border: 1.5px solid #fff; border-radius: 6px; background: #0e668b; box-shadow: 0 2px 7px #17354477; color: #fff; text-align: center; font: 800 10px/1.15 sans-serif; white-space: nowrap; }
+    .wx-card b { display: block; font-size: 12px; letter-spacing: .02em; }
+    .wx-card span { display: block; font-weight: 700; opacity: .96; }
+    .wx-card .wx-wind-arrow { display: inline-block; margin-right: 2px; transform: rotate(var(--direction)); }
+    .wx-card.vfr { background: #167853; } .wx-card.mvfr { background: #1765a7; } .wx-card.ifr { background: #b92f43; } .wx-card.lifr { background: #773d8a; } .wx-card.unknown { background: #78818b; }
+    .wx-card .wx-taf { margin-top: 2px; padding: 1px 3px; border-radius: 3px; background: #0b2535; }
+    .wx-card .wx-taf.vfr { background: #0f5a3f; } .wx-card .wx-taf.mvfr { background: #124d80; } .wx-card .wx-taf.ifr { background: #8d1f31; } .wx-card .wx-taf.lifr { background: #572a66; } .wx-card .wx-taf.unknown { background: #4d555d; }
+    .sat-ir { mix-blend-mode: screen; }
+    .radar-controls { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+    .radar-controls button { width: 34px; min-height: 30px; border: 1px solid #456a83; border-radius: 4px; background: #10344e; color: #e7eff2; cursor: pointer; }
+    .radar-controls input { flex: 1; accent-color: #0e7199; }
+    .overlay-info { display: block; margin-top: 6px; line-height: 1.4; }
+    .radar-controls[hidden] { display: none; }
     .wx-observation.taf { background: #a24771; }
     .wx-observation.combo { display: grid; gap: 2px; padding: 3px 5px; background: #0b2535; text-align: left; }
     .wx-observation.combo span { display: block; padding: 1px 4px; border-radius: 3px; }
@@ -1313,14 +1326,20 @@
                 <div class="dock-popover" role="group" aria-label="Wetterebene">
                   <strong>Wetter</strong>
                   <div class="dock-options" id="weatherModes">
-                    <button type="button" data-weather-mode="metar" aria-pressed="false">METAR</button>
-                    <button type="button" data-weather-mode="combo" aria-pressed="false">METAR + TAF</button>
-                    <button type="button" data-weather-mode="wind" aria-pressed="false">Wind</button>
-                    <button type="button" data-weather-mode="cloud" aria-pressed="false">Wolken</button>
-                    <button type="button" data-weather-mode="ceiling" aria-pressed="false">Untergrenze</button>
-                    <button type="button" data-weather-mode="visibility" aria-pressed="false">Sicht</button>
+                    <button type="button" data-weather-mode="metar" aria-pressed="false">Stationen · Kategorie, Wolken, Wind</button>
+                    <button type="button" data-weather-mode="combo" aria-pressed="false">Stationen + TAF</button>
                   </div>
-                  <small id="weatherMeta">Eine Stationsanzeige gleichzeitig. Marker öffnen, um METAR und TAF gemeinsam zu sehen.</small>
+                  <strong class="traffic-filter-title">Flächenebenen</strong>
+                  <div class="dock-options" id="weatherOverlays" role="group" aria-label="Wetterflächen">
+                    <button type="button" data-weather-overlay="radar" aria-pressed="false">Regenradar</button>
+                    <button type="button" data-weather-overlay="satellite" aria-pressed="false">Wolken · Satellit</button>
+                  </div>
+                  <div id="radarControls" class="radar-controls" hidden>
+                    <button type="button" id="radarPlay" aria-label="Radar abspielen" aria-pressed="false">▶</button>
+                    <input type="range" id="radarStep" min="0" max="0" step="1" value="0" aria-label="Radarzeitpunkt">
+                  </div>
+                  <small id="overlayInfo" class="overlay-info"></small>
+                  <small id="weatherMeta">Stationskarten zeigen Kategorie, Wolken und Wind je Station. Marker öffnen, um METAR und TAF gemeinsam zu sehen.</small>
                   <div id="tafTimeline" class="taf-timeline" hidden></div>
                 </div>
               </details>
@@ -1384,7 +1403,7 @@
               <div class="legend-row"><span class="tag access-guest">GAST OK</span><span>Gast-/Privatanflug durch Betreiberquelle belegt; PPR bleibt maßgeblich</span></div>
               <div class="legend-row"><span class="tag access-open">OFFEN</span><span>Zivil veröffentlicht, Fremdnutzung für R44 aber nicht belegt</span></div>
               <div class="legend-row"><span class="tag corridor">KORRIDOR</span><span>innerhalb der gewählten Entfernung zur eigenen Route</span></div>
-              <p class="legend-note">Eigene Planungsdarstellung, keine amtliche DFS-/ENAV-Luftfahrtkarte. WebAAI-IDs sind keine ICAO-Kennungen. Verkehr: <a href="https://www.adsb.lol/docs/open-data/api/" target="_blank" rel="noopener">ADSB.lol (ODbL)</a>, Reserve <a href="https://adsb.fi" target="_blank" rel="noopener">adsb.fi</a>, Flugzeugtypen aus der <a href="https://opensky-network.org/datasets/metadata/" target="_blank" rel="noopener">OpenSky Aircraft Database</a> und <a href="https://www.glidernet.org/ogn-data-usage/" target="_blank" rel="noopener">OGN (ODbL)</a>; nur freigegebene Signale, unvollständige Abdeckung.</p>
+              <p class="legend-note">Eigene Planungsdarstellung, keine amtliche DFS-/ENAV-Luftfahrtkarte. WebAAI-IDs sind keine ICAO-Kennungen. Wetter: <a href="https://aviationweather.gov/" target="_blank" rel="noopener">NOAA AWC</a> (METAR/TAF), Radar <a href="https://www.rainviewer.com/" target="_blank" rel="noopener">RainViewer</a>, Satellit <a href="https://view.eumetsat.int/" target="_blank" rel="noopener">EUMETSAT</a>. Verkehr: <a href="https://www.adsb.lol/docs/open-data/api/" target="_blank" rel="noopener">ADSB.lol (ODbL)</a>, Reserve <a href="https://adsb.fi" target="_blank" rel="noopener">adsb.fi</a>, Flugzeugtypen aus der <a href="https://opensky-network.org/datasets/metadata/" target="_blank" rel="noopener">OpenSky Aircraft Database</a> und <a href="https://www.glidernet.org/ogn-data-usage/" target="_blank" rel="noopener">OGN (ODbL)</a>; nur freigegebene Signale, unvollständige Abdeckung.</p>
             </div>
             <div class="map-tools"><button class="mobile-route-jump" id="jumpPlanner" type="button">Route</button><button id="measureUndo" type="button" title="Letzten Messpunkt entfernen" hidden><i data-lucide="undo-2"></i> Letzten Messpunkt</button><small id="measureStatus" aria-live="polite"></small></div>
             <button class="map-only-toggle" id="mapOnlyToggle" type="button" aria-pressed="false" title="Bedienelemente ausblenden">Vollansicht</button>
