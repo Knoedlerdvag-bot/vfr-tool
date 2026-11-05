@@ -1034,7 +1034,7 @@
     .wx-observation.cloud { background: #536b86; }
     .wx-observation.ceiling { background: #5e4f83; }
     .wx-observation.visibility { background: #48655d; }
-    .wx-card { display: grid; gap: 1px; width: 66px; padding: 4px 5px 5px; border: 1.5px solid #fff; border-radius: 6px; background: #0e668b; box-shadow: 0 2px 7px #17354477; color: #fff; text-align: center; font: 800 10px/1.15 sans-serif; white-space: nowrap; }
+    .wx-card { display: grid; gap: 1px; box-sizing: border-box; width: 88px; padding: 5px 4px 6px; overflow: hidden; border: 1.5px solid #fff; border-radius: 6px; background: #0e668b; box-shadow: 0 2px 7px #17354477; color: #fff; text-align: center; font: 800 10px/1.2 sans-serif; white-space: nowrap; }
     .wx-card b { display: block; font-size: 12px; letter-spacing: .02em; }
     .wx-card span { display: block; font-weight: 700; opacity: .96; }
     .wx-card .wx-wind-arrow { display: inline-block; margin-right: 2px; transform: rotate(var(--direction)); }
@@ -1118,15 +1118,17 @@
     #map.compact-map .aviation-pin.major .aviation-symbol svg,
     #map.compact-map .aviation-pin.large_airport .aviation-symbol svg { width: 27px; height: 27px; }
     .nav-marker { display: grid; justify-items: center; width: 82px; transform: translateX(-50%); color: #392b92; pointer-events: none; }
-    .nav-marker .nav-symbol { display: grid; place-items: center; width: 34px; height: 34px; background: rgba(255,255,255,.72); filter: drop-shadow(0 1px 1px #fff) drop-shadow(0 1px 2px #162f4970); pointer-events: auto; }
+    .nav-marker .nav-symbol { display: grid; place-items: center; width: 34px; height: 34px; background: none; pointer-events: auto; filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 2px #fffc); }
     .nav-marker.vor-dme .nav-symbol { width: 38px; }
     .nav-marker .nav-symbol svg { width: 100%; height: 100%; overflow: visible; }
-    .nav-marker .nav-outline, .nav-marker .ndb-ring { fill: #fff; stroke: currentColor; stroke-width: 2; vector-effect: non-scaling-stroke; }
+    .nav-marker .nav-outline, .nav-marker .ndb-ring { fill: none; stroke: currentColor; stroke-width: 3.2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
     .nav-marker .nav-fill { fill: currentColor; }
-    .nav-marker .ndb-ring { fill: none; stroke-linecap: round; }
-    .nav-marker .ndb-ring.outer { stroke-dasharray: .6 2.3; stroke-width: 2.3; }
-    .nav-marker .ndb-ring.inner { stroke-dasharray: .6 2; stroke-width: 2; }
-    .nav-marker.fix .nav-symbol { width: 27px; height: 27px; background: transparent; }
+    .nav-marker .nav-outline.nav-fill { fill: currentColor; }
+    .nav-marker .ndb-ring { stroke-linecap: round; }
+    .nav-marker .ndb-ring.outer { stroke-dasharray: .6 3; stroke-width: 3.4; }
+    .nav-marker .ndb-ring.inner { stroke-dasharray: .6 2.6; stroke-width: 3; }
+    .nav-marker.vfr .nav-symbol, .nav-marker.rnav .nav-symbol { width: 27px; height: 27px; }
+    .nav-marker.rnav { color: #0b6e8a; }
     .nav-marker .nav-label { max-width: 74px; padding: 2px 4px; margin-top: 2px; border-radius: 3px; background: rgba(255,255,255,.95); font: 800 10px/1.1 sans-serif; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; pointer-events: none; }
     #map.compact-map .nav-marker .nav-label, #map.nav-labels-hidden .nav-marker .nav-label { display: none; }
     .camera-marker .bearing { display: none; }
@@ -1350,10 +1352,11 @@
                   <div class="dock-options layer-toggles">
                     <label><input type="checkbox" id="vorLayer"> VOR / DME</label>
                     <label><input type="checkbox" id="ndbLayer"> NDB</label>
-                    <label><input type="checkbox" id="fixLayer"> VFR-Punkte / RNAV</label>
-                    <label><input type="checkbox" id="ofmLayer"> VFR-Kartenebene</label>
+                    <label><input type="checkbox" id="vfrLayer"> VFR-Meldepunkte</label>
+                    <label><input type="checkbox" id="rnavLayer"> RNAV-Wegpunkte (GNSS)</label>
+                    <label><input type="checkbox" id="ofmLayer"> VFR-Luftraumkarte (OpenFlightMaps)</label>
                   </div>
-                  <small id="navigationMeta">Funkfeuer & VFR-Meldepunkte · AIRAC 2609</small>
+                  <small id="navigationMeta">Funkfeuer, VFR-Meldepunkte & RNAV-Wegpunkte · AIRAC 2609</small>
                   <small id="ofmMeta">Optionale VFR-Orientierung · AIRAC 2609 · nicht als primäre Navigationsquelle.</small>
                 </div>
               </details>
@@ -1391,7 +1394,8 @@
               <div class="legend-row"><span class="legend-map-symbol glider-symbol">⋈</span><span><b>Segelflugbetrieb</b> – magentafarbenes Doppelkegel-Symbol nur bei entsprechend belegter Platzklassifikation</span></div>
               <div class="legend-row"><span class="nav-symbol-legend">⬡</span><span><b>VOR</b> – ICAO-Sechseck mit Mittelpunkt; VOR/DME zusätzlich im Rechteck</span></div>
               <div class="legend-row"><span class="nav-symbol-legend">◉</span><span><b>NDB</b> – Mittelpunkt mit zwei gepunkteten Kreisringen</span></div>
-              <div class="legend-row"><span class="nav-symbol-legend">▲</span><span><b>VFR-Punkte / RNAV</b> – Meldepunktdreieck; Kennungen ab näherem Zoom</span></div>
+              <div class="legend-row"><span class="nav-symbol-legend">▲</span><span><b>VFR-Meldepunkte</b> – Dreieck; ausgefüllt = Pflichtmeldepunkt (MRP), offen = Meldepunkt (RP) / Streckenpunkt; Kennungen ab näherem Zoom</span></div>
+              <div class="legend-row"><span class="nav-symbol-legend">✦</span><span><b>RNAV-Wegpunkte</b> – Flächennavigations-Wegpunkte (GNSS/RNP), keine VFR-Meldepunkte; vierzackiger Stern</span></div>
               <div class="legend-row"><span></span><span>Flugplatz-, Funkfeuer- und Meldepunktsymbole folgen den Formen der amtlichen ICAO-Zeichenerklärung 2026. Die Karte bleibt eine Planungshilfe und keine amtliche DFS-/ENAV-Karte. <a href="https://www.swisstopo.admin.ch/dam/de/sd-web/oAbJkfKRzznX/LegendeICAO_A4_2026.pdf" target="_blank" rel="noopener">Amtliche ICAO-Zeichenerklärung 2026</a></span></div>
               <div class="legend-row"><span class="tag avgas100">100LL</span><span>AVGAS 100LL ausdrücklich belegt; Blau folgt der Kraftstofffärbung</span></div>
               <div class="legend-row"><span class="tag fuel">AVGAS</span><span>AVGAS belegt, Sorte nicht eindeutig genannt</span></div>
@@ -1761,18 +1765,18 @@
     openFlightMapsTiles.on("tileload", () => {
       if (openFlightMapsLoaded) return;
       openFlightMapsLoaded = true;
-      openFlightMapsMeta.textContent = `VFR-Kartenebene · AIRAC ${openFlightMapsAirac} · ergänzende, nicht zertifizierte Orientierung.`;
+      openFlightMapsMeta.textContent = `VFR-Luftraumkarte · AIRAC ${openFlightMapsAirac} · ergänzende, nicht zertifizierte Orientierung.`;
     });
     openFlightMapsTiles.on("tileerror", () => {
       if (openFlightMapsLoaded || !openFlightMapsToggle.checked) return;
-      openFlightMapsMeta.textContent = `VFR-Kartenebene · AIRAC ${openFlightMapsAirac} · für diesen Ausschnitt derzeit nicht verfügbar.`;
+      openFlightMapsMeta.textContent = `VFR-Luftraumkarte · AIRAC ${openFlightMapsAirac} · für diesen Ausschnitt derzeit nicht verfügbar.`;
     });
     function setOpenFlightMaps(enabled, persist = true) {
       if (enabled) openFlightMapsTiles.addTo(map);
       else openFlightMapsTiles.remove();
       openFlightMapsToggle.checked = enabled;
-      openFlightMapsToggle.closest("label").title = enabled ? "VFR-Kartenebene ausblenden" : "VFR-Kartenebene einblenden";
-      if (!enabled) openFlightMapsMeta.textContent = `VFR-Kartenebene · AIRAC ${openFlightMapsAirac} · optional und nicht als primäre Navigationsquelle.`;
+      openFlightMapsToggle.closest("label").title = enabled ? "VFR-Luftraumkarte ausblenden" : "VFR-Luftraumkarte einblenden";
+      if (!enabled) openFlightMapsMeta.textContent = `VFR-Luftraumkarte · AIRAC ${openFlightMapsAirac} · optional und nicht als primäre Navigationsquelle.`;
       if (persist) try { localStorage.setItem("vfr-openflightmaps", enabled ? "on" : "off"); } catch (_) {}
     }
     openFlightMapsToggle.addEventListener("change", (event) => setOpenFlightMaps(event.target.checked));

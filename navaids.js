@@ -1,6 +1,8 @@
 (() => {
-  const layers = { vor: L.layerGroup(), ndb: L.layerGroup(), fix: L.layerGroup() };
-  const counts = { vor: 0, ndb: 0, fix: 0 };
+  const KINDS = ["vor", "ndb", "vfr", "rnav"];
+  const layers = { vor: L.layerGroup(), ndb: L.layerGroup(), vfr: L.layerGroup(), rnav: L.layerGroup() };
+  const counts = { vor: 0, ndb: 0, vfr: 0, rnav: 0 };
+  const VFR_TYPE_LABELS = { "VFR-MRP": "VFR-Pflichtmeldepunkt (MRP)", "VFR-RP": "VFR-Meldepunkt (RP)", "VFR-ENR": "VFR-Streckenpunkt (ENR)" };
   let ofmAirac = "";
   window.navigationPoints = [];
 
@@ -12,8 +14,12 @@
     if (kind === "ndb") {
       return '<svg viewBox="0 0 34 34" aria-hidden="true"><circle class="ndb-ring outer" cx="17" cy="17" r="13"/><circle class="ndb-ring inner" cx="17" cy="17" r="9"/><circle class="nav-fill" cx="17" cy="17" r="2.3"/></svg>';
     }
-    if (kind === "fix") {
-      return '<svg viewBox="0 0 34 34" aria-hidden="true"><path class="nav-fill reporting-triangle" d="M17 5 28 26H6Z"/></svg>';
+    if (kind === "vfr") {
+      const mandatory = point.type === "VFR-MRP";
+      return `<svg viewBox="0 0 34 34" aria-hidden="true"><path class="${mandatory ? "nav-fill nav-outline" : "nav-outline"} reporting-triangle" d="M17 5 28 26H6Z"/></svg>`;
+    }
+    if (kind === "rnav") {
+      return '<svg viewBox="0 0 34 34" aria-hidden="true"><path class="nav-outline rnav-star" d="M17 4 20.2 13.8 30 17 20.2 20.2 17 30 13.8 20.2 4 17 13.8 13.8Z"/></svg>';
     }
     if (/DME|TAC/.test(point.type || "")) {
       return '<svg viewBox="0 0 38 34" aria-hidden="true"><rect class="nav-outline" x="3" y="7" width="32" height="20"/><path class="nav-outline" d="M19 9 27 14v8l-8 4-8-4v-8Z"/><circle class="nav-fill" cx="19" cy="18" r="2"/></svg>';
@@ -34,7 +40,7 @@
     const association = point.airport_code ? ` · ${escapeHtml(point.airport_code)}` : "";
     const marker = L.marker([point.lat, point.lon], { icon, zIndexOffset: 200 });
     marker.bindPopup(`<div class="popup-title">${escapeHtml(point.ident)} · ${escapeHtml(point.name)}</div>
-      <p>${escapeHtml(point.type || "VFR-Meldepunkt")}${association}${frequency ? ` · ${frequency}` : ""}</p>
+      <p>${escapeHtml(VFR_TYPE_LABELS[point.type] || point.type || "Navigationspunkt")}${association}${frequency ? ` · ${frequency}` : ""}</p>
       <small>${escapeHtml(sourceNote)} · Vor Nutzung aktuelle AIP prüfen.</small>
       <div class="popup-actions"><button type="button" class="add-nav-point">Als Überflugpunkt</button></div>`);
     marker.on("popupopen", () => marker.getPopup().getElement().querySelector(".add-nav-point")?.addEventListener("click", () => {
@@ -47,16 +53,17 @@
   }
 
   function updateNavigationMeta() {
-    const enabled = ["vor", "ndb", "fix"].filter((kind) => document.getElementById(`${kind}Layer`).checked);
+    const enabled = KINDS.filter((kind) => document.getElementById(`${kind}Layer`).checked);
     const meta = document.getElementById("navigationMeta");
     if (!enabled.length) {
-      meta.textContent = `${counts.vor + counts.ndb} Funkfeuer · ${counts.fix} VFR-Meldepunkte verfügbar`;
+      meta.textContent = `${counts.vor + counts.ndb} Funkfeuer · ${counts.vfr} VFR-Meldepunkte · ${counts.rnav} RNAV-Wegpunkte verfügbar`;
       return;
     }
     const parts = [];
     if (enabled.includes("vor")) parts.push(`${counts.vor} VOR / VOR-DME`);
     if (enabled.includes("ndb")) parts.push(`${counts.ndb} NDB`);
-    if (enabled.includes("fix")) parts.push(`${counts.fix} VFR-Punkte · AIRAC ${ofmAirac}`);
+    if (enabled.includes("vfr")) parts.push(`${counts.vfr} VFR-Meldepunkte · AIRAC ${ofmAirac}`);
+    if (enabled.includes("rnav")) parts.push(`${counts.rnav} RNAV-Wegpunkte`);
     meta.textContent = `${parts.join(" · ")} · hineinzoomen für Kennungen`;
   }
 
@@ -84,16 +91,16 @@
       ));
       ofm.points.forEach((point) => addMarker(
         point,
-        "fix",
+        "vfr",
         `AIRAC ${ofm.airac}, ergänzende VFR-Orientierung`
       ));
       lowi.fixes.forEach((point) => addMarker(
-        { ...point, type: "LOWI RNP-Fix", country: "LO" },
-        "fix",
+        { ...point, type: "RNAV-/RNP-Wegpunkt (LOWI)", country: "LO" },
+        "rnav",
         `AIRAC ${ofm.airac}, veröffentlichte RNP-Auswahl`
       ));
 
-      ["vor", "ndb", "fix"].forEach((kind) => {
+      KINDS.forEach((kind) => {
         if (document.getElementById(`${kind}Layer`).checked) layers[kind].addTo(map);
       });
       syncLabelDensity();
@@ -104,7 +111,7 @@
     }
   }
 
-  ["vor", "ndb", "fix"].forEach((kind) => document.getElementById(`${kind}Layer`).addEventListener("change", (event) => {
+  KINDS.forEach((kind) => document.getElementById(`${kind}Layer`).addEventListener("change", (event) => {
     if (event.target.checked) layers[kind].addTo(map);
     else layers[kind].remove();
     updateNavigationMeta();

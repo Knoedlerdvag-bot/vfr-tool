@@ -463,6 +463,7 @@ def main():
     parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", 4178)))
     parser.add_argument("--host", default=os.environ.get("HOST", "127.0.0.1"))
     args = parser.parse_args()
+    threading.Thread(target=aircraft_db._load, daemon=True).start()  # Typ-Datenbank vorladen, damit der erste Verkehrsabruf nicht blockiert
     server = ThreadingHTTPServer((args.host, args.port), partial(Handler, directory=str(ROOT)))
     print(f"VFR Italia: http://{args.host}:{args.port}/", flush=True)
     server.serve_forever()

@@ -82,5 +82,27 @@ class RouteBoardUiContractTests(unittest.TestCase):
         self.assertIn('class="page content-page" id="referencePage"', self.html)
 
 
+class NavigationLayerContractTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.html = (ROOT / "index.html").read_text(encoding="utf-8")
+        cls.navaids = (ROOT / "navaids.js").read_text(encoding="utf-8")
+        cls.planner = (ROOT / "planner.js").read_text(encoding="utf-8")
+
+    def test_vfr_reporting_points_and_rnav_waypoints_are_separate_layers(self):
+        self.assertIn('id="vfrLayer"', self.html)
+        self.assertIn('id="rnavLayer"', self.html)
+        self.assertNotIn('id="fixLayer"', self.html)
+        self.assertIn('const KINDS = ["vor", "ndb", "vfr", "rnav"]', self.navaids)
+
+    def test_navaid_symbols_have_no_opaque_square_background(self):
+        rule = re.search(r"\.nav-marker \.nav-symbol \{[^}]*\}", self.html).group(0)
+        self.assertIn("background: none", rule)
+
+    def test_weather_card_uses_unambiguous_units(self):
+        self.assertIn("Math.round(Number(layer.base))} ft", self.planner)
+        self.assertNotIn('toLocaleString("de-DE")} ft', self.planner.split("function cloudText")[1].split("function windText")[0])
+
+
 if __name__ == "__main__":
     unittest.main()

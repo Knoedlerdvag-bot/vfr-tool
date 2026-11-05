@@ -585,6 +585,7 @@
       lastRouteKey = "";
     }
     places.forEach(enrichPlace);
+    if (lastTrafficPayload && map.hasLayer(trafficMarkers)) renderTraffic();
     const totalNm = legs.reduce((sum, leg) => sum + leg.nm, 0);
     updateRouteBoard(totalNm, speed, burn);
     hydrateStats();
@@ -745,7 +746,7 @@
     const layers = (report.clouds || []).filter((cloud) => Number.isFinite(Number(cloud.base)));
     const ceiling = layers.find((cloud) => ["BKN", "OVC", "VV"].includes(cloud.cover));
     const layer = ceiling || layers[0];
-    if (layer) return `${layer.cover} ${Number(layer.base).toLocaleString("de-DE")}`;
+    if (layer) return `${layer.cover} ${Math.round(Number(layer.base))} ft`;
     return (report.clouds || []).length ? escapeHtml(report.clouds[0].cover) : "CLR";
   }
 
@@ -754,7 +755,7 @@
     const direction = Number(report.wdir);
     const gust = Number.isFinite(Number(report.wgst)) && Number(report.wgst) > Number(report.wspd) ? `G${report.wgst}` : "";
     if (!Number.isFinite(direction)) return `VRB ${report.wspd}${gust} kt`;
-    return `<span class="wx-wind-arrow" style="--direction:${(direction + 180) % 360}deg">↑</span>${String(Math.round(direction)).padStart(3, "0")}°/${report.wspd}${gust}`;
+    return `<span class="wx-wind-arrow" style="--direction:${(direction + 180) % 360}deg">↑</span>${String(Math.round(direction)).padStart(3, "0")}°/${report.wspd}${gust} kt`;
   }
 
   function weatherValue(report) {
@@ -815,7 +816,7 @@
   function renderWeatherMarkers() {
     weatherMarkers.clearLayers();
     if (!weatherMode) return;
-    const cellSize = map.getZoom() < 7 ? 120 : map.getZoom() < 9 ? 96 : 0;
+    const cellSize = map.getZoom() < 7 ? 130 : map.getZoom() < 9 ? 104 : 0;
     const occupied = new Set();
     let displayed = 0;
     weatherReports.forEach((report) => {
@@ -829,7 +830,7 @@
         occupied.add(cell);
       }
       const stale = reportCategory(report) === "unknown";
-      const marker = L.marker([report.lat, report.lon], { icon: L.divIcon({ className: "", html: `<div class="wx-card ${reportCategory(report).toLowerCase()}">${value}</div>`, iconSize: weatherMode === "combo" ? [66, 74] : [66, 56], iconAnchor: weatherMode === "combo" ? [33, 78] : [33, 60] }), zIndexOffset: -150 });
+      const marker = L.marker([report.lat, report.lon], { icon: L.divIcon({ className: "", html: `<div class="wx-card ${reportCategory(report).toLowerCase()}">${value}</div>`, iconSize: weatherMode === "combo" ? [92, 80] : [92, 62], iconAnchor: weatherMode === "combo" ? [46, 84] : [46, 66] }), zIndexOffset: -150 });
       marker.bindPopup(weatherPopup(report));
       marker.on("popupopen", () => marker.getPopup().getElement().querySelector(".open-taf")?.addEventListener("click", () => openTaf(report.icaoId)));
       marker.addTo(weatherMarkers);
@@ -969,6 +970,9 @@
   };
   let trafficRules = "all";
   let lastTrafficPayload = null;
+  let trafficAbort = null;
+  let trafficDebounce = null;
+  let trafficOversize = false;
 
   function trafficShapeKey(position) {
     if (TRAFFIC_SHAPES[position.shape]) return position.shape;
@@ -986,8 +990,10 @@
     const occupied = new Set();
     let displayed = 0;
     const rulesLabel = { ifr: "IFR (geschätzt)", vfr: "VFR (geschätzt)", unknown: "Flugregeln unbekannt" };
+    const corridorActive = route.length >= 2 && Number.isFinite(corridorWidthNm);
     const visible = payload.positions
       .filter((position) => trafficRules === "all" || position.flight_rules === trafficRules)
+      .filter((position) => !corridorActive || distanceToLineNm([position.lat, position.lon], route) <= corridorWidthNm)
       .filter((position) => map.getBounds().contains([position.lat, position.lon]));
     visible
       .sort((a, b) => (Number(b.speed_kt || 0) > 20 ? 1 : 0) - (Number(a.speed_kt || 0) > 20 ? 1 : 0) || a.age_sec - b.age_sec)
@@ -1017,8 +1023,8 @@
         L.marker([position.lat, position.lon], { icon: L.divIcon({ className: "", html: `<div class="traffic-icon ${shape}" title="${escapeHtml(label)}"><span class="traffic-glyph" style="transform:rotate(${heading}deg)">${TRAFFIC_SHAPES[shape].svg}</span>${!compactMap && compact ? `<b>${escapeHtml(compact)}</b>` : ""}</div>`, iconSize: [compactMap ? 34 : 150, 34], iconAnchor: [17, 17] }) })
           .bindTooltip(detail, { direction: "top" }).addTo(trafficMarkers);
       });
-    const filterNote = trafficRules === "all" ? "" : ` · Filter ${trafficRules.toUpperCase()}`;
-    status.textContent = `${payload.positions.length} Signale · ${displayed} auf der Karte${filterNote} · unvollständige Abdeckung${payload.status && payload.status !== "connected" ? ` · ${payload.status}` : ""}`;
+    const filterNote = (trafficRules === "all" ? "" : ` · Filter ${trafficRules.toUpperCase()}`) + (corridorActive ? ` · nur Korridor ±${corridorWidthNm} NM` : "");
+    status.textContent = `${payload.positions.length} Signale im Ausschnitt · ${displayed} auf der Karte${filterNote} · unvollständige Abdeckung${trafficOversize ? " · Ausschnitt zu groß: Verkehr nur im 250-NM-Kreis um die Kartenmitte, näher heranzoomen" : ""}${payload.status && payload.status !== "connected" ? ` · ${payload.status}` : ""}`;
   }
 
   async function loadTraffic() {
@@ -1026,15 +1032,21 @@
     const adsb = document.getElementById("adsbTraffic").checked;
     if (!flarm && !adsb) return;
     const center = map.getCenter();
-    const radius = Math.min(250, Math.max(1, Math.ceil(map.distance(center, map.getBounds().getNorthEast()) / 1852)));
+    const wanted = Math.ceil(map.distance(center, map.getBounds().getNorthEast()) / 1852);
+    trafficOversize = wanted > 250;
+    const radius = Math.min(250, Math.max(1, wanted));
     const source = flarm && adsb ? "both" : flarm ? "flarm" : "adsb";
     const status = document.getElementById("trafficStatus");
+    trafficAbort?.abort();
+    trafficAbort = new AbortController();
+    if (!lastTrafficPayload) status.textContent = "Verkehr wird geladen … (der erste Abruf kann bis zu einer Minute dauern, wenn der Server gerade aufwacht)";
     try {
-      const response = await fetch(`/api/traffic?lat=${center.lat.toFixed(3)}&lon=${center.lng.toFixed(3)}&radius=${radius}&source=${source}`);
+      const response = await fetch(`/api/traffic?lat=${center.lat.toFixed(3)}&lon=${center.lng.toFixed(3)}&radius=${radius}&source=${source}`, { signal: trafficAbort.signal });
       if (!response.ok) throw new Error("Serverdienst nicht erreichbar");
       lastTrafficPayload = await response.json();
       renderTraffic();
     } catch (error) {
+      if (error.name === "AbortError") return;
       status.textContent = `Flugverkehr nicht verfügbar: ${error.message}`;
     }
   }
@@ -1103,7 +1115,7 @@
     else renderWeatherMarkers();
     const timeline = document.getElementById("tafTimeline");
     timeline.hidden = weatherMode !== "taf" || !activeTaf;
-    if (!enabled) document.getElementById("weatherMeta").textContent = "Stationskarten zeigen Kategorie, Wolken (niedrigste Schicht, ft AGL) und Wind (Richtung, Stärke, Böen).";
+    if (!enabled) document.getElementById("weatherMeta").textContent = "Karte je Station: Flugwetterkategorie · Wolken = niedrigste Schicht BKN/OVC (Wolkenuntergrenze) bzw. sonst FEW/SCT, in ft über Grund · Wind = Richtung (woher, rechtweisend)/Stärke in kt, G = Böen.";
     else document.getElementById("weatherMeta").textContent = weatherMode === "combo" ? "Oben METAR aktuell, unten TAF: schlechteste Kategorie der nächsten 6 h (Näherung). Marker öffnen für Volltext." : "Aktuelle METAR-Stationswerte. Marker öffnen für Volltext und TAF.";
   }));
 
@@ -1206,6 +1218,8 @@
     } else {
       trafficMarkers.remove();
       trafficMarkers.clearLayers();
+      trafficAbort?.abort();
+      lastTrafficPayload = null;
       document.getElementById("trafficStatus").textContent = "Unvollständige Abdeckung. Nicht zur Kollisionsvermeidung verwenden.";
     }
   }
@@ -1216,7 +1230,7 @@
   }));
   document.getElementById("flarmTraffic").addEventListener("change", updateTrafficSelection);
   document.getElementById("adsbTraffic").addEventListener("change", updateTrafficSelection);
-  map.on("moveend", () => { if (map.hasLayer(trafficMarkers)) loadTraffic(); });
+  map.on("moveend", () => { if (!map.hasLayer(trafficMarkers)) return; clearTimeout(trafficDebounce); trafficDebounce = setTimeout(loadTraffic, 500); });
   function renderMeasurement() {
     measureLayer.clearLayers();
     const undo = document.getElementById("measureUndo");
