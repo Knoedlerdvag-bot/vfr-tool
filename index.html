@@ -1109,7 +1109,12 @@
     .aviation-pin .place-symbol-aerodrome .symbol-ticks,
     .aviation-pin .place-symbol-private path,
     .aviation-pin .place-symbol-heli path { fill: none; stroke: #164778; stroke-width: 2.2; stroke-linecap: square; }
-    .aviation-pin .place-symbol-aerodrome .symbol-runway { fill: none; stroke: #164778; stroke-width: 4.4; stroke-linecap: butt; }
+    .aviation-pin .place-symbol-aerodrome .symbol-runway, .aviation-pin .place-symbol-private .symbol-runway { fill: none; stroke: #164778; stroke-width: 4.4; stroke-linecap: butt; }
+    .aviation-pin .symbol-runway.outline { stroke-width: 5.4; }
+    .aviation-pin .symbol-runway.core { stroke: #fff; stroke-width: 2.2; }
+    .aviation-pin .symbol-runway.unknown { stroke-width: 3.4; stroke-dasharray: 4 2.6; }
+    .aviation-rwy { display: none; margin-top: 2px; padding: 2px 4px; border-radius: 3px; background: rgba(255,255,255,.92); border: 1px solid #afc8dc; color: #164778; font: 750 9.5px/1.15 sans-serif; white-space: nowrap; box-shadow: 0 1px 4px #0002; }
+    #map.show-rwy .aviation-pin .aviation-rwy { display: block; }
     .aviation-pin.aviosurface .aviation-symbol { transform: none; }
     #map.compact-map .aviation-label { display: none; }
     #map.compact-map .aviation-pin.major .aviation-label { display: block; }
@@ -1853,13 +1858,82 @@
         ? `WebAAI ${place.label}` : `Platz-ID ${place.label}`;
     }
 
+    // ---- Pistendaten (OurAirports, gemeinfrei): Belag, Länge, Ausrichtung -> ICAO-Platzsymbol + Bahninfo ----
+    const SURFACE_NAMES = { A: "Asphalt", C: "Beton", G: "Gras", R: "Schotter", D: "Erde", S: "Sand", P: "befestigt", U: "Belag unbekannt" };
+    const PAVED_CODES = new Set(["A", "C", "P"]);
+    let runwayIndex = null;
+
+    function loadRunwayIndex(payload) {
+      const byIdent = new Map();
+      const grid = new Map();
+      payload.airports.forEach((airport) => {
+        const record = { ident: airport[0], lat: airport[1], lon: airport[2], elevFt: airport[3], runways: airport[4].map((r) => ({ le: r[0], he: r[1], ft: r[2], widthFt: r[3], surface: r[4], heading: r[5] })) };
+        byIdent.set(record.ident, record);
+        const key = `${Math.round(record.lat * 20)},${Math.round(record.lon * 20)}`;
+        if (!grid.has(key)) grid.set(key, []);
+        grid.get(key).push(record);
+      });
+      runwayIndex = { byIdent, grid };
+    }
+
+    function ensureRunway(place) {
+      if (!runwayIndex || place._rwyChecked || place.type === "helipad") return place.rwy || null;
+      place._rwyChecked = true;
+      let record = /^[A-Z]{4}$/.test(String(place.label || "")) ? runwayIndex.byIdent.get(place.label) : null;
+      if (!record) {
+        const cx = Math.round(place.coords[0] * 20), cy = Math.round(place.coords[1] * 20);
+        let best = Infinity;
+        for (let dx = -1; dx <= 1; dx += 1) for (let dy = -1; dy <= 1; dy += 1) {
+          (runwayIndex.grid.get(`${cx + dx},${cy + dy}`) || []).forEach((candidate) => {
+            const nm = Math.hypot((candidate.lat - place.coords[0]) * 60, (candidate.lon - place.coords[1]) * 60 * Math.cos(place.coords[0] * Math.PI / 180));
+            if (nm < best && nm <= 1.5) { best = nm; record = candidate; }
+          });
+        }
+      }
+      if (!record) return null;
+      const main = record.runways[0];
+      const headingFromIdent = (ident) => { const n = parseInt(String(ident), 10); return Number.isFinite(n) ? (n * 10) % 360 : null; };
+      const paved = record.runways.some((r) => PAVED_CODES.has(r.surface));
+      const allUnknown = record.runways.every((r) => r.surface === "U");
+      place.rwy = {
+        record, main, designators: `${main.le}/${main.he}`,
+        meters: Math.round(main.ft * 0.3048), feet: main.ft,
+        heading: Number.isFinite(main.heading) ? main.heading : headingFromIdent(main.le),
+        paved: allUnknown ? null : paved,
+        surfaceName: SURFACE_NAMES[main.surface] || "Belag unbekannt"
+      };
+      return place.rwy;
+    }
+
+    function runwayLine(place, defaultLine) {
+      const rwy = ensureRunway(place);
+      if (!rwy || !Number.isFinite(rwy.heading)) return defaultLine;
+      const transform = `rotate(${rwy.heading % 180} 18 18)`;
+      const d = "M18 6.500V29.500";
+      if (rwy.paved === false) return `<path class="symbol-runway outline" d="${d}" transform="${transform}"/><path class="symbol-runway core" d="${d}" transform="${transform}"/>`;
+      if (rwy.paved === null) return `<path class="symbol-runway unknown" d="${d}" transform="${transform}"/>`;
+      return `<path class="symbol-runway" d="${d}" transform="${transform}"/>`;
+    }
+
+    function runwayLabelLine(place) {
+      const rwy = ensureRunway(place);
+      if (!rwy) return "";
+      return `<span class="aviation-rwy">${rwy.designators} · ${rwy.meters} m / ${rwy.feet} ft · ${rwy.surfaceName}</span>`;
+    }
+
+    function runwayPopupRows(place) {
+      const rwy = ensureRunway(place);
+      if (!rwy) return "";
+      const rows = rwy.record.runways.map((r) => `${r.le}/${r.he} · ${Math.round(r.ft * 0.3048)} m / ${r.ft} ft${r.widthFt ? ` × ${Math.round(r.widthFt * 0.3048)} m` : ""} · ${SURFACE_NAMES[r.surface] || "Belag unbekannt"}`).join("<br>");
+      return `<div>Pisten</div><div>${rows}<br><small>Platzhöhe ${rwy.record.elevFt} ft MSL · Quelle OurAirports, ohne Gewähr – AIP maßgeblich</small></div>`;
+    }
+
     function markerSymbol(place) {
       const description = `${place.name} ${place.status || ""} ${place.officialData || ""}`;
       if (place.type === "helipad") return '<svg class="place-symbol-heli" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="11"/><path d="M13 11v14M23 11v14M13 18h10"/></svg>';
       if (/SEGLER|SEGELFLUG|GLIDER/i.test(description)) return '<svg class="place-symbol-glider" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="11"/></svg>';
-      if (place.type === "airport") return '<svg class="place-symbol-aerodrome" viewBox="0 0 36 36" aria-hidden="true"><circle class="symbol-ring" cx="18" cy="18" r="9.5"/><path class="symbol-ticks" d="M18 3v5M18 28v5M3 18h5M28 18h5"/><path class="symbol-runway" d="M11 25 25 11"/></svg>';
-      if (place.type === "field" || place.type === "aviosurface") return '<svg class="place-symbol-private" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="10.5"/><path d="M10 26 26 10"/></svg>';
-      return '<svg class="place-symbol-private" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="10.5"/><path d="M10 26 26 10"/></svg>';
+      if (place.type === "airport") return `<svg class="place-symbol-aerodrome" viewBox="0 0 36 36" aria-hidden="true"><circle class="symbol-ring" cx="18" cy="18" r="9.5"/><path class="symbol-ticks" d="M18 3v5M18 28v5M3 18h5M28 18h5"/>${runwayLine(place, '<path class="symbol-runway" d="M11 25 25 11"/>')}</svg>`;
+      return `<svg class="place-symbol-private" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="10.5"/>${runwayLine(place, '<path class="symbol-runway" d="M10 26 26 10"/>')}</svg>`;
     }
 
     function markerIcon(place) {
@@ -1869,7 +1943,7 @@
       const major = ["large_airport", "medium_airport"].includes(place.referenceType);
       return L.divIcon({
         className: "",
-        html: `<div class="aviation-pin ${typeClass}${major ? " major" : ""} ${place.referenceType || ""}"><span class="aviation-symbol">${markerSymbol(place)}</span><span class="aviation-label" title="${safeName}">${safeName}</span></div>`,
+        html: `<div class="aviation-pin ${typeClass}${major ? " major" : ""} ${place.referenceType || ""}"><span class="aviation-symbol">${markerSymbol(place)}</span><span class="aviation-label" title="${safeName}">${safeName}</span>${runwayLabelLine(place)}</div>`,
         iconSize: [1, 42],
         iconAnchor: [0, 12],
         popupAnchor: [0, -20]
@@ -2246,6 +2320,7 @@ ${waypoints}
           <div class="popup-grid">
             ${route.length >= 2 ? `<div>Routenkorridor</div><div>${place.corridorNm.toFixed(1)} NM</div>` : ""}
             <div>Koordinaten</div><div>${decimalCoords(place)}<br>${dmsCoords(place)}</div>
+            ${runwayPopupRows(place)}
             <div>Fuel</div><div>${deText(place.fuel)}</div>
             <div>Zeiten</div><div>${deText(place.hours)}</div>
             <div>PPR</div><div>${deText(place.ppr)}</div>
@@ -2292,6 +2367,20 @@ ${waypoints}
     }
 
     places.forEach((place, index) => addPlaceMarker(place, index));
+
+    function syncRunwayLabels() { document.getElementById("map").classList.toggle("show-rwy", map.getZoom() >= 11); }
+    map.on("zoomend", syncRunwayLabels);
+    syncRunwayLabels();
+    fetch("data/runways.json")
+      .then((response) => (response.ok ? response.json() : Promise.reject(new Error("Pistendaten nicht erreichbar"))))
+      .then((payload) => {
+        loadRunwayIndex(payload);
+        markers.forEach((marker, index) => {
+          const place = places[index];
+          if (place && ensureRunway(place)) marker.setIcon(markerIcon(place));
+        });
+      })
+      .catch(() => { /* ohne Pistendaten bleibt das bisherige Symbol */ });
     map.setView([46.7, 10.8], 8, { animate: false });
 
     function tagLine(place) {
