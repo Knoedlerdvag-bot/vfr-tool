@@ -29,6 +29,25 @@
     const c = fuelConversion(amount);
     return `${c.liters.toFixed(1)} L · ${c.gal.toFixed(1)} US gal · ${c.kg.toFixed(1)} kg (${c.name}, ${String(c.density.toFixed(2)).replace(".", ",")} kg/L)`;
   }
+  // Der kostenlose Render-Server schläft nach Inaktivität ein; der erste Abruf danach kann Verbindungsabbrüche liefern -> automatisch wiederholen.
+  async function fetchRetry(url, options = {}, { retries = 3, onRetry } = {}) {
+    let lastError;
+    for (let attempt = 0; attempt <= retries; attempt += 1) {
+      try {
+        const response = await fetch(url, options);
+        if (response.status >= 502 && response.status <= 504 && attempt < retries) throw new Error(`Server antwortet mit ${response.status}`);
+        return response;
+      } catch (error) {
+        if (error.name === "AbortError") throw error;
+        lastError = error;
+        if (attempt < retries) {
+          onRetry?.(attempt + 1, retries + 1);
+          await new Promise((resolve) => setTimeout(resolve, 3000 * (attempt + 1)));
+        }
+      }
+    }
+    throw lastError;
+  }
   let weatherMode = "";
   let tafByIcao = {};
   let activeTaf = null;
@@ -821,7 +840,7 @@
     timeline.hidden = false;
     timeline.textContent = `${icao}: TAF wird geladen …`;
     try {
-      const response = await fetch(`/api/taf?icao=${encodeURIComponent(icao)}`);
+      const response = await fetchRetry(`/api/taf?icao=${encodeURIComponent(icao)}`, {}, { onRetry: (attempt, total) => { timeline.textContent = `${icao}: Server wacht auf … Versuch ${attempt + 1}/${total}`; } });
       if (!response.ok) throw new Error("TAF nicht erreichbar");
       const payload = await response.json();
       activeTaf = payload.reports?.[0] || null;
@@ -867,7 +886,7 @@
 
   async function loadAllTafs() {
     try {
-      const response = await fetch("/api/tafs");
+      const response = await fetchRetry("/api/tafs");
       if (!response.ok) throw new Error("TAF nicht erreichbar");
       const payload = await response.json();
       tafByIcao = Object.fromEntries((payload.reports || []).map((taf) => [taf.icaoId, taf]));
@@ -880,7 +899,7 @@
   async function loadWeather() {
     layerStatus.textContent = "METAR werden geladen …";
     try {
-      const response = await fetch("/api/weather");
+      const response = await fetchRetry("/api/weather");
       if (!response.ok) throw new Error("Serverdienst nicht erreichbar");
       const payload = await response.json();
       weatherReports = payload.reports.filter((report) => Number.isFinite(Number(report.lat)) && Number.isFinite(Number(report.lon)) && report.rawOb);
@@ -1050,7 +1069,8 @@
     status.textContent = `${payload.positions.length} Signale im Ausschnitt · ${displayed} auf der Karte${filterNote} · unvollständige Abdeckung${trafficOversize ? " · Ausschnitt zu groß: Verkehr nur im 250-NM-Kreis um die Kartenmitte, näher heranzoomen" : ""}${payload.status && payload.status !== "connected" ? ` · ${payload.status}` : ""}`;
   }
 
-  async function loadTraffic() {
+  let trafficLoading = false;
+  async function loadTraffic(force = false) {
     const flarm = document.getElementById("flarmTraffic").checked;
     const adsb = document.getElementById("adsbTraffic").checked;
     if (!flarm && !adsb) return;
@@ -1060,17 +1080,23 @@
     const radius = Math.min(250, Math.max(1, wanted));
     const source = flarm && adsb ? "both" : flarm ? "flarm" : "adsb";
     const status = document.getElementById("trafficStatus");
+    if (trafficLoading && !force) return;
     trafficAbort?.abort();
     trafficAbort = new AbortController();
+    trafficLoading = true;
     if (!lastTrafficPayload) status.textContent = "Verkehr wird geladen … (der erste Abruf kann bis zu einer Minute dauern, wenn der Server gerade aufwacht)";
     try {
-      const response = await fetch(`/api/traffic?lat=${center.lat.toFixed(3)}&lon=${center.lng.toFixed(3)}&radius=${radius}&source=${source}`, { signal: trafficAbort.signal });
+      const response = await fetchRetry(`/api/traffic?lat=${center.lat.toFixed(3)}&lon=${center.lng.toFixed(3)}&radius=${radius}&source=${source}`, { signal: trafficAbort.signal }, {
+        onRetry: (attempt, total) => { status.textContent = `Server wacht auf … neuer Versuch ${attempt + 1}/${total}`; }
+      });
       if (!response.ok) throw new Error("Serverdienst nicht erreichbar");
       lastTrafficPayload = await response.json();
       renderTraffic();
     } catch (error) {
       if (error.name === "AbortError") return;
-      status.textContent = `Flugverkehr nicht verfügbar: ${error.message}`;
+      status.textContent = `Flugverkehr nicht verfügbar (${error.message}). Server ggf. noch im Aufwachen – bitte in 1 Minute erneut versuchen.`;
+    } finally {
+      trafficLoading = false;
     }
   }
 
@@ -1237,7 +1263,7 @@
     if (enabled) {
       trafficMarkers.addTo(map);
       loadTraffic();
-      trafficTimer = setInterval(loadTraffic, 10000);
+      trafficTimer = setInterval(() => loadTraffic(false), 10000);
     } else {
       trafficMarkers.remove();
       trafficMarkers.clearLayers();
@@ -1253,7 +1279,7 @@
   }));
   document.getElementById("flarmTraffic").addEventListener("change", updateTrafficSelection);
   document.getElementById("adsbTraffic").addEventListener("change", updateTrafficSelection);
-  map.on("moveend", () => { if (!map.hasLayer(trafficMarkers)) return; clearTimeout(trafficDebounce); trafficDebounce = setTimeout(loadTraffic, 500); });
+  map.on("moveend", () => { if (!map.hasLayer(trafficMarkers)) return; clearTimeout(trafficDebounce); trafficDebounce = setTimeout(() => loadTraffic(true), 500); });
   function renderMeasurement() {
     measureLayer.clearLayers();
     const undo = document.getElementById("measureUndo");

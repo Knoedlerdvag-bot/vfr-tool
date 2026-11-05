@@ -1,9 +1,18 @@
 (() => {
   const KINDS = ["vor", "ndb", "vfr", "rnav"];
-  const layers = { vor: L.layerGroup(), ndb: L.layerGroup(), vfr: L.layerGroup(), rnav: L.layerGroup() };
+  // Anzeigegruppen mit Mindest-Zoomstufe: weit herausgezoomt bleibt die Karte lesbar (wie SkyDemon/ForeFlight: nach Bedeutung gestaffelt)
+  const GROUPS = {
+    vor: { kind: "vor", minZoom: 6, group: L.layerGroup() },
+    ndb: { kind: "ndb", minZoom: 8, group: L.layerGroup() },
+    vfr: { kind: "vfr", minZoom: 9, group: L.layerGroup() },
+    vfrMinor: { kind: "vfr", minZoom: 10, group: L.layerGroup() },
+    rnav: { kind: "rnav", minZoom: 8, group: L.layerGroup() }
+  };
+  const groupKey = (kind, point) => (kind === "vfr" && point.type !== "VFR-MRP" ? "vfrMinor" : kind);
   const counts = { vor: 0, ndb: 0, vfr: 0, rnav: 0 };
   const VFR_TYPE_LABELS = { "VFR-MRP": "VFR-Pflichtmeldepunkt (MRP)", "VFR-RP": "VFR-Meldepunkt (RP)", "VFR-ENR": "VFR-Streckenpunkt (ENR)" };
   let ofmAirac = "";
+  let zoomHint = "";
   window.navigationPoints = [];
 
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -20,6 +29,9 @@
     }
     if (kind === "rnav") {
       return '<svg viewBox="0 0 34 34" aria-hidden="true"><path class="nav-outline rnav-star" d="M17 4 20.2 13.8 30 17 20.2 20.2 17 30 13.8 20.2 4 17 13.8 13.8Z"/></svg>';
+    }
+    if (point.type === "DME") {
+      return '<svg viewBox="0 0 34 34" aria-hidden="true"><rect class="nav-outline" x="8" y="8" width="18" height="18"/><circle class="nav-fill" cx="17" cy="17" r="2"/></svg>';
     }
     if (/DME|TAC/.test(point.type || "")) {
       return '<svg viewBox="0 0 38 34" aria-hidden="true"><rect class="nav-outline" x="3" y="7" width="32" height="20"/><path class="nav-outline" d="M19 9 27 14v8l-8 4-8-4v-8Z"/><circle class="nav-fill" cx="19" cy="18" r="2"/></svg>';
@@ -53,7 +65,7 @@
       window.dispatchEvent(new CustomEvent("vfr-add-navigation-point", { detail: point }));
       map.closePopup();
     }));
-    marker.addTo(layers[kind]);
+    marker.addTo(GROUPS[groupKey(kind, point)].group);
     window.navigationPoints.push({ ...point, kind });
     counts[kind] += 1;
   }
@@ -70,11 +82,28 @@
     if (enabled.includes("ndb")) parts.push(`${counts.ndb} NDB`);
     if (enabled.includes("vfr")) parts.push(`${counts.vfr} VFR-Meldepunkte · AIRAC ${ofmAirac}`);
     if (enabled.includes("rnav")) parts.push(`${counts.rnav} RNAV-Wegpunkte`);
-    meta.textContent = `${parts.join(" · ")} · hineinzoomen für Kennungen`;
+    meta.textContent = `${parts.join(" · ")}${zoomHint}`;
   }
 
   function syncLabelDensity() {
-    document.getElementById("map").classList.toggle("nav-labels-hidden", map.getZoom() < 9);
+    const zoom = map.getZoom();
+    document.getElementById("map").classList.toggle("nav-labels-hidden", zoom < 9);
+    document.getElementById("map").classList.toggle("nav-far", zoom < 9);
+  }
+
+  function applyVisibility() {
+    const zoom = map.getZoom();
+    const hidden = new Map();
+    Object.values(GROUPS).forEach((entry) => {
+      const wanted = document.getElementById(`${entry.kind}Layer`).checked;
+      const show = wanted && zoom >= entry.minZoom;
+      if (show && !map.hasLayer(entry.group)) entry.group.addTo(map);
+      if (!show && map.hasLayer(entry.group)) entry.group.remove();
+      if (wanted && !show && (!hidden.has(entry.kind) || hidden.get(entry.kind) > entry.minZoom)) hidden.set(entry.kind, entry.minZoom);
+    });
+    const names = { vor: "VOR/DME", ndb: "NDB", vfr: "VFR-Meldepunkte", rnav: "RNAV-Wegpunkte" };
+    zoomHint = hidden.size ? ` · hineinzoomen: ${[...hidden].map(([kind, zoom]) => `${names[kind]} ab Zoom ${zoom}`).join(", ")}` : "";
+    updateNavigationMeta();
   }
 
   async function loadNavigation() {
@@ -106,22 +135,15 @@
         `AIRAC ${ofm.airac}, veröffentlichte RNP-Auswahl`
       ));
 
-      KINDS.forEach((kind) => {
-        if (document.getElementById(`${kind}Layer`).checked) layers[kind].addTo(map);
-      });
       syncLabelDensity();
-      updateNavigationMeta();
+      applyVisibility();
       window.dispatchEvent(new Event("vfr-navigation-loaded"));
     } catch (error) {
       document.getElementById("layerStatus").textContent = `Funkfeuer/Meldepunkte nicht verfügbar: ${error.message}`;
     }
   }
 
-  KINDS.forEach((kind) => document.getElementById(`${kind}Layer`).addEventListener("change", (event) => {
-    if (event.target.checked) layers[kind].addTo(map);
-    else layers[kind].remove();
-    updateNavigationMeta();
-  }));
-  map.on("zoomend", syncLabelDensity);
+  KINDS.forEach((kind) => document.getElementById(`${kind}Layer`).addEventListener("change", applyVisibility));
+  map.on("zoomend", () => { syncLabelDensity(); applyVisibility(); });
   loadNavigation();
 })();

@@ -58,5 +58,19 @@ class AipLinkTests(unittest.TestCase):
         self.assertEqual(result["pages"]["LOAT"], "ad_3_loat.htm")
 
 
+class NavaidDataTests(unittest.TestCase):
+    def test_ofmx_navaids_include_stuttgart_vor(self):
+        payload = json.loads((ROOT / "data" / "navaids.json").read_text(encoding="utf-8"))
+        stg = [n for n in payload["navaids"] if n["ident"] == "STG" and n["country"] == "DE"]
+        self.assertEqual(len(stg), 1)
+        self.assertEqual(stg[0]["type"], "VOR-DME")
+        self.assertEqual(stg[0]["frequency_khz"], 116850)
+
+    def test_runway_filter_controls_exist(self):
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertIn('id="runwayMinLength"', html)
+        self.assertIn('id="runwaySurface"', html)
+
+
 if __name__ == "__main__":
     unittest.main()
